@@ -2,7 +2,7 @@
 """
 Created on Fri Apr  6 13:11:23 2018
 
-@author: Joy Hill
+@authors: Joy Hill, Simona Denaro
 """
 
 #this code will read in ResSim Lite rule curves, control points, etc. for the 13 dams in the Williamette Basin
