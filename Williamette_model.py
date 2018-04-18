@@ -2,7 +2,7 @@
 """
 Created on Fri Apr  6 13:11:23 2018
 
-@authors: Joy Hill, SDenaro
+@author: Joy Hill
 """
 
 #this code will read in ResSim Lite rule curves, control points, etc. for the 13 dams in the Williamette Basin
@@ -21,6 +21,7 @@ import untangle as unt
 import xmltodict as xmld
 from collections import OrderedDict
 import dict_digger as dd
+import datetime as dt
 
 
 #first need to read in XML file containg reservoir and control point identifying info
@@ -29,10 +30,21 @@ with open('Flow.xml') as fd:
     
 flow_model = flow["flow_model"]
 
-controlPoints = flow_model["controlPoints"]
+controlPoints = flow_model["controlPoints"]['controlPoint']
 
-reservoirs = flow_model["reservoirs"]["reservoir"]
+reservoirs = flow_model["reservoirs"]['reservoir']
 
+
+
+
+
+
+    
+
+
+
+#RESERVOIR rules
+#in order of RES ID
 
 #Create Reservoir class
 class Reservoir:
@@ -327,18 +339,15 @@ BCL.minOutflow=float(reservoirs[id-1]["@minOutflow"])
 BCL.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])     
 BCL.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])   
 BCL.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"]) 
-BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])   
-
-
-
-
+BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
 #CONTROL POINTS
 #in order of ID
+#rename to have classifer at the beginning (max vs Min)
 
 #SALEM
-Salem_min_flow = pd.read_csv('cp_Min_flow_at_Salem_23791083.csv')
-Salem_max_bank = pd.read_csv('cp_Max_bf_Salem_23791083.csv')
+Min_flow_Salem = pd.read_csv('cp_Min_flow_at_Salem_23791083.csv')
+Max_bank_Salem = pd.read_csv('cp_Max_bf_Salem_23791083.csv')
 
 #ALBANY
 Albany_min_flow = pd.read_csv('cp_Min_Flow_at_Albany_23762845.csv')
@@ -384,8 +393,131 @@ Foster_min_con_flow = pd.read_csv('cp_Min_Con_Flow_from_Foster_23785773.csv')
 Foster_min_buffer = pd.read_csv('cp_Min_Buffer_Flow_from_Foster_23785773.csv')
 
 
-#extract each control pt from the ordered dict, then extract the reservoirs influenced information
-#use this to create an array of reservoirs influenced for each cp
+
+#create simplest read-in functions first
+
+####################
+#get pool elevation from volume: for each of the 13 reservoirs, this function takes current volume and that time step and translates to pool elevation
+
+#get specific area volume curve from xml file -- fed into a data frame
+
+#are we going to store each area volume curve table under the same name?
+
+def DatetoDayOfYear(val, fmt):
+#val = '2012/11/07'
+#fmt = '%Y/%m/%d'
+    date_d = dt.datetime.strptime(val,fmt)
+    tt = date_d.timetuple()
+    doy = tt.tm_yday
+    
+    return doy
+        
+
+
+def GetPoolElevationFromVolume(volume,name):
+    if name.AreaVolCurve is None:
+        return 0
+    else:
+        poolElevation = np.interp(volume,name.AreaVolCurve['Storage_m3'],name.AreaVolCurve['Elevation_m'])
+    
+        return poolElevation #returns pool elevation (m)
+
+def GetPoolVolumeFromElevation(pool_elev,name):
+    if name.AreaVolCurve is None:
+        return 0
+    else:
+        poolVolume = np.interp(pool_elev,name.AreaVolCurve['Elevation_m'],name.AreaVolCurve['Storage_m3'])
+    
+        return poolVolume #returns pool vol(m^3)
+
+def GetBufferZoneElevation(doy,name): 
+    if name.Buffer is None:
+        return 0
+    else:
+        bufferZoneElevation = np.interp(doy,name.Buffer['Date'],name.Buffer['Pool_Elevation_m'])
+    
+        return bufferZoneElevation #returns what the buffer zone elevation level is for this time of year (in m)
+
+def GetTargetElevationFromRuleCurve(doy,name): #target_table is same as rule_curve
+    if name.RuleCurve is None:
+        return 0
+    else:
+        target = np.interp(doy,name.RuleCurve['Day'],name.RuleCurve['Cons_Pool_elev_m'])
+    
+        return target #target pool elevation in m
+
+def UpdateMaxGateOutflows(name,poolElevation): #not sure if these are the right inputs
+    if name.Restype == 'Storage':
+        if name.RO is not None:
+            maxRO_flow = np.interp(poolElevation,name.RO['pool_elev_m'],name.RO['release_cap_cms'])
+#            return maxRO_flow
+        maxSpillway_flow = np.interp(poolElevation,name.Spillway['pool_elev_m'],name.Spillway['release_cap_cms'])
+        return (maxRO_flow,maxSpillway_flow)
+
+
+
+def AssignReservoirOutletFlows(name,outflow):
+    #flow file has a condition on reservoir not being null...dk if we need that here
+    
+    #reset values to 0.0
+    powerFlow = 0.0
+    RO_flow = 0.0
+    spillwayFlow = 0.0
+    
+    if outflow < name.maxPowerFlow: #this value is stored
+        powerFlow = outflow
+    else:
+        powerFlow = name.maxPowerFlow
+        excessFlow = outflow - name.maxPowerFlow
+        if excessFlow <= name.maxRO_flow:
+            RO_flow = excessFlow
+            if RO_flow < name.minRO_flow: #why is this condition less than where as the previous are <=
+                RO_flow = name.minRO_flow
+                powerFlow = outflow - name.minRO_flow
+        else: 
+            RO_flow = name.maxRO_flow
+            excessFlow = RO_flow
+            
+            spillwayFlow = excessFlow
+            
+            if spillwayFlow < name.minSpillwayFlow:
+                spillwayFlow = name.minSpillwayFlow
+                RO_flow =- name.minSpillwayFlow - excessFlow
+            if spillwayFlow > name.maxSpillwayflow:
+                print('Flow: Maximum spillway volume exceed')
+                
+    #reset max outflows to gate maximums for next timestep
+    maxPowerFlow = gateMaxPowerFlow #where are these gate values?
+    maxROFlow = gateMaxRO_flow
+    maxSpillwayFlow = gateMaxSpillwayFlow
+    
+    massbalancecheck = outflow - (powerFlow + RO_flow + spillwayFlow)
+    #does this equal 0?
+    
+    return(powerFlow,RO_flow,spillwayFlow, massbalancecheck)
+    
+def CalculateHydropowerOutput(name,elevation,powerFlow):
+    head = elevation - name.Tailwater_elev #should this input be poolElevation? or target?
+    powerOut = (1000*powerFlow*9.81*head*0.9)/1000000  #assume a 0.9 turbine efficiency
+    
+    return powerOut
+        
+           
+    
+    
+    
+        
+        
+
+
+    
+
+
+
+    
+    
+
+
 
 
 
