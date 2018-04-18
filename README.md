@@ -1,2 +1,2 @@
 # Williamette
-This is the code modeling the Williamette River Basin (adapted from ResSim Lite)
+This is the code modeling the Willamette River Basin (adapted from ResSim Lite)
