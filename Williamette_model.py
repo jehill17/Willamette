@@ -12,8 +12,8 @@ import pandas as pd
 from pandas.plotting import autocorrelation_plot
 from pandas import ExcelWriter
 import numpy as np
-import scipy.stats as stats
-import scipy.interpolate.interp2d as interp2d
+import scipy as sp
+from scipy.interpolate import interp2d
 from sklearn import linear_model
 from sklearn.metrics import r2_score
 from xml.dom import minidom
@@ -86,8 +86,8 @@ class Reservoir:
 id=1
 HCR=Reservoir(1)
 HCR.Restype='Storage'
-HCR.AreaVolCurve=pd.read_csv('hills_creek_area_capacity.csv')
-HCR.RuleCurve=pd.read_csv('hills_creek_rule_curve.csv')
+HCR.AreaVolCurve=pd.read_csv('Hills_creek_area_capacity.csv')
+HCR.RuleCurve=pd.read_csv('Hills_creek_rule_curve.csv')
 HCR.Composite=pd.read_csv('HC_composite_rc.csv')
 HCR.RO=pd.read_csv('HC_RO_capacity.csv')
 HCR.RulePriorityTable=pd.read_csv('hills_creek_rule_priorities.csv')
@@ -316,8 +316,7 @@ FOS.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 id=12
 DET=Reservoir(12)
 DET.Restype='Storage'
-DET.AreaVolCurve=pd.read_csv('detroit_area_capacity.csv')
-DET.RuleCurve=pd.read_csv('detroit_rule_curve.csv')
+DET.AreaVolCurve=pd.read_csv('Detroit_area_capacity.csv')
 DET.Composite=pd.read_csv('Detroit_composite_rc.csv')
 DET.RO=pd.read_csv('Detroit_RO_capacity.csv')
 DET.RulePriorityTable=pd.read_csv('detroit_rule_priorities.csv')
@@ -442,7 +441,7 @@ def GetBufferZoneElevation(doy,name):
     if name.Buffer is None:
         return 0
     else:
-        bufferZoneElevation = np.interp(doy,name.Buffer['Date'],name.Buffer['Pool_Elevation_m'])
+        bufferZoneElevation = np.interp(doy,name.Buffer['Date'],name.Buffer['Pool_elevation_m'])
 
         return bufferZoneElevation #returns what the buffer zone elevation level is for this time of year (in m)
 
@@ -533,7 +532,7 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
           elif xlabel=="Date_pool_elev_m":             # Lookup based on two values...date and pool elevation.  x value is date.  y value is pool elevation
                xvalue = doy
                yvalue = currentPoolElevation
-          elif xlabel=="Date_water_year_type":          #Lookup based on two values...date and wateryeartype (storage in 13 USACE reservoirs on May 20th).
+          elif xlabel=="Date_Water_year_type":          #Lookup based on two values...date and wateryeartype (storage in 13 USACE reservoirs on May 20th).
                xvalue = doy
                yvalue = waterYear
           elif xlabel == "Date_release_cms": 
@@ -544,76 +543,85 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
    
           if constraint_array[i].startswith('Max_'):  #case RCT_MAX  maximum
              if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
-             constraintValue = interp2d(xvalue, yvalue, z);
-                  else             //If not, just use xvalue
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-                  
-                  if ( actualRelease >= constraintValue )
-                     {
-                     actualRelease = constraintValue;
-                     pRes->m_activeRule = pConstraint->m_constraintFileName; pRes->m_constraintValue = constraintValue;
-                     }
-                  }
-                  break;
+                 cols=constraintRules.iloc[0,1::]
+                 rows=constraintRules.iloc[1::,0]
+                 vals=constraintRules.iloc[1::,1::]
+                 interp_table = interp2d(cols, rows, vals, kind='linear')
+                 constraintValue = interp_table(xvalue, yvalue)    
+             else:             #//If not, just use xvalue
+                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+             if actualRelease >= constraintValue:
+                actualRelease = constraintValue;
 
-           elif constraint_array[i].startswith('Min_'):  # case RCT_MIN:  //minimum
-                  {
-                  if (yvalue > 0)  //Does the constraint depend on two values?  If so, use both xvalue and yvalue
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, yvalue, IM_LINEAR);
-                  else             //If not, just use xvalue
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-   
-                  if (actualRelease <= constraintValue)
-                     {
-                     actualRelease = constraintValue;
-                     pRes->m_activeRule = pConstraint->m_constraintFileName; pRes->m_constraintValue = constraintValue;
-                     }
-                  }
-                  break;
 
-            elif constraint_array[i].startswith('MaxI_'):     #case RCT_INCREASINGRATE:  //Increasing Rate
-                  {
-                  if (yvalue > 0)  //Does the constraint depend on two values?  If so, use both xvalue and yvalue
-                     {
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, yvalue, IM_LINEAR);
-                     constraintValue = constraintValue*24;   //Covert hourly to daily
-                     }
-                  else             //If not, just use xvalue
-                     {
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-                     constraintValue = constraintValue*24;   //Covert hourly to daily
-                     }
-   
-                  if (actualRelease >= (constraintValue + pRes->m_outflow/SEC_PER_DAY))   //Is planned release more than current release + contstraint? 
-                     {
-                     actualRelease = (pRes->m_outflow/SEC_PER_DAY) + constraintValue;  //If so, planned release can be no more than current release + constraint.
-                     pRes->m_activeRule = pConstraint->m_constraintFileName; pRes->m_constraintValue = constraintValue;
-                     }
-                  }
-                  break;
+          elif constraint_array[i].startswith('Min_'):  # case RCT_MIN:  //minimum
+             if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
+                 cols=constraintRules.iloc[0,1::]
+                 rows=constraintRules.iloc[1::,0]
+                 vals=constraintRules.iloc[1::,1::]
+                 interp_table = interp2d(cols, rows, vals, kind='linear')
+                 constraintValue = interp_table(xvalue, yvalue)                 
+             else:             #//If not, just use xvalue
+                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+             if actualRelease <= constraintValue:
+                actualRelease = constraintValue;
 
-            elif constraint_array[i].startswith('MaxD_'):    #case RCT_DECREASINGRATE:  //Decreasing Rate
-                  {
-                  if (yvalue > 0)  //Does the constraint depend on two values?  If so, use both xvalue and yvalue
-                     {
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, yvalue, IM_LINEAR);
-                     constraintValue = constraintValue*24;   //Covert hourly to daily
-                     }
-                  else             //If not, just use xvalue
-                     {
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-                     constraintValue = constraintValue*24;   //Covert hourly to daily
-                     }
-   
-                  if (actualRelease <= (pRes->m_outflow/SEC_PER_DAY - constraintValue))    //Is planned release less than current release - contstraint?
-                     {
-                     actualRelease = (pRes->m_outflow/SEC_PER_DAY) - constraintValue;     //If so, planned release can be no less than current release - constraint.
-                     pRes->m_activeRule = pConstraint->m_constraintFileName; pRes->m_constraintValue = constraintValue;
-                     }
-                  }
-                  break;
 
-              elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  //Downstream control point 
+          elif constraint_array[i].startswith('MaxI_'):     #case RCT_INCREASINGRATE:  //Increasing Rate
+             if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
+                 cols=constraintRules.iloc[0,1::]
+                 rows=constraintRules.iloc[1::,0]
+                 vals=constraintRules.iloc[1::,1::]
+                 interp_table = interp2d(cols, rows, vals, kind='linear')
+                 constraintValue = interp_table(xvalue, yvalue)
+                 constraintValue = constraintValue*24   #Covert hourly to daily                  
+             else:             #//If not, just use xvalue
+                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+                 constraintValue = constraintValue*24   #Covert hourly to daily
+             if actualRelease >= name.outflow/86400 + constraintValue:  #Is planned release more than current release + contstraint? 
+                actualRelease = (name.outflow/86400) + constraintValue  #If so, planned release can be no more than current release + constraint.
+                 
+
+          elif constraint_array[i].startswith('MaxD_'):    #case RCT_DECREASINGRATE:  //Decreasing Rate
+             if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
+                 cols=constraintRules.iloc[0,1::]
+                 rows=constraintRules.iloc[1::,0]
+                 vals=constraintRules.iloc[1::,1::]
+                 interp_table = interp2d(cols, rows, vals, kind='linear')
+                 constraintValue = interp_table(xvalue, yvalue)
+                 constraintValue = constraintValue*24   #Covert hourly to daily                  
+             else:             #//If not, just use xvalue
+                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+                 constraintValue = constraintValue*24   #Covert hourly to daily
+             if actualRelease >= name.outflow/86400 - constraintValue:  #Is planned release less than current release - contstraint? 
+                actualRelease = (name.outflow/86400) - constraintValue  #If so, planned release can be no less than current release - constraint.
+
+
+          elif constraint_array[i].startswith('Pow_Max'): # case RCT_POWERPLANT:  //maximum Power plant rule  Assign m_maxPowerFlow attribute.
+               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+               maxPowerFlow = constraintValue  #Just for this timestep.  name.MaxPowerFlow is the physical limitation for the reservoir.
+          elif constraint_array[i].startswith('Pow_Min'): # case RCT_POWERPLANT:  //minimum Power plant rule  Assign m_minPowerFlow attribute.
+               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+               minPowerFlow = constraintValue 
+           
+            
+          elif constraint_array[i].startswith('RO_Max'): #case RCT_REGULATINGOUTLET:  Max Regulating outlet rule, Assign m_maxRO_Flow attribute.
+               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+               maxRO_Flow  = constraintValue  
+          elif constraint_array[i].startswith('RO_Min'): #Min Regulating outlet rule, Assign m_maxRO_Flow attribute.
+               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+               minRO_Flow  = constraintValue 
+
+
+          elif constraint_array[i].startswith('Spill_Max'): #  case RCT_SPILLWAY:   //Max Spillway rule
+               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+               maxSpillwayFlow  = constraintValue  
+          elif constraint_array[i].startswith('Spill_Min'): #Min Spillway rule
+               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+               minSpillwayFlow  = constraintValue 
+
+
+          elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  //Downstream control point 
                   {
                    CString filename = pConstraint->m_constraintFileName;
                   // get control point location.  Assumes last characters of filename contain a COMID
@@ -683,86 +691,7 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
                   }
                   break;
 
-             elif constraint_array[i].startswith('Pow_'): # case RCT_POWERPLANT:  //Power plant rule
-                  { //first, we have to strip the first header to get to the 2nd, which tells us whether the rule is a min or a max 
-                  TCHAR powname[256];
-                  lstrcpy(powname, filename);
-                  TCHAR *ruletype = NULL;
-                  TCHAR *next     = NULL;
-                  TCHAR delim[] = " ,_";  //allowable delimeters: , ; space ; underscore
-
-                  ruletype = _tcstok_s(powname, delim, &next);  //Strip header.  should be pow_ for power plant rules
-                  ruletype = _tcstok_s(NULL, delim, &next);  //Returns next string at head of file (max or min).
-               
-                  if (_stricmp(ruletype, "Max") == 0)  //Is this a maximum power flow?  Assign m_maxPowerFlow attribute.
-                     {
-                     ASSERT(  pConstraint->m_pRCData != NULL );
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-                     pRes->m_maxPowerFlow = constraintValue;  //Just for this timestep.  m_gateMaxPowerFlow is the physical limitation for the reservoir.
-                     }
-                  else if (_stricmp(ruletype, "Min" ) == 0 )   /// bug!!! maximum) == 0)  //Is this a minimum power flow?  Assign m_minPowerFlow attribute.
-                     {
-                     ASSERT(  pConstraint->m_pRCData != NULL );
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-                     pRes->m_minPowerFlow = constraintValue;
-                     }
-                //  pRes->m_activeRule = pConstraint->m_constraintFileName;
-                  }
-                  break;
-
-             elif constraint_array[i].startswith('RO_'):   #case RCT_REGULATINGOUTLET:  //Regulating outlet rule
-                  {
-                  //first, we have to strip the first header to get to the 2nd, which tells us whether the rule is a min or a max 
-                  TCHAR roname[256];
-                  lstrcpy(roname, filename);
-                  TCHAR *ruletype = NULL;
-                  TCHAR *next     = NULL;
-                  TCHAR delim[] = " ,_";  //allowable delimeters: , ; space ; underscore
-                  ruletype = _tcstok_s(roname, delim, &next);  //Strip header.  should be pow_ for power plant rules
-                  ruletype = _tcstok_s(NULL, delim, &next);  //Returns next string at head of file (max or min).
-   
-                  if (_stricmp(ruletype, "Max") == 0)  //Is this a maximum RO flow?   Assign m_maxRO_Flow attribute.
-                     {
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-                     pRes->m_maxRO_Flow = constraintValue;
-                     }
-                  else if (_stricmp(ruletype, "Min" ) == 0)  //Is this a minimum RO flow?   Assign m_minRO_Flow attribute.
-                     {
-                     ASSERT(  pConstraint->m_pRCData != NULL );
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-                     pRes->m_minRO_Flow = constraintValue;
-                     }
-                //  pRes->m_activeRule = pConstraint->m_constraintFileName;
-                  }
-                  break;
-
-             elif constraint_array[i].startswith('Spill_'):   #  case RCT_SPILLWAY:   //Spillway rule
-                  {
-                  //first, we have to strip the first header to get to the 2nd, which tells us whether the rule is a min or a max 
-                  TCHAR spillname[256];
-                  lstrcpy(spillname, filename);
-                  TCHAR *ruletype = NULL;
-                  TCHAR *next     = NULL;
-                  TCHAR delim[] = " ,_";  //allowable delimeters: , ; space ; underscore
-
-                  ruletype = _tcstok_s(spillname, delim, &next);  //Strip header.  should be pow_ for power plant rules
-                  ruletype =_tcstok_s(NULL, delim, &next);  //Returns next string at head of file (max or min).
-               
-                  if (_stricmp(ruletype, "Max" ) == 0)  //Is this a maximum spillway flow?  Assign m_maxSpillwayFlow attribute.
-                     {
-                     ASSERT(  pConstraint->m_pRCData != NULL );
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-                     pRes->m_maxSpillwayFlow = constraintValue;
-                     }
-                  else if (_stricmp(ruletype, "Min") == 0)  //Is this a minimum spillway flow?  Assign m_minSpillwayFlow attribute.
-                     {
-                     ASSERT(  pConstraint->m_pRCData != NULL );
-                     constraintValue = pConstraint->m_pRCData->IGet(xvalue, 1, IM_LINEAR);
-                     pRes->m_minSpillwayFlow = constraintValue;
-                     }
-                //  pRes->m_activeRule = pConstraint->m_constraintFileName;
-                  }
-                  break;
+            
                }  // end of: switch( pConstraint->m_type )
 
                /*
