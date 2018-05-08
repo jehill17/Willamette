@@ -35,18 +35,6 @@ controlPoints = flow_model["controlPoints"]['controlPoint']
 
 reservoirs = flow_model["reservoirs"]['reservoir']
 
-
-
-
-
-
-
-
-
-
-#RESERVOIR rules
-#in order of RES ID
-
 #Create Reservoir class
 class Reservoir:
     def __init__(self, ID):
@@ -76,6 +64,15 @@ class Reservoir:
         self.RO_flow =[]
         self.spillwayflow =[]
         self.zone=[]
+
+
+#Create ControlPoint class
+class ControlPoint:
+    def __init__(self, ID):
+        self.ID=ID
+        self.influencedReservoirs=[]
+        self.discharge = []
+        self.localFlow = []
 
 
 #RESERVOIR rules
@@ -350,65 +347,54 @@ BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
 #CONTROL POINTS
 #in order of ID
-#rename to have classifer at the beginning (max vs Min)
 
 #SALEM
-Min_flow_Salem = pd.read_csv('cp_Min_flow_at_Salem_23791083.csv')
-Max_bank_Salem = pd.read_csv('cp_Max_bf_Salem_23791083.csv')
+SAL=ControlPoint(1)
+SAL.influencedReservoirs = []
 
 #ALBANY
-Albany_min_flow = pd.read_csv('cp_Min_Flow_at_Albany_23762845.csv')
+ALB=ControlPoint(2)
+ALB.influencedReservoirs = []
 
 #JEFFERSON
-Jefferson_max_bank = pd.read_csv('cp_Max_bf_Jefferson_23780423.csv')
+JEF=ControlPoint(3)
+JEF.influencedReservoirs = []
 
 #MEHAMA
-Mehama_max_bank = pd.read_csv('cp_Max_bf_Mehama_23780481.csv')
+MEH=ControlPoint(4)
+MEH.influencedReservoirs = []
 
 #HARRISBURG
-Harrisburg_max_42500 = pd.read_csv('cp_Max_HB_42500_cfs_23763337.csv')
-Harrisburg_max_51000 = pd.read_csv('cp_Max_HB_51000_cfs_23763337.csv')
-Harrisburg_max_70500 = pd.read_csv('cp_Max_HB_70500_cfs_23763337.csv')
+HAR=ControlPoint(5)
+HAR.influencedReservoirs = []
 
 #VIDA
-Vida_max_flood = pd.read_csv('cp_Max_Vida_Flood_23772903.csv')
+VID=ControlPoint(6)
+VID.influencedReservoirs = []
 
 #JASPER
-Jasper_max_bank = pd.read_csv('cp_Max_Jasper_Bankfull_23751778.csv')
+JAS=ControlPoint(7)
+JAS.influencedReservoirs = []
 
 #GOSHEN
-Goshen_max_bank = pd.read_csv('cp_Max_bf_Goshen_23759228.csv')
+GOS=ControlPoint(8)
+GOS.influencedReservoirs = []
 
 #WATERLOO
-Waterloo_max_bank = pd.read_csv('cp_Max_bf_Waterloo_23785687.csv')
+WAT=ControlPoint(9)
+WAT.influencedReservoirs = []
 
 #MONROE
-Monroe_max_reg = pd.read_csv('cp_Max_Reg_Monroe_23763073.csv')
-Monroe_min_flow = pd.read_csv('cp_Min_Flow_at_Monroe_23763073.csv')
-
-#MEHAMA winter
-Mehama_max_flow_winter = pd.read_csv('cp_Max_Winter_Ops_Mehama_23780481.csv')
-
-#SALEM winter
-Salem_max_flow_winter = pd.read_csv('cp_Max_Winter_Ops_Salem_23791083.csv')
+MON=ControlPoint(10)
+MON.influencedReservoirs = []
 
 #FOSTER
-Foster_max_10K = pd.read_csv('cp_Max_10K_into_Foster_23787257.csv')
-Foster_max_12K = pd.read_csv('cp_Max_12K_into_Foster_23787257.csv')
-Foster_min_BiOp = pd.read_csv('cp_Min_BiOp_MaxD_at_FOS_23785773.csv') #what is this cp?
-Foster_min_con_flow = pd.read_csv('cp_Min_Con_Flow_from_Foster_23785773.csv')
-Foster_min_buffer = pd.read_csv('cp_Min_Buffer_Flow_from_Foster_23785773.csv')
+FOS=ControlPoint(11)
+FOS.influencedReservoirs = []
 
 
-
-#create simplest read-in functions first
 
 ####################
-#get pool elevation from volume: for each of the 13 reservoirs, this function takes current volume and that time step and translates to pool elevation
-
-#get specific area volume curve from xml file -- fed into a data frame
-
-#are we going to store each area volume curve table under the same name?
 
 def DatetoDayOfYear(val, fmt):
 #val = '2012/11/07'
@@ -420,7 +406,6 @@ def DatetoDayOfYear(val, fmt):
     return doy
 
 
-
 def GetPoolElevationFromVolume(volume,name):
     if name.AreaVolCurve is None:
         return 0
@@ -428,6 +413,7 @@ def GetPoolElevationFromVolume(volume,name):
         poolElevation = np.interp(volume,name.AreaVolCurve['Storage_m3'],name.AreaVolCurve['Elevation_m'])
 
         return poolElevation #returns pool elevation (m)
+
 
 def GetPoolVolumeFromElevation(pool_elev,name):
     if name.AreaVolCurve is None:
@@ -437,6 +423,7 @@ def GetPoolVolumeFromElevation(pool_elev,name):
 
         return poolVolume #returns pool vol(m^3)
 
+
 def GetBufferZoneElevation(doy,name):
     if name.Buffer is None:
         return 0
@@ -445,6 +432,7 @@ def GetBufferZoneElevation(doy,name):
 
         return bufferZoneElevation #returns what the buffer zone elevation level is for this time of year (in m)
 
+
 def GetTargetElevationFromRuleCurve(doy,name): #target_table is same as rule_curve
     if name.RuleCurve is None:
         return 0
@@ -452,6 +440,7 @@ def GetTargetElevationFromRuleCurve(doy,name): #target_table is same as rule_cur
         target = np.interp(doy,name.RuleCurve['Day'],name.RuleCurve['Cons_Pool_elev_m'])
 
         return target #target pool elevation in m
+
 
 def UpdateMaxGateOutflows(name,poolElevation): #not sure if these are the right inputs
     if name.Restype == 'Storage':
@@ -621,10 +610,10 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
                minSpillwayFlow  = constraintValue 
 
 
-          elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  //Downstream control point 
+          elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point 
                   {
                    CString filename = pConstraint->m_constraintFileName;
-                  // get control point location.  Assumes last characters of filename contain a COMID
+                  # get control point location.  Assumes last characters of filename contain a COMID
                   LPTSTR p = (LPTSTR) _tcsrchr( filename, '.' );
    
                   if ( p != NULL )
@@ -637,7 +626,7 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
                      pConstraint->m_comID = comID;
                      }
                         
-                  //Determine which control point this is.....use COMID to identify
+                  #Determine which control point this is.....use COMID to identify
                   for (int k=0;  k < gpModel->m_controlPointArray.GetSize(); k++) 
                      {
                      ControlPoint *pControl = gpModel->m_controlPointArray.GetAt(k);
@@ -645,9 +634,9 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
 
                      if ( pControl->InUse() )
                         {                     
-                        int location = pControl->m_location;     // Get COMID of this control point
-                        //if (pControl->m_location == pConstraint->m_comID)  //Do they match?
-                        if (_stricmp(pControl->m_controlPointFileName,pConstraint->m_constraintFileName) == 0)  //compare names
+                        int location = pControl->m_location;     # Get COMID of this control point
+                        #if (pControl->m_location == pConstraint->m_comID)  #Do they match?
+                        if (_stricmp(pControl->m_controlPointFileName,pConstraint->m_constraintFileName) == 0)  #compare names
                            {
                            ASSERT( pControl->m_pResAllocation != NULL );
                            constraintValue = 0.0f;
@@ -671,14 +660,14 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
                                           }
                                        constraintValue = constraintValue / releaseFreq;
                                     }
-                  //                  constraintValue = pControl->m_pResAllocation->IGet(0, l);   //Flow allocated from this control point
+                  #                  constraintValue = pControl->m_pResAllocation->IGet(0, l);   #Flow allocated from this control point
                                  }
                                  else
-                                    constraintValue = pControl->m_pResAllocation->IGet(0, l );   //Flow allocated from this control point
+                                    constraintValue = pControl->m_pResAllocation->IGet(0, l );   #Flow allocated from this control point
                                  
-                                 actualRelease += constraintValue;    //constraint value will be negative if flow needs to be withheld, positive if flow needs to be augmented
+                                 actualRelease += constraintValue;    #constraint value will be negative if flow needs to be withheld, positive if flow needs to be augmented
                                  
-                                 if ( constraintValue > 0.0 )         //Did this constraint affect release?  If so, save as active rule.
+                                 if ( constraintValue > 0.0 )         #Did this constraint affect release?  If so, save as active rule.
                                     {
                                     pRes->m_activeRule = pConstraint->m_constraintFileName; pRes->m_constraintValue = actualRelease;
                                     }
@@ -692,7 +681,7 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
                   break;
 
             
-               }  // end of: switch( pConstraint->m_type )
+               }  # end of: switch( pConstraint->m_type )
 
                /*
             float minVolum = pRes->GetPoolVolumeFromElevation(m_inactive_elev);
