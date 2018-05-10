@@ -354,28 +354,94 @@ BCL.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
 BCL.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
-#import control point historical data
+
+
+#CONTROL POINTS
+#in order of ID
+
+#SALEM
+SAL=ControlPoint(1)
+SAL.influencedReservoirs = []
+SAL.COMID = 23791083
+
+#ALBANY
+ALB=ControlPoint(2)
+ALB.influencedReservoirs = []
+ALB.COMID = 23763073
+
+#JEFFERSON
+JEF=ControlPoint(3)
+JEF.influencedReservoirs = []
+JEF.COMID = 23780423
+
+
+#MEHAMA
+MEH=ControlPoint(4)
+MEH.influencedReservoirs = []
+MEH.COMID = 23780481
+
+#HARRISBURG
+HAR=ControlPoint(5)
+HAR.influencedReservoirs = []
+HAR.COMID = 23763337
+
+
+#VIDA
+VID=ControlPoint(6)
+VID.influencedReservoirs = []
+VID.COMID = 23772903
+
+#JASPER
+JAS=ControlPoint(7)
+JAS.influencedReservoirs = [HCR, LOP, FAL]
+JAS.COMID =23751778
+
+
+#GOSHEN
+GOS=ControlPoint(8)
+GOS.influencedReservoirs = []
+GOS.COMID = 23759228
+
+#WATERLOO
+WAT=ControlPoint(9)
+WAT.influencedReservoirs = []
+WAT.COMID = 23785687
+
+#MONROE
+MON=ControlPoint(10)
+MON.influencedReservoirs = []
+MON.COMID = 23763073
+
+#FOSTER
+FOS=ControlPoint(11)
+FOS.influencedReservoirs = []
+FOS.COMID = 23785773
+
+#import control point historical data-- shifted one day before
 
 cp_local = pd.read_excel('Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) #when does this data come into play?
+#add in fnt that updates control pt discharge after every timestep
 
 #read in historical reservoir inflows -- this will contain the array of 'dates' to use
-BCL5M = pd.read_excel('BCL5M_daily.xls') #this data starts 7/01/1928
-BLU5A = pd.read_excel('BLU5A_daily.xls')
-CGR5A = pd.read_excel('CGR5A_daily.xls')
-DET5A = pd.read_excel('DET5A_daily.xls')
-DEX5M = pd.read_excel('DEX5M_daily.xls')
-DOR5A = pd.read_excel('DOR5A_daily.xls')
-FAL5A = pd.read_excel('FAL5A_daily.xls')
-FOS5A = pd.read_excel('FOS5A_daily.xls')
-FRN5M = pd.read_excel('FRN5M_daily.xls')
-GPR5A = pd.read_excel('GPR5A_daily.xls')
-HCR5A = pd.read_excel('HCR5A_daily.xls')
-LOP5A = pd.read_excel('LOP5A_daily.xls')
-LOP5E = pd.read_excel('LOP5E_daily.xls')
-COT5A = pd.read_excel('COT5A_daily.xls')
-FOS_loc = pd.read_excel('FOS_loc.xls',usecols = [0,3])
-LOP_loc = pd.read_excel('LOP_loc.xls',usecols = [0,3])
 
+BLU5A = pd.read_excel('BLU5A_daily.xls',skiprows=27943,skip_footer =1004) #only using data from 2005
+BLU5A.columns = ['Date','Inflow']
+CGR5A = pd.read_excel('CGR5A_daily.xls',skiprows=27943,skip_footer =1004)
+DET5A = pd.read_excel('DET5A_daily.xls',skiprows=27943,skip_footer =1004)
+DEX5M = pd.read_excel('DEX5M_daily.xls',skiprows=27943,skip_footer =1004)
+DOR5A = pd.read_excel('DOR5A_daily.xls',skiprows=27943,skip_footer =1004)
+FAL5A = pd.read_excel('FAL5A_daily.xls',skiprows=27943,skip_footer =1004)
+FOS5A = pd.read_excel('FOS5A_daily.xls',skiprows=27943,skip_footer =1004)
+FRN5M = pd.read_excel('FRN5M_daily.xls',skiprows=27943,skip_footer =1004)
+GPR5A = pd.read_excel('GPR5A_daily.xls',skiprows=27943,skip_footer =1004)
+HCR5A = pd.read_excel('HCR5A_daily.xls',skiprows=27943,skip_footer =1004)
+LOP5A = pd.read_excel('LOP5A_daily.xls',skiprows=27943,skip_footer =1004)
+LOP5E = pd.read_excel('LOP5E_daily.xls',skiprows=27943,skip_footer =1004)
+COT5A = pd.read_excel('COT5A_daily.xls',skiprows=27943,skip_footer =1004)
+FOS_loc = pd.read_excel('FOS_loc.xls',usecols = [0,3],skiprows=27943,skip_footer =1004)
+LOP_loc = pd.read_excel('LOP_loc.xls',usecols = [0,3],skiprows=27943,skip_footer =1004)
+
+dates = np.array(BLU5A['Date'])
 
 
 k = 365 #of days we will run the simulation
@@ -383,16 +449,20 @@ k = 365 #of days we will run the simulation
 outflows_all = np.zeros((k,13)) #we can fill these in later, or make them empty and 'append' the values
 hydropower_all = np.zeros((k,8))
 
+#also need to intialize array of volumes and elevations here
+
 #define an outer fnt here that takes date, name, vol as inputs?
 
 for i in range(0,k+1):
     
-    #date = inflow_data_dates[k]
-    doy = inner.DatetoDayOfYear(dates[k],'%Y/%m/%d')
+    doy = inner.DatetoDayOfYear(str(dates[k])[:10],'%Y-%m-%d')
     
     #calculate waterYear
+    #conditional based on doy 
+    #calculate at doy = 140
     
-    #COTTAGE GROVE
+    #COTTAGE GROVE 
+    COT_poolElevation = inner.GetPoolElevationfromVolume(COT,COT.volume) #not sure which vol input to use
     COT_outflow = inner.GetResOutflow(COT,COT.InitVol,COT5A.iloc[k,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(COT,COT_outflow)
     COT_power_output = inner.CalculateHydropowerOutput(COT,COT_poolElevation,powerFlow) #do I need to give a unique name to poweroutflow?
@@ -401,6 +471,7 @@ for i in range(0,k+1):
 #    hydropower_all[k,0] = COT_power_output
     
     #DORENA
+    DOR_poolElevation = inner.GetPoolElevationFromVolume(DOR,DOR.volume)
     DOR_outflow = inner.GetResOutflow(DOR,DOR.InitVol,DOR5A.iloc[k,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(DOR,DOR_outflow)
     DOR_power_output = inner.CalculateHydropowerOutput(DOR,DOR_poolElevation,powerFlow)
@@ -409,6 +480,7 @@ for i in range(0,k+1):
 #    hydropower_all[k,1] = DOR_power_output
     
     #FERN RIDGE
+    FRN_poolElevation = inner.GetPoolElevationFromVolume(FRN,FRN.volume)
     FRN_outflow = inner.GetResOutflow(FRN,FRN.InitVol,FRN5M.iloc[k,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(FRN,FRN_outflow)
     FRN_power_output = inner.CalculateHydropowerOutput(FRN,FRN_poolElevation,powerFlow)
@@ -417,6 +489,7 @@ for i in range(0,k+1):
 #    hydropower_all[k,2] = FRN_power_output
     
     #HILLS CREEK
+    HCR_poolElevation = inner.GetPoolElevationFromVolume(HCR,HCR.volume)
     HCR_outflow = inner.GetResOutflow(HCR,HCR.InitVol,HCR5A.iloc[k,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(HCR,HCR_outflow)
     HCR_power_output = inner.CalculateHydropowerOutput(HCR,HCR_poolElevation,powerFlow)
@@ -425,6 +498,7 @@ for i in range(0,k+1):
     hydropower_all[k,1] = HCR_power_output
     
     #LOOKOUT POINT
+    LOP_poolElevation = inner.GetPoolElevationFromVolume(LOP,LOP.volume)
     LOP_in = HCR_outflow + LOP_loc[k] + LOP5E[k]
     LOP_outflow = inner.GetResOutflow(LOP,LOP.InitVol,LOP_in,doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(LOP,LOP_outflow)
@@ -434,6 +508,7 @@ for i in range(0,k+1):
     hydropower_all[k,2] = LOP_power_output
     
     #DEXTER
+    DEX_poolElevation = inner.GetPoolElevationFromVolume(DEX,DEX.volume)
     DEX_outflow = inner.GetResOutflow(DEX,DEX.InitVol,LOP_outflow,doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(DEX,DEX_outflow)
     DEX_power_output = inner.CalculateHydropowerOutput(DEX,DEX_poolElevation,powerFlow)
@@ -442,11 +517,13 @@ for i in range(0,k+1):
     hydropower_all[k,3] = DEX_power_output
     
     #FALL CREEK
+    FAL_poolElevation = inner.GetPoolElevationFromVolume(FAL,FAL.volume)
     FAL_outflow = inner.GetResOutflow(FAL,FAL.InitVol,FAL5A.iloc[k,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(FAL,FAL_outflow)
     FAL_power_output = inner.CalculateHydropowerOutput(FAL,FAL_poolElevation,powerFlow)
     
     #COUGAR
+    CGR_poolElevation = inner.GetPoolElevationFromVolume(CGR,CGR.volume)
     CGR_outflow = inner.GetResOutflow(CGR,CGR.InitVol,CGR5A.iloc[k,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(CGR,CGR_outflow)
     CGR_power_output = inner.CalculateHydropowerOutput(CGR,CGR_poolElevation,powerFlow)
@@ -455,6 +532,7 @@ for i in range(0,k+1):
     hydropower_all[k,4] = CGR_power_output
     
     #BLUE RIVER
+    BLU_poolElevation = inner.GetPoolElevationFromVolume(BLU,BLU.volume)
     BLU_outflow = inner.GetResOutflow(BLU,BLU.InitVol,BLU5A.iloc[k,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(BLU,BLU_outflow)
     BLU_power_output = inner.CalculateHydropowerOutput(BLU,BLU_poolElevation,powerFlow)
@@ -463,6 +541,7 @@ for i in range(0,k+1):
     #the above reservoirs are at time "t-2"
     
     #GREEN PETER
+    GPR_poolElevation = inner.GetPoolElevationFromVolume(GPR,GPR.volume)
     GPR_outflow = inner.GetResOutflow(GPR,GPR.InitVol,GPR5A.iloc[k+2,1],doy+2,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(GPR,GPR_outflow)
     GPR_power_output = inner.CalculateHydropowerOutput(GPR,GPR_poolElevation,powerFlow)
@@ -471,6 +550,7 @@ for i in range(0,k+1):
     hydropower_all[k+2,5] = GPR_power_output
     
     #FOSTER
+    FOS_poolElevation = inner.GetPoolElevationFromVolume(FOS,FOS.volume)
     FOS_in = GPR_outflow + FOS_loc[k+2]
     FOS_outflow = inner.GetResOutflow(FOS,FOS.InitVol,FOS_in,doy+2,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(FOS,FOS_outflow)
@@ -481,6 +561,7 @@ for i in range(0,k+1):
     
     
     #DETROIT
+    DET_poolElevation = inner.GetPoolElevationFromVolume(DET,DET.volume)
     DET_outflow = inner.GetResOutflow(DET,DET.InitVol,DET5A.iloc[k+2,1],doy+2,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(DET,DET_outflow)
     DET_power_output = inner.CalculateHydropowerOutput(DET,DET_poolElevation,powerFlow)
@@ -489,6 +570,7 @@ for i in range(0,k+1):
     hydropower_all[k+2,7] = DET_power_output
     
     #BIG CLIFF
+    BCL_poolElevation = inner.GetPoolElevationFromVolume(BCL,BCL.volume)
     BCL_outflow = inner.GetResOutflow(BCL,BCL.InitVol,DET_outflow,doy+2,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(BCL,BCL_outflow)
     BCL_power_output = inner.CalculateHydropowerOutput(BCL,BCL_poolElevation,powerFlow)
