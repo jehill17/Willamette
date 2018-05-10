@@ -68,8 +68,10 @@ class Reservoir:
 
 #Create ControlPoint class
 class ControlPoint:
+    CP_list = []
     def __init__(self, ID):
         self.ID=ID
+        self.COMID=[]
         self.influencedReservoirs=[]
         self.discharge = []
         self.localFlow = []
@@ -120,6 +122,7 @@ LOP.Td_elev=float(reservoirs[id-1]["@td_elev"])
 LOP.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 LOP.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 LOP.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
+LOP.Fc3_elev=float(reservoirs[id-1]["@fc3_elev"])
 LOP.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
 LOP.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 LOP.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
@@ -345,20 +348,25 @@ BCL.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
 BCL.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
+
+
 #CONTROL POINTS
 #in order of ID
 
 #SALEM
 SAL=ControlPoint(1)
 SAL.influencedReservoirs = []
+SAL.COMID = []
 
 #ALBANY
 ALB=ControlPoint(2)
 ALB.influencedReservoirs = []
+ALB.COMID = []
 
 #JEFFERSON
 JEF=ControlPoint(3)
 JEF.influencedReservoirs = []
+
 
 #MEHAMA
 MEH=ControlPoint(4)
@@ -374,7 +382,9 @@ VID.influencedReservoirs = []
 
 #JASPER
 JAS=ControlPoint(7)
-JAS.influencedReservoirs = []
+JAS.influencedReservoirs = [HCR, LOP, FAL]
+JAS.COMID =23751778
+
 
 #GOSHEN
 GOS=ControlPoint(8)
@@ -383,6 +393,7 @@ GOS.influencedReservoirs = []
 #WATERLOO
 WAT=ControlPoint(9)
 WAT.influencedReservoirs = []
+WAT.COMID=438349802
 
 #MONROE
 MON=ControlPoint(10)
@@ -610,22 +621,7 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
                minSpillwayFlow  = constraintValue 
 
 
-          elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point 
-                  {
-                   CString filename = pConstraint->m_constraintFileName;
-                  # get control point location.  Assumes last characters of filename contain a COMID
-                  LPTSTR p = (LPTSTR) _tcsrchr( filename, '.' );
-   
-                  if ( p != NULL )
-                     {
-                     p--;
-                     while ( isdigit( *p ) )
-                        p--;
-   
-                     int comID = atoi( p+1 );
-                     pConstraint->m_comID = comID;
-                     }
-                        
+          elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point  
                   #Determine which control point this is.....use COMID to identify
                   for (int k=0;  k < gpModel->m_controlPointArray.GetSize(); k++) 
                      {
