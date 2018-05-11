@@ -29,7 +29,7 @@ import xmltodict as xmld
 #from collections import OrderedDict
 #import dict_digger as dd
 import datetime as dt
-import Willamette_model_updated as inner #reading in the inner function
+import Williamette_model as inner #reading in the inner function
 
 #I think we need to add the class definition here so we have each reservoir's attributes stored
 with open('Flow.xml') as fd:
@@ -419,6 +419,8 @@ FOS.COMID = 23785773
 
 #import control point historical data-- shifted one day before
 
+#cp_hist: start this at 12/31/2004
+
 cp_local = pd.read_excel('Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) #when does this data come into play?
 #add in fnt that updates control pt discharge after every timestep
 
@@ -448,14 +450,20 @@ k = 365 #of days we will run the simulation
 
 outflows_all = np.zeros((k,13)) #we can fill these in later, or make them empty and 'append' the values
 hydropower_all = np.zeros((k,8))
+volumes_all = np.zeros((k,13))
+elevations_all = np.zeros((k,13))
 
 #also need to intialize array of volumes and elevations here
 
 #define an outer fnt here that takes date, name, vol as inputs?
 
+InitwaterYear = 1.2
+
 for i in range(0,k+1):
     
     doy = inner.DatetoDayOfYear(str(dates[k])[:10],'%Y-%m-%d')
+    
+    waterYear = inner.UpdateReservoirWaterYear(doy)
     
     #calculate waterYear
     #conditional based on doy 
