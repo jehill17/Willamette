@@ -2,7 +2,7 @@
 """
 Created on Tue May  8 09:09:37 2018
 
-@author: Joy Hill
+@authors: Joy Hill, Simona Denaro
 """
 
 #this file will be the outer shell of the Willamette code
@@ -61,24 +61,25 @@ class Reservoir:
         self.Fc1_elev=[]
         self.Fc2_elev=[]
         self.Fc3_elev=[]
+        self.GateMaxPowerFlow=[]
         self.maxPowerFlow=[]
+        self.maxRO_Flow =[]
+        self.maxSpillwayFlow=[]
+        self.minPowerFlow=0
+        self.minRO_Flow =0
+        self.minSpillwayFlow=0
         self.Tailwater_elev=[]
         self.Turbine_eff=[]
-        self.inflow=[]
-        self.outflow=[]
-        self.powerflow=[]
-        self.RO_flow =[]
-        self.spillwayflow =[]
-        self.zone=[]
-
+   
 
 #Create ControlPoint class
 class ControlPoint:
     def __init__(self, ID):
         self.ID=ID
+        self.COMID=str()
         self.influencedReservoirs=[]
-        self.discharge = []
-        self.localFlow = []
+        self.init_discharge = []
+
 
 
 #RESERVOIR rules
@@ -103,7 +104,7 @@ HCR.Td_elev=float(reservoirs[id-1]["@td_elev"])
 HCR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 HCR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 #HCR.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-HCR.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+HCR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 HCR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 HCR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -126,7 +127,8 @@ LOP.Td_elev=float(reservoirs[id-1]["@td_elev"])
 LOP.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 LOP.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 LOP.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-LOP.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+LOP.Fc3_elev=float(reservoirs[id-1]["@fc3_elev"])
+LOP.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 LOP.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 LOP.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -142,7 +144,7 @@ DEX.Spillway=pd.read_csv('Dexter_Spillway_capacity.csv')
 DEX.InitVol=float(reservoirs[id-1]["@initVolume"])
 DEX.minOutflow=float(reservoirs[id-1]["@minOutflow"])
 DEX.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-DEX.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+DEX.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 DEX.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 DEX.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -165,7 +167,7 @@ FAL.Td_elev=float(reservoirs[id-1]["@td_elev"])
 FAL.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 FAL.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 FAL.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-FAL.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+FAL.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #DORENA
@@ -186,7 +188,7 @@ DOR.Td_elev=float(reservoirs[id-1]["@td_elev"])
 DOR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 DOR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 DOR.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-DOR.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+DOR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #COTTAGE GROVE
@@ -207,7 +209,7 @@ COT.Td_elev=float(reservoirs[id-1]["@td_elev"])
 COT.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 COT.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 COT.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-COT.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+COT.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #FERN RIDGE
@@ -227,7 +229,7 @@ FRN.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 FRN.Td_elev=float(reservoirs[id-1]["@td_elev"])
 FRN.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 FRN.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-FRN.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+FRN.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #COUGAR
@@ -247,7 +249,7 @@ CGR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 CGR.Td_elev=float(reservoirs[id-1]["@td_elev"])
 CGR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 CGR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-CGR.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+CGR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 CGR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 CGR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -268,7 +270,7 @@ BLU.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 BLU.Td_elev=float(reservoirs[id-1]["@td_elev"])
 BLU.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 BLU.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-BLU.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+BLU.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #GREEN PETER
@@ -288,9 +290,7 @@ GPR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 GPR.Td_elev=float(reservoirs[id-1]["@td_elev"])
 GPR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 GPR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-GPR.Fc2_elev = 289.6 #these values are from the release notes
-#GPR.Fc3_elev = 301.8 #these values are from the release notes
-GPR.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+GPR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 GPR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 GPR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -312,7 +312,7 @@ FOS.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 FOS.Td_elev=float(reservoirs[id-1]["@td_elev"])
 FOS.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 FOS.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-FOS.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+FOS.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 FOS.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 FOS.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -333,8 +333,7 @@ DET.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 DET.Td_elev=float(reservoirs[id-1]["@td_elev"])
 DET.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 DET.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-#DET.Fc2_elev = 478 this value in release notes??
-DET.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+DET.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 DET.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 DET.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -350,11 +349,11 @@ BCL.Spillway=pd.read_csv('BC_Spillway_capacity.csv')
 BCL.InitVol=float(reservoirs[id-1]["@initVolume"])
 BCL.minOutflow=float(reservoirs[id-1]["@minOutflow"])
 BCL.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-BCL.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+BCL.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 BCL.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
-
+res_list =[HCR, LOP, DEX, FAL, DOR, COT, FRN, CGR, BLU, GPR, FOS, DET, BCL]
 
 #CONTROL POINTS
 #in order of ID
@@ -362,60 +361,60 @@ BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 #SALEM
 SAL=ControlPoint(1)
 SAL.influencedReservoirs = []
-SAL.COMID = 23791083
+SAL.COMID = str(23791083)
 
 #ALBANY
 ALB=ControlPoint(2)
 ALB.influencedReservoirs = []
-ALB.COMID = 23763073
+ALB.COMID = str(23762845)
 
 #JEFFERSON
 JEF=ControlPoint(3)
 JEF.influencedReservoirs = []
-JEF.COMID = 23780423
-
+JEF.COMID = str(23780423)
 
 #MEHAMA
 MEH=ControlPoint(4)
 MEH.influencedReservoirs = []
-MEH.COMID = 23780481
+MEH.COMID = str(23780481)
 
 #HARRISBURG
 HAR=ControlPoint(5)
 HAR.influencedReservoirs = []
-HAR.COMID = 23763337
-
+HAR.COMID =str(23763337)
 
 #VIDA
 VID=ControlPoint(6)
 VID.influencedReservoirs = []
-VID.COMID = 23772903
+VID.COMID =str(23772903)
 
 #JASPER
 JAS=ControlPoint(7)
 JAS.influencedReservoirs = [HCR, LOP, FAL]
-JAS.COMID =23751778
-
+JAS.COMID =str(23751778)
 
 #GOSHEN
 GOS=ControlPoint(8)
 GOS.influencedReservoirs = []
-GOS.COMID = 23759228
+GOS.COMID =str(23759228)
 
 #WATERLOO
 WAT=ControlPoint(9)
 WAT.influencedReservoirs = []
-WAT.COMID = 23785687
+WAT.COMID=str(23785687)
 
 #MONROE
 MON=ControlPoint(10)
 MON.influencedReservoirs = []
-MON.COMID = 23763073
+MON.COMID =str(23763073)
 
 #FOSTER
 FOS=ControlPoint(11)
 FOS.influencedReservoirs = []
-FOS.COMID = 23785773
+FOS.COMID  =str(23787257)
+
+cp_list =[SAL, ALB, JEF, MEH, HAR, VID, JAS, GOS, WAT, MON, FOS]
+
 
 #import control point historical data-- shifted one day before
 
@@ -446,12 +445,26 @@ LOP_loc = pd.read_excel('LOP_loc.xls',usecols = [0,3],skiprows=27943,skip_footer
 dates = np.array(BLU5A['Date'])
 
 
-k = 365 #of days we will run the simulation
+T = 365 # Set the simulation horizon
 
-outflows_all = np.zeros((k,13)) #we can fill these in later, or make them empty and 'append' the values
-hydropower_all = np.zeros((k,8))
-volumes_all = np.zeros((k,13))
-elevations_all = np.zeros((k,13))
+n_res=13
+n_HPres=8
+n_cp = 11
+
+# allocate output 
+outflows_all = np.nan((T+1,n_res)) #we can fill these in later, or make them empty and 'append' the values
+hydropower_all = np.nan((T+1,n_HPres))
+volumes_all = np.nan((T+1,n_res))
+elevations_all = np.nan((T+1,n_res))
+cp_discharge_all = np.nan((T+1,n_cp))
+
+#initialize values
+for  i in range(0,n_res):
+    outflows_all[0,i] = res_list[i].init_outflow
+    volumes_all[0,i] = res_list[i].InitVol 
+
+for  i in range(0,n_cp):
+    cp_discharge_all[0,i] = cp_list[i].init_discharge
 
 #also need to intialize array of volumes and elevations here
 
@@ -459,9 +472,9 @@ elevations_all = np.zeros((k,13))
 
 InitwaterYear = 1.2
 
-for i in range(0,k+1):
+for t in range(0,T+1):
     
-    doy = inner.DatetoDayOfYear(str(dates[k])[:10],'%Y-%m-%d')
+    doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     
     waterYear = inner.UpdateReservoirWaterYear(doy)
     
@@ -471,49 +484,49 @@ for i in range(0,k+1):
     
     #COTTAGE GROVE 
     COT_poolElevation = inner.GetPoolElevationfromVolume(COT,COT.volume) #not sure which vol input to use
-    COT_outflow = inner.GetResOutflow(COT,COT.InitVol,COT5A.iloc[k,1],doy,waterYear)
+    COT_outflow = inner.GetResOutflow(COT,COT.InitVol,COT5A.iloc[t,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(COT,COT_outflow)
     COT_power_output = inner.CalculateHydropowerOutput(COT,COT_poolElevation,powerFlow) #do I need to give a unique name to poweroutflow?
     
-    outflows_all[k,COT.ID] = COT_outflow
-#    hydropower_all[k,0] = COT_power_output
+    outflows_all[t,COT.ID] = COT_outflow
+#    hydropower_all[t,0] = COT_power_output
     
     #DORENA
     DOR_poolElevation = inner.GetPoolElevationFromVolume(DOR,DOR.volume)
-    DOR_outflow = inner.GetResOutflow(DOR,DOR.InitVol,DOR5A.iloc[k,1],doy,waterYear)
+    DOR_outflow = inner.GetResOutflow(DOR,DOR.InitVol,DOR5A.iloc[t,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(DOR,DOR_outflow)
     DOR_power_output = inner.CalculateHydropowerOutput(DOR,DOR_poolElevation,powerFlow)
     
-    outflows_all[k,DOR.ID] = DOR_outflow
-#    hydropower_all[k,1] = DOR_power_output
+    outflows_all[t,DOR.ID] = DOR_outflow
+#    hydropower_all[t,1] = DOR_power_output
     
     #FERN RIDGE
     FRN_poolElevation = inner.GetPoolElevationFromVolume(FRN,FRN.volume)
-    FRN_outflow = inner.GetResOutflow(FRN,FRN.InitVol,FRN5M.iloc[k,1],doy,waterYear)
+    FRN_outflow = inner.GetResOutflow(FRN,FRN.InitVol,FRN5M.iloc[t,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(FRN,FRN_outflow)
     FRN_power_output = inner.CalculateHydropowerOutput(FRN,FRN_poolElevation,powerFlow)
     
-    outflows_all[k,FRN.ID] = FRN_outflow
-#    hydropower_all[k,2] = FRN_power_output
+    outflows_all[t,FRN.ID] = FRN_outflow
+#    hydropower_all[t,2] = FRN_power_output
     
     #HILLS CREEK
     HCR_poolElevation = inner.GetPoolElevationFromVolume(HCR,HCR.volume)
-    HCR_outflow = inner.GetResOutflow(HCR,HCR.InitVol,HCR5A.iloc[k,1],doy,waterYear)
+    HCR_outflow = inner.GetResOutflow(HCR,HCR.InitVol,HCR5A.iloc[t,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(HCR,HCR_outflow)
     HCR_power_output = inner.CalculateHydropowerOutput(HCR,HCR_poolElevation,powerFlow)
     
-    outflows_all[k,HCR.ID] = HCR_outflow
-    hydropower_all[k,1] = HCR_power_output
+    outflows_all[t,HCR.ID] = HCR_outflow
+    hydropower_all[t,1] = HCR_power_output
     
     #LOOKOUT POINT
     LOP_poolElevation = inner.GetPoolElevationFromVolume(LOP,LOP.volume)
-    LOP_in = HCR_outflow + LOP_loc[k] + LOP5E[k]
+    LOP_in = HCR_outflow + LOP_loc[t] + LOP5E[t]
     LOP_outflow = inner.GetResOutflow(LOP,LOP.InitVol,LOP_in,doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(LOP,LOP_outflow)
     LOP_power_output = inner.CalculateHydropowerOutput(LOP,LOP_poolElevation,powerFlow)
     
-    outflows_all[k,LOP.ID] = LOP_outflow
-    hydropower_all[k,2] = LOP_power_output
+    outflows_all[t,LOP.ID] = LOP_outflow
+    hydropower_all[t,2] = LOP_power_output
     
     #DEXTER
     DEX_poolElevation = inner.GetPoolElevationFromVolume(DEX,DEX.volume)
@@ -521,27 +534,27 @@ for i in range(0,k+1):
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(DEX,DEX_outflow)
     DEX_power_output = inner.CalculateHydropowerOutput(DEX,DEX_poolElevation,powerFlow)
     
-    outflows_all[k,DEX.ID] = DEX_outflow
-    hydropower_all[k,3] = DEX_power_output
+    outflows_all[t,DEX.ID] = DEX_outflow
+    hydropower_all[t,3] = DEX_power_output
     
     #FALL CREEK
     FAL_poolElevation = inner.GetPoolElevationFromVolume(FAL,FAL.volume)
-    FAL_outflow = inner.GetResOutflow(FAL,FAL.InitVol,FAL5A.iloc[k,1],doy,waterYear)
+    FAL_outflow = inner.GetResOutflow(FAL,FAL.InitVol,FAL5A.iloc[t,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(FAL,FAL_outflow)
     FAL_power_output = inner.CalculateHydropowerOutput(FAL,FAL_poolElevation,powerFlow)
     
     #COUGAR
     CGR_poolElevation = inner.GetPoolElevationFromVolume(CGR,CGR.volume)
-    CGR_outflow = inner.GetResOutflow(CGR,CGR.InitVol,CGR5A.iloc[k,1],doy,waterYear)
+    CGR_outflow = inner.GetResOutflow(CGR,CGR.InitVol,CGR5A.iloc[t,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(CGR,CGR_outflow)
     CGR_power_output = inner.CalculateHydropowerOutput(CGR,CGR_poolElevation,powerFlow)
     
-    outflows_all[k,CGR.ID] = CGR_outflow
-    hydropower_all[k,4] = CGR_power_output
+    outflows_all[t,CGR.ID] = CGR_outflow
+    hydropower_all[t,4] = CGR_power_output
     
     #BLUE RIVER
     BLU_poolElevation = inner.GetPoolElevationFromVolume(BLU,BLU.volume)
-    BLU_outflow = inner.GetResOutflow(BLU,BLU.InitVol,BLU5A.iloc[k,1],doy,waterYear)
+    BLU_outflow = inner.GetResOutflow(BLU,BLU.InitVol,BLU5A.iloc[t,1],doy,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(BLU,BLU_outflow)
     BLU_power_output = inner.CalculateHydropowerOutput(BLU,BLU_poolElevation,powerFlow)
     
@@ -550,32 +563,32 @@ for i in range(0,k+1):
     
     #GREEN PETER
     GPR_poolElevation = inner.GetPoolElevationFromVolume(GPR,GPR.volume)
-    GPR_outflow = inner.GetResOutflow(GPR,GPR.InitVol,GPR5A.iloc[k+2,1],doy+2,waterYear)
+    GPR_outflow = inner.GetResOutflow(GPR,GPR.InitVol,GPR5A.iloc[t+2,1],doy+2,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(GPR,GPR_outflow)
     GPR_power_output = inner.CalculateHydropowerOutput(GPR,GPR_poolElevation,powerFlow)
     
-    outflows_all[k+2,GPR.ID] = GPR_outflow
-    hydropower_all[k+2,5] = GPR_power_output
+    outflows_all[t+2,GPR.ID] = GPR_outflow
+    hydropower_all[t+2,5] = GPR_power_output
     
     #FOSTER
     FOS_poolElevation = inner.GetPoolElevationFromVolume(FOS,FOS.volume)
-    FOS_in = GPR_outflow + FOS_loc[k+2]
+    FOS_in = GPR_outflow + FOS_loc[t+2]
     FOS_outflow = inner.GetResOutflow(FOS,FOS.InitVol,FOS_in,doy+2,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(FOS,FOS_outflow)
     FOS_power_output = inner.CalculateHydropowerOutput(FOS,FOS_poolElevation,powerFlow)
     
-    outflows_all[k+2,FOS.ID] = FOS_outflow
-    hydropower_all[k+2,6] = FOS_power_output
+    outflows_all[t+2,FOS.ID] = FOS_outflow
+    hydropower_all[t+2,6] = FOS_power_output
     
     
     #DETROIT
     DET_poolElevation = inner.GetPoolElevationFromVolume(DET,DET.volume)
-    DET_outflow = inner.GetResOutflow(DET,DET.InitVol,DET5A.iloc[k+2,1],doy+2,waterYear)
+    DET_outflow = inner.GetResOutflow(DET,DET.InitVol,DET5A.iloc[t+2,1],doy+2,waterYear)
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(DET,DET_outflow)
     DET_power_output = inner.CalculateHydropowerOutput(DET,DET_poolElevation,powerFlow)
     
-    outflows_all[k+2,DET.ID] = DET_outflow
-    hydropower_all[k+2,7] = DET_power_output
+    outflows_all[t+2,DET.ID] = DET_outflow
+    hydropower_all[t+2,7] = DET_power_output
     
     #BIG CLIFF
     BCL_poolElevation = inner.GetPoolElevationFromVolume(BCL,BCL.volume)
@@ -583,8 +596,8 @@ for i in range(0,k+1):
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(BCL,BCL_outflow)
     BCL_power_output = inner.CalculateHydropowerOutput(BCL,BCL_poolElevation,powerFlow)
     
-    outflows_all[k+2,BCL.ID] = BCL_outflow
-    hydropower_all[k+2,8] = BCL_power_output
+    outflows_all[t+2,BCL.ID] = BCL_outflow
+    hydropower_all[t+2,8] = BCL_power_output
     
     #the above reservoirs are at time "t"
     
