@@ -68,13 +68,13 @@ class Reservoir:
 
 #Create ControlPoint class
 class ControlPoint:
-    CP_list = []
     def __init__(self, ID):
         self.ID=ID
-        self.COMID=[]
+        self.COMID=str()
         self.influencedReservoirs=[]
         self.discharge = []
         self.localFlow = []
+
 
 
 #RESERVOIR rules
@@ -356,54 +356,59 @@ BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 #SALEM
 SAL=ControlPoint(1)
 SAL.influencedReservoirs = []
-SAL.COMID = []
+SAL.COMID = str(23791083)
 
 #ALBANY
 ALB=ControlPoint(2)
 ALB.influencedReservoirs = []
-ALB.COMID = []
+ALB.COMID = str(23762845)
 
 #JEFFERSON
 JEF=ControlPoint(3)
 JEF.influencedReservoirs = []
-
+JEF.COMID = str(23780423)
 
 #MEHAMA
 MEH=ControlPoint(4)
 MEH.influencedReservoirs = []
+MEH.COMID = str(23780481)
 
 #HARRISBURG
 HAR=ControlPoint(5)
 HAR.influencedReservoirs = []
+HAR.COMID =str(23763337)
 
 #VIDA
 VID=ControlPoint(6)
 VID.influencedReservoirs = []
+VID.COMID =str(23772903)
 
 #JASPER
 JAS=ControlPoint(7)
 JAS.influencedReservoirs = [HCR, LOP, FAL]
-JAS.COMID =23751778
-
+JAS.COMID =str(23751778)
 
 #GOSHEN
 GOS=ControlPoint(8)
 GOS.influencedReservoirs = []
+GOS.COMID =str(23759228)
 
 #WATERLOO
 WAT=ControlPoint(9)
 WAT.influencedReservoirs = []
-WAT.COMID=438349802
+WAT.COMID=str(23785687)
 
 #MONROE
 MON=ControlPoint(10)
 MON.influencedReservoirs = []
+MON.COMID =str(23763073)
 
 #FOSTER
 FOS=ControlPoint(11)
 FOS.influencedReservoirs = []
+FOS.COMID  =str(23787257)
 
-
+cp_list =[SAL, ALB, JEF, MEH, HAR, VID, JAS, GOS, WAT, MON, FOS]
 
 ####################
 
@@ -461,11 +466,11 @@ def UpdateMaxGateOutflows(name,poolElevation): #not sure if these are the right 
         name.maxSpillway_flow = np.interp(poolElevation,name.Spillway['pool_elev_m'],name.Spillway['release_cap_cms'])
         return (name.maxRO_flow,name.maxSpillway_flow)
 
-def GetResOutflow(name, volume, inflow, doy, waterYear):
-    currentPoolElevation = GetPoolElevationFromVolume(volume,name)
+def GetResOutflow(name, res_volume, res_inflow, res_outflow, doy, waterYear, cp_list, cp_discharge, t):
+    currentPoolElevation = GetPoolElevationFromVolume(res_volume[t,name.ID-1],name)
     UpdateMaxGateOutflows( name, currentPoolElevation )
     if name.Restype=='RunOfRiver':
-      outflow = inflow / 86400   # convert outflow to m3/day
+      outflow = res_inflow[t+1,name.ID-1]
     else:
       targetPoolElevation = GetTargetElevationFromRuleCurve( doy, name );
       targetPoolVolume    = GetPoolVolumeFromElevation(targetPoolElevation, name);
@@ -519,16 +524,16 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
           xlabel = list(constraintRules)[0]   
           xvalue = []
           yvalue = []
-          if xlabel=="date":                           # Date based rule?  xvalue = current date.
+          if xlabel=="Date":                           # Date based rule?  xvalue = current date.
              xvalue = doy
           elif xlabel=="release_cms":                  # Release based rule?  xvalue = release last timestep
-               xvalue = name.outflow/86400              # SEC_PER_DAY = cubic meters per second to cubic meters per day
+               xvalue = res_outflow[t,name.ID-1]       
           elif xlabel=="pool_elev_m" :                 # Pool elevation based rule?  xvalue = pool elevation (meters)
                xvalue = currentPoolElevation
           elif xlabel=="inflow_cms":                    # Inflow based rule?   xvalue = inflow to reservoir
-               xvalue = name.inflow/86400              
+               xvalue = res_inflow[t+1,name.ID-1]             
           elif xlabel=="Outflow_lagged_24h":            #24h lagged outflow based rule?   xvalue = outflow from reservoir at last timestep
-               xvalue = name.outflow/8640               #placeholder (assumes that timestep=24 hours)
+               xvalue = res_outflow[t,name.ID-1]               #placeholder (assumes that timestep=24 hours)
           elif xlabel=="Date_pool_elev_m":             # Lookup based on two values...date and pool elevation.  x value is date.  y value is pool elevation
                xvalue = doy
                yvalue = currentPoolElevation
@@ -537,9 +542,9 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
                yvalue = waterYear
           elif xlabel == "Date_release_cms": 
                xvalue = doy
-               yvalue = name.outflow/86400
+               yvalue = res_outflow[t,name.ID-1] 
           else:                                            #Unrecognized xvalue for constraint lookup table
-              "Unrecognized x value for reservoir constraint lookup label = ", xlabel 
+             print "Unrecognized x value for reservoir constraint lookup label = ", xlabel 
    
           if constraint_array[i].startswith('Max_'):  #case RCT_MAX  maximum
              if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
@@ -578,8 +583,8 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                  constraintValue = constraintValue*24   #Covert hourly to daily
-             if actualRelease >= name.outflow/86400 + constraintValue:  #Is planned release more than current release + contstraint? 
-                actualRelease = (name.outflow/86400) + constraintValue  #If so, planned release can be no more than current release + constraint.
+             if actualRelease >= res_outflow[t,name.ID-1]  + constraintValue:  #Is planned release more than current release + contstraint? 
+                actualRelease = res_outflow[t,name.ID-1]  + constraintValue  #If so, planned release can be no more than current release + constraint.
                  
 
           elif constraint_array[i].startswith('MaxD_'):    #case RCT_DECREASINGRATE:  //Decreasing Rate
@@ -593,10 +598,40 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                  constraintValue = constraintValue*24   #Covert hourly to daily
-             if actualRelease >= name.outflow/86400 - constraintValue:  #Is planned release less than current release - contstraint? 
-                actualRelease = (name.outflow/86400) - constraintValue  #If so, planned release can be no less than current release - constraint.
+             if actualRelease >= res_outflow[t,name.ID-1]  - constraintValue:  #Is planned release less than current release - contstraint? 
+                actualRelease = res_outflow[t,name.ID-1]  - constraintValue  #If so, planned release can be no less than current release - constraint.
 
 
+          elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point  
+              #Determine which control point this is.....use COMID to identify
+              for j in range(len(cp_list)):
+                  if cp_list[j].COMID in constraint_array[i]:
+                      cp_name = cp_list[j]
+                      cp_id = cp_list[j].ID        
+              if name in cp_name.influencedReservoirs:  #Make sure that the reservoir is on the influenced reservoir list
+                  if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
+                     cols=constraintRules.iloc[0,1::]
+                     rows=constraintRules.iloc[1::,0]
+                     vals=constraintRules.iloc[1::,1::]
+                     interp_table = interp2d(cols, rows, vals, kind='linear')
+                     constraintValue = interp_table(xvalue, yvalue)
+                  else:             #//If not, just use xvalue
+                     constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+                     #Compare to current discharge and allocate flow increases or decreases
+                     #Currently allocated evenly......need to update based on storage balance curves in ResSIM 
+                  if constraint_array[i].startswith('cp_Max'):  #maximum    
+                     if cp_discharge[t,cp_id] > constraintValue:   #Are we above the maximum flow?   
+                        resallocation = constraintValue - cp_discharge[t,cp_id]/len(cp_name.influencedReservoirs) #Allocate decrease in releases (should be negative) over "controlled" reservoirs if maximum, evenly for now
+                     else:  
+                        resallocation = 0
+                  elif constraint_array[i].startswith('cp_Min'):  #minimum
+                      if cp_discharge[t,cp_id] < constraintValue:   #Are we below the minimum flow?  
+                        resallocation = constraintValue - cp_discharge[t,cp_id]/len(cp_name.influencedReservoirs) 
+                      else:  
+                        resallocation = 0
+              actualRelease += resallocation #add/subract cp allocation
+              
+          #GATE SPECIFIC RULES:   
           elif constraint_array[i].startswith('Pow_Max'): # case RCT_POWERPLANT:  //maximum Power plant rule  Assign m_maxPowerFlow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                maxPowerFlow = constraintValue  #Just for this timestep.  name.MaxPowerFlow is the physical limitation for the reservoir.
@@ -619,124 +654,24 @@ def GetResOutflow(name, volume, inflow, doy, waterYear):
           elif constraint_array[i].startswith('Spill_Min'): #Min Spillway rule
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                minSpillwayFlow  = constraintValue 
+                
+               
+          if actualRelease < 0:
+             actualRelease = 0
+          if actualRelease < name.minOutflow:         # No release values less than the minimum
+             actualRelease = name.minOutflow
+          if currentPoolElevation < name.inactive_elev:     #In the inactive zone, water is not accessible for release from any of the gates.
+             actualRelease = 0 #res_outflow[t,name.ID-1] *0.5
 
+          outflow = actualRelease;
 
-          elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point  
-                  #Determine which control point this is.....use COMID to identify
-                  for (int k=0;  k < gpModel->m_controlPointArray.GetSize(); k++) 
-                     {
-                     ControlPoint *pControl = gpModel->m_controlPointArray.GetAt(k);
-                     ASSERT( pControl != NULL );
-
-                     if ( pControl->InUse() )
-                        {                     
-                        int location = pControl->m_location;     # Get COMID of this control point
-                        #if (pControl->m_location == pConstraint->m_comID)  #Do they match?
-                        if (_stricmp(pControl->m_controlPointFileName,pConstraint->m_constraintFileName) == 0)  #compare names
-                           {
-                           ASSERT( pControl->m_pResAllocation != NULL );
-                           constraintValue = 0.0f;
-                           int releaseFreq = 1;
-
-                           for ( int l=0; l < pControl->m_influencedReservoirsArray.GetSize(); l++ )
-                              {
-                              if ( pControl->m_influencedReservoirsArray[ l ] == pRes )
-                              {
-                                 if (pRes->m_reservoirType == ResType_CtrlPointControl)
-                                 {
-                                    int rowCount = pControl->m_pResAllocation->GetRowCount();
-                                    releaseFreq = pControl->m_influencedReservoirsArray[l]->m_releaseFreq;
-
-                                    if (releaseFreq > 1 && doy >= releaseFreq - 1)
-                                    {
-                                       for (int k = 1; k <= releaseFreq; k++)
-                                          {
-                                          float tmp = pControl->m_pResAllocation->Get(l, rowCount - k);
-                                          constraintValue += pControl->m_pResAllocation->Get(l, rowCount - k);
-                                          }
-                                       constraintValue = constraintValue / releaseFreq;
-                                    }
-                  #                  constraintValue = pControl->m_pResAllocation->IGet(0, l);   #Flow allocated from this control point
-                                 }
-                                 else
-                                    constraintValue = pControl->m_pResAllocation->IGet(0, l );   #Flow allocated from this control point
-                                 
-                                 actualRelease += constraintValue;    #constraint value will be negative if flow needs to be withheld, positive if flow needs to be augmented
-                                 
-                                 if ( constraintValue > 0.0 )         #Did this constraint affect release?  If so, save as active rule.
-                                    {
-                                    pRes->m_activeRule = pConstraint->m_constraintFileName; pRes->m_constraintValue = actualRelease;
-                                    }
-                                 break;
-                                 }
-                              }
-                           }
-                        }
-                     }  
-                  }
-                  break;
-
-            
-               }  # end of: switch( pConstraint->m_type )
-
-               /*
-            float minVolum = pRes->GetPoolVolumeFromElevation(m_inactive_elev);
-            //float targetPoolElevation = pRes->GetTargetElevationFromRuleCurve(doy);
-            float currentVolume = pRes->GetPoolVolumeFromElevation(currentPoolElevation);
-            float rc_outflowVolum = actualRelease*SEC_PER_DAY;//volume that would be drained (m3 over the day)
-         
-            
-            if (rc_outflowVolum > currentVolume - minVolum)      //In the inactive zone, water is not accessible for release from any of the gates.
-               {
-               actualRelease = (currentVolume - minVolum)/SEC_PER_DAY*0.5f;
-               CString resMsg;
-
-               resMsg.Format("Pool is only %8.1f m above inactive zone. Outflow set to drain %8.1fm above inactive zone.  RC outflow of %8.1f m3/s (from %s) would have resulted in %8.0f m3 of discharged water (over a day) but there is only %8.0f m3 above the inactive zone", pRes->m_elevation - pRes->m_inactive_elev, (pRes->m_elevation - pRes->m_inactive_elev) / 2, rc_outflowVolum / SEC_PER_DAY, pRes->m_activeRule, rc_outflowVolum, currentVolume - minVolum);
-                  pRes->m_activeRule = resMsg;
-              
-               }
-               */
-            if (actualRelease < 0.0f)
-               actualRelease = 0.0f;
-            pRes->m_zone = (int)zone;
-
-          // if (actualRelease < pRes->m_minOutflow)              // No release values less than the minimum
-          //     actualRelease = pRes->m_minOutflow;
-
-            if (pRes->m_elevation < pRes->m_inactive_elev)      //In the inactive zone, water is not accessible for release from any of the gates.
-               actualRelease = pRes->m_outflow/SEC_PER_DAY*0.5f;
-
-            outflow = actualRelease;
-            }//end of for ( int i=0; i < pZone->m_resConstraintArray.GetSize(); i++ )
-         }
-      }  // end of: else (not run of river gate flow
- 
-   //Code here to assign total outflow to powerplant, RO and spillway (including run of river projects) 
-   if (pRes->m_reservoirType == ResType_FloodControl || pRes->m_reservoirType == ResType_RiverRun )
-      AssignReservoirOutletFlows(pRes, outflow);
-
-   pRes->m_power = (pRes->m_powerFlow > 0.) ? CalculateHydropowerOutput(pRes) : 0.f; // MW
-
-   /* output activ rule to log window
-   if (true || pRes->m_id==5)
-      { // Dorena is reservoir 5
-      CString msg;
-      msg.Format("Flow: Day %i: Active Rule for Reservoir %s is %s", doy, (LPCTSTR)pRes->m_name, (LPCTSTR)pRes->m_activeRule);
-      Report::LogMsg(msg);
-      }
-*/
-   return outflow;
-   }
-
-
-
-
+    return (outflow, maxPowerFlow, minPowerFlow, maxRO_Flow, minRO_Flow, maxSpillwayFlow, minSpillwayFlow)
 
 
 def AssignReservoirOutletFlows(name,outflow):
     #flow file has a condition on reservoir not being null...dk if we need that here
-
-    #reset values to 0.0
+    outflow = outflow * 86400  # convert to daily volume    m3 per day 
+    #initialize values to 0.0
     powerFlow = 0.0
     RO_flow = 0.0
     spillwayFlow = 0.0
