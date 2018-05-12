@@ -462,11 +462,10 @@ cp_discharge_all = np.nan((T+1,n_cp))
 for  i in range(0,n_res):
     outflows_all[0,i] = res_list[i].init_outflow
     volumes_all[0,i] = res_list[i].InitVol 
+    elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i])
 
 for  i in range(0,n_cp):
     cp_discharge_all[0,i] = cp_list[i].init_discharge
-
-#also need to intialize array of volumes and elevations here
 
 #define an outer fnt here that takes date, name, vol as inputs?
 
@@ -477,18 +476,17 @@ for t in range(0,T+1):
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     
     waterYear = inner.UpdateReservoirWaterYear(doy)
-    
     #calculate waterYear
     #conditional based on doy 
     #calculate at doy = 140
     
     #COTTAGE GROVE 
-    COT_poolElevation = inner.GetPoolElevationfromVolume(COT,COT.volume) #not sure which vol input to use
-    COT_outflow = inner.GetResOutflow(COT,COT.InitVol,COT5A.iloc[t,1],doy,waterYear)
+    COT_poolElevation = inner.GetPoolElevationfromVolume(COT,volumes_all[t,COT.ID]) 
+    COT_outflow = inner.GetResOutflow(COT,volumes_all[t,COT.ID],COT5A.iloc[t,1],outflows_all[t,COT.ID],doy,waterYear,cp_list,cp_discharge_all[t,:])
     [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(COT,COT_outflow)
     COT_power_output = inner.CalculateHydropowerOutput(COT,COT_poolElevation,powerFlow) #do I need to give a unique name to poweroutflow?
     
-    outflows_all[t,COT.ID] = COT_outflow
+    outflows_all[t+1,COT.ID] = COT_outflow
 #    hydropower_all[t,0] = COT_power_output
     
     #DORENA
