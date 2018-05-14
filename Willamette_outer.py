@@ -30,8 +30,9 @@ import xmltodict as xmld
 #import dict_digger as dd
 import datetime as dt
 import Williamette_model as inner #reading in the inner function
+import os
 
-#I think we need to add the class definition here so we have each reservoir's attributes stored
+# load reservoirs and control point infos
 with open('Flow.xml') as fd:
     flow = xmld.parse(fd.read())
 
@@ -84,287 +85,321 @@ class ControlPoint:
 
 #RESERVOIR rules
 #in order of RES ID
+res_list =('HCR', 'LOP', 'DEX', 'FAL', 'DOR', 'COT', 'FRN', 'CGR', 'BLU', 'GPR', 'FOS', 'DET', 'BCL')
+RES = [Reservoir(id) for id in range(1,len(res_list)+1)]
+
+for res in RES:
+    id = res.ID
+    res.name = res_list[id-1]
+    res.Restype = str(reservoirs[id-1]['@reservoir_type'])
+    res.AreaVolCurve=pd.read_csv(os.path.join('Area_Capacity_Curves/', str(reservoirs[id-1]['@area_vol_curve'])))
+    res.Composite=pd.read_csv(os.path.join('Rel_Cap/', str(reservoirs[id-1]['@composite_rc'])))
+    res.RO=pd.read_csv(os.path.join('Rel_Cap/', str(reservoirs[id-1]['@RO_rc'])))
+    res.Spillway=pd.read_csv(os.path.join('Rel_Cap/', str(reservoirs[id-1]['@spillway_rc'])))
+    res.InitVol=float(reservoirs[id-1]["@initVolume"])
+    res.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+    res.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+    res.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+    res.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
+    res.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
+    if res.Restype == "Storage":
+        res.RuleCurve=pd.read_csv(os.path.join('Rule_Curves/', str(reservoirs[id-1]['@rule_curve'])))
+        res.RulePriorityTable=pd.read_csv(os.path.join('Rule_Priorities/', str(reservoirs[id-1]['@rule_priorities'])))
+        res.Buffer=pd.read_csv(os.path.join('Rule_Curves/', str(reservoirs[id-1]['@buffer_zone'])))
+        res.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+        res.Td_elev=float(reservoirs[id-1]["@td_elev"])
+        res.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+        res.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
+        res.Fc2_elev=float(reservoirs[id-1]["@fc3_elev"])
+       
+cp_list =['SAL', 'ALB', 'JEF', 'MEH', 'HAR', 'VID', 'JAS', 'GOS', 'WAT', 'MON', 'FOS']
+CP = [ControlPoint(id) for id in range(1, len(cp_list)+1)]
+
+for cp in CP:
+    id = cp.ID
+    cp.name = cp_list[id-1]
+    cp.influencedReservoirs =str(controlPoints[id-1]["@reservoirs"])
+    cp.COMID=str(controlPoints[id-1]["@location"])
 
 
-#HILLS CREEK
-id=1
-HCR=Reservoir(1)
-HCR.Restype='Storage'
-HCR.AreaVolCurve=pd.read_csv('Hills_creek_area_capacity.csv')
-HCR.RuleCurve=pd.read_csv('Hills_creek_rule_curve.csv')
-HCR.Composite=pd.read_csv('HC_composite_rc.csv')
-HCR.RO=pd.read_csv('HC_RO_capacity.csv')
-HCR.RulePriorityTable=pd.read_csv('hills_creek_rule_priorities.csv')
-HCR.Buffer=pd.read_csv('HC_buffer.csv')
-HCR.Spillway=pd.read_csv('HC_spillway_capacity.csv')
-HCR.InitVol=float(reservoirs[id-1]["@initVolume"])
-HCR.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-HCR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-HCR.Td_elev=float(reservoirs[id-1]["@td_elev"])
-HCR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-HCR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-#HCR.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-HCR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-HCR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
-HCR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
+#
+##HILLS CREEK
+#id=1
+#HCR=Reservoir(1)
+#HCR.Restype='Storage'
+#HCR.AreaVolCurve=pd.read_csv('Area_Capacity_Curves/Hills_creek_area_capacity.csv')
+#HCR.RuleCurve=pd.read_csv('Rule_Curves/Hills_creek_rule_curve.csv')
+#HCR.Composite=pd.read_csv('HC_composite_rc.csv')
+#HCR.RO=pd.read_csv('HC_RO_capacity.csv')
+#HCR.RulePriorityTable=pd.read_csv('hills_creek_rule_priorities.csv')
+#HCR.Buffer=pd.read_csv('HC_buffer.csv')
+#HCR.Spillway=pd.read_csv('HC_spillway_capacity.csv')
+#HCR.InitVol=float(reservoirs[id-1]["@initVolume"])
+#HCR.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#HCR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#HCR.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#HCR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#HCR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+##HCR.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
+#HCR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#HCR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
+#HCR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
+#
+#
+##LOOKOUT POINT
+#id=2
+#LOP=Reservoir(2)
+#LOP.Restype='Storage'
+#LOP.AreaVolCurve=pd.read_csv('lookout_point_area_capacity.csv')
+#LOP.RuleCurve=pd.read_csv('lookout_point_rule_curve.csv')
+#LOP.Composite=pd.read_csv('LO_composite_rc.csv')
+#LOP.RO=pd.read_csv('LO_RO_capacity.csv')
+#LOP.RulePriorityTable=pd.read_csv('lookout_rule_priorities.csv')
+#LOP.Buffer=pd.read_csv('LO_buffer.csv')
+#LOP.Spillway=pd.read_csv('LO_spillway_capacity.csv')
+#LOP.InitVol=float(reservoirs[id-1]["@initVolume"])
+#LOP.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#LOP.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#LOP.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#LOP.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#LOP.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#LOP.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
+#LOP.Fc3_elev=float(reservoirs[id-1]["@fc3_elev"])
+#LOP.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#LOP.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
+#LOP.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
+#
+#
+##DEXTER re-regulating
+#id=3
+#DEX=Reservoir(3)
+#DEX.Restype='RunOfRiver'
+#DEX.AreaVolCurve=pd.read_csv('dexter_area_capacity.csv')
+#DEX.Composite=pd.read_csv('Dexter_composite_rc.csv')
+#DEX.RO=pd.read_csv('Dexter_RO_capacity.csv')
+#DEX.Spillway=pd.read_csv('Dexter_Spillway_capacity.csv')
+#DEX.InitVol=float(reservoirs[id-1]["@initVolume"])
+#DEX.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#DEX.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#DEX.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#DEX.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
+#DEX.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
+#
+#
+##FALL CREEK
+#id=4
+#FAL=Reservoir(4)
+#FAL.Restype='Storage'
+#FAL.AreaVolCurve=pd.read_csv('fall_creek_area_capacity.csv')
+#FAL.RuleCurve=pd.read_csv('fall_creek_rule_curve.csv')
+#FAL.Composite=pd.read_csv('FC_composite_rc.csv')
+#FAL.RO=pd.read_csv('FC_RO_capacity.csv')
+#FAL.RulePriorityTable=pd.read_csv('fall_creek_rule_priorities.csv')
+#FAL.Buffer=pd.read_csv('FC_buffer.csv')
+#FAL.Spillway=pd.read_csv('FC_spillway_capacity.csv')
+#FAL.InitVol=float(reservoirs[id-1]["@initVolume"])
+#FAL.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#FAL.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#FAL.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#FAL.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#FAL.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#FAL.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
+#FAL.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#
+#
+##DORENA
+#id=5
+#DOR=Reservoir(5)
+#DOR.Restype='Storage'
+#DOR.AreaVolCurve=pd.read_csv('dorena_area_capacity.csv')
+#DOR.RuleCurve=pd.read_csv('dorena_rule_curve.csv')
+#DOR.Composite=pd.read_csv('Dorena_composite_rc.csv')
+#DOR.RO=pd.read_csv('Dorena_RO_capacity.csv')
+#DOR.RulePriorityTable=pd.read_csv('dorena_rule_priorities.csv')
+#DOR.Buffer=pd.read_csv('Dorena_buffer.csv')
+#DOR.Spillway=pd.read_csv('Dorena_spillway_capacity.csv')
+#DOR.InitVol=float(reservoirs[id-1]["@initVolume"])
+#DOR.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#DOR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#DOR.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#DOR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#DOR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#DOR.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
+#DOR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#
+#
+##COTTAGE GROVE
+#id=6
+#COT=Reservoir(6)
+#COT.Restype='Storage'
+#COT.AreaVolCurve=pd.read_csv('cottage_grove_area_capacity.csv')
+#COT.RuleCurve=pd.read_csv('cottage_grove_rule_curve.csv')
+#COT.Composite=pd.read_csv('CG_composite_rc.csv')
+#COT.RO=pd.read_csv('CG_RO_capacity.csv')
+#COT.RulePriorityTable=pd.read_csv('cottage_grove_rule_priorities.csv')
+#COT.Buffer=pd.read_csv('CG_buffer.csv')
+#COT.Spillway=pd.read_csv('CG_spillway_capacity.csv')
+#COT.InitVol=float(reservoirs[id-1]["@initVolume"])
+#COT.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#COT.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#COT.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#COT.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#COT.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#COT.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
+#COT.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#
+#
+##FERN RIDGE
+#id=7
+#FRN=Reservoir(7)
+#FRN.Restype='Storage'
+#FRN.AreaVolCurve=pd.read_csv('fern_ridge_area_capacity.csv')
+#FRN.RuleCurve=pd.read_csv('fern_ridge_rule_curve.csv')
+#FRN.Composite=pd.read_csv('FR_composite_rc.csv')
+#FRN.RO=pd.read_csv('FR_RO_capacity.csv')
+#FRN.RulePriorityTable=pd.read_csv('fern_ridge_rule_priorities.csv')
+#FRN.Buffer=pd.read_csv('FR_buffer.csv')
+#FRN.Spillway=pd.read_csv('FR_spillway_capacity.csv')
+#FRN.InitVol=float(reservoirs[id-1]["@initVolume"])
+#FRN.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#FRN.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#FRN.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#FRN.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#FRN.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#FRN.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#
+#
+##COUGAR
+#id=8
+#CGR=Reservoir(8)
+#CGR.Restype='Storage'
+#CGR.AreaVolCurve=pd.read_csv('cougar_area_capacity.csv')
+#CGR.RuleCurve=pd.read_csv('cougar_rule_curve.csv')
+#CGR.Composite=pd.read_csv('Cougar_composite_rc.csv')
+#CGR.RO=pd.read_csv('Cougar_RO_capacity.csv')
+#CGR.RulePriorityTable=pd.read_csv('cougar_rule_priorities.csv')
+#CGR.Buffer=pd.read_csv('Cougar_buffer.csv')
+#CGR.Spillway=pd.read_csv('Cougar_spillway_capacity.csv')
+#CGR.InitVol=float(reservoirs[id-1]["@initVolume"])
+#CGR.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#CGR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#CGR.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#CGR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#CGR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#CGR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#CGR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
+#CGR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
+#
+##BLUE RIVER
+#id=9
+#BLU=Reservoir(9)
+#BLU.Restype='Storage'
+#BLU.AreaVolCurve=pd.read_csv('blue_river_area_capacity.csv')
+#BLU.RuleCurve=pd.read_csv('blue_river_rule_curve.csv')
+#BLU.Composite=pd.read_csv('BR_composite_rc.csv')
+#BLU.RO=pd.read_csv('BR_RO_capacity.csv')
+#BLU.RulePriorityTable=pd.read_csv('blue_river_rule_priorities.csv')
+#BLU.Buffer=pd.read_csv('BR_buffer.csv')
+#BLU.Spillway=pd.read_csv('BR_spillway_capacity.csv')
+#BLU.InitVol=float(reservoirs[id-1]["@initVolume"])
+#BLU.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#BLU.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#BLU.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#BLU.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#BLU.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#BLU.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#
+#
+##GREEN PETER
+#id=10
+#GPR=Reservoir(10)
+#GPR.Restype='Storage'
+#GPR.AreaVolCurve=pd.read_csv('green_peter_area_capacity.csv')
+#GPR.RuleCurve=pd.read_csv('green_peter_rule_curve.csv')
+#GPR.Composite=pd.read_csv('GP_composite_rc.csv')
+#GPR.RO=pd.read_csv('GP_RO_capacity.csv')
+#GPR.RulePriorityTable=pd.read_csv('green_peter_rule_priorities.csv')
+#GPR.Buffer=pd.read_csv('GP_buffer.csv')
+#GPR.Spillway=pd.read_csv('GP_spillway_capacity.csv')
+#GPR.InitVol=float(reservoirs[id-1]["@initVolume"])
+#GPR.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#GPR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#GPR.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#GPR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#GPR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#GPR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#GPR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
+#GPR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
+#
+#
+##FOSTER
+#id=11
+#FOS=Reservoir(11)
+#FOS.Restype='Storage'
+#FOS.AreaVolCurve=pd.read_csv('foster_area_capacity.csv')
+#FOS.RuleCurve=pd.read_csv('foster_rule_curve.csv')
+#FOS.Composite=pd.read_csv('Foster_composite_rc.csv')
+#FOS.RO=pd.read_csv('Foster_RO_capacity.csv')
+#FOS.RulePriorityTable=pd.read_csv('foster_rule_priorities.csv')
+#FOS.Buffer=pd.read_csv('Foster_buffer.csv')
+#FOS.Spillway=pd.read_csv('Foster_spillway_capacity.csv')
+#FOS.InitVol=float(reservoirs[id-1]["@initVolume"])
+#FOS.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#FOS.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#FOS.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#FOS.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#FOS.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#FOS.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#FOS.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
+#FOS.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
+#
+#
+##DETROIT
+#id=12
+#DET=Reservoir(12)
+#DET.Restype='Storage'
+#DET.AreaVolCurve=pd.read_csv('Detroit_area_capacity.csv')
+#DET.Composite=pd.read_csv('Detroit_composite_rc.csv')
+#DET.RO=pd.read_csv('Detroit_RO_capacity.csv')
+#DET.RulePriorityTable=pd.read_csv('detroit_rule_priorities.csv')
+#DET.Buffer=pd.read_csv('Detroit_buffer.csv')
+#DET.Spillway=pd.read_csv('Detroit_spillway_capacity.csv')
+#DET.InitVol=float(reservoirs[id-1]["@initVolume"])
+#DET.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#DET.maxVolume=float(reservoirs[id-1]["@maxVolume"])
+#DET.Td_elev=float(reservoirs[id-1]["@td_elev"])
+#DET.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#DET.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
+#DET.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#DET.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
+#DET.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
+#
+#
+##BIG CLIFF re-regulating
+#id=13
+#BCL=Reservoir(13)
+#BCL.Restype='RunOfRiver'
+#BCL.AreaVolCurve=pd.read_csv('Big_Cliff_area_capacity.csv')
+#BCL.Composite=pd.read_csv('BC_composite_rc.csv')
+#BCL.RO=pd.read_csv('BC_RO_capacity.csv')
+#BCL.Spillway=pd.read_csv('BC_Spillway_capacity.csv')
+#BCL.InitVol=float(reservoirs[id-1]["@initVolume"])
+#BCL.minOutflow=float(reservoirs[id-1]["@minOutflow"])
+#BCL.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+#BCL.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+#BCL.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
+#BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
-#LOOKOUT POINT
-id=2
-LOP=Reservoir(2)
-LOP.Restype='Storage'
-LOP.AreaVolCurve=pd.read_csv('lookout_point_area_capacity.csv')
-LOP.RuleCurve=pd.read_csv('lookout_point_rule_curve.csv')
-LOP.Composite=pd.read_csv('LO_composite_rc.csv')
-LOP.RO=pd.read_csv('LO_RO_capacity.csv')
-LOP.RulePriorityTable=pd.read_csv('lookout_rule_priorities.csv')
-LOP.Buffer=pd.read_csv('LO_buffer.csv')
-LOP.Spillway=pd.read_csv('LO_spillway_capacity.csv')
-LOP.InitVol=float(reservoirs[id-1]["@initVolume"])
-LOP.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-LOP.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-LOP.Td_elev=float(reservoirs[id-1]["@td_elev"])
-LOP.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-LOP.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-LOP.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-LOP.Fc3_elev=float(reservoirs[id-1]["@fc3_elev"])
-LOP.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-LOP.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
-LOP.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
-
-
-#DEXTER re-regulating
-id=3
-DEX=Reservoir(3)
-DEX.Restype='RunOfRiver'
-DEX.AreaVolCurve=pd.read_csv('dexter_area_capacity.csv')
-DEX.Composite=pd.read_csv('Dexter_composite_rc.csv')
-DEX.RO=pd.read_csv('Dexter_RO_capacity.csv')
-DEX.Spillway=pd.read_csv('Dexter_Spillway_capacity.csv')
-DEX.InitVol=float(reservoirs[id-1]["@initVolume"])
-DEX.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-DEX.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-DEX.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-DEX.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
-DEX.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
-
-
-#FALL CREEK
-id=4
-FAL=Reservoir(4)
-FAL.Restype='Storage'
-FAL.AreaVolCurve=pd.read_csv('fall_creek_area_capacity.csv')
-FAL.RuleCurve=pd.read_csv('fall_creek_rule_curve.csv')
-FAL.Composite=pd.read_csv('FC_composite_rc.csv')
-FAL.RO=pd.read_csv('FC_RO_capacity.csv')
-FAL.RulePriorityTable=pd.read_csv('fall_creek_rule_priorities.csv')
-FAL.Buffer=pd.read_csv('FC_buffer.csv')
-FAL.Spillway=pd.read_csv('FC_spillway_capacity.csv')
-FAL.InitVol=float(reservoirs[id-1]["@initVolume"])
-FAL.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-FAL.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-FAL.Td_elev=float(reservoirs[id-1]["@td_elev"])
-FAL.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-FAL.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-FAL.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-FAL.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-
-
-#DORENA
-id=5
-DOR=Reservoir(5)
-DOR.Restype='Storage'
-DOR.AreaVolCurve=pd.read_csv('dorena_area_capacity.csv')
-DOR.RuleCurve=pd.read_csv('dorena_rule_curve.csv')
-DOR.Composite=pd.read_csv('Dorena_composite_rc.csv')
-DOR.RO=pd.read_csv('Dorena_RO_capacity.csv')
-DOR.RulePriorityTable=pd.read_csv('dorena_rule_priorities.csv')
-DOR.Buffer=pd.read_csv('Dorena_buffer.csv')
-DOR.Spillway=pd.read_csv('Dorena_spillway_capacity.csv')
-DOR.InitVol=float(reservoirs[id-1]["@initVolume"])
-DOR.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-DOR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-DOR.Td_elev=float(reservoirs[id-1]["@td_elev"])
-DOR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-DOR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-DOR.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-DOR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-
-
-#COTTAGE GROVE
-id=6
-COT=Reservoir(6)
-COT.Restype='Storage'
-COT.AreaVolCurve=pd.read_csv('cottage_grove_area_capacity.csv')
-COT.RuleCurve=pd.read_csv('cottage_grove_rule_curve.csv')
-COT.Composite=pd.read_csv('CG_composite_rc.csv')
-COT.RO=pd.read_csv('CG_RO_capacity.csv')
-COT.RulePriorityTable=pd.read_csv('cottage_grove_rule_priorities.csv')
-COT.Buffer=pd.read_csv('CG_buffer.csv')
-COT.Spillway=pd.read_csv('CG_spillway_capacity.csv')
-COT.InitVol=float(reservoirs[id-1]["@initVolume"])
-COT.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-COT.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-COT.Td_elev=float(reservoirs[id-1]["@td_elev"])
-COT.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-COT.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-COT.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-COT.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-
-
-#FERN RIDGE
-id=7
-FRN=Reservoir(7)
-FRN.Restype='Storage'
-FRN.AreaVolCurve=pd.read_csv('fern_ridge_area_capacity.csv')
-FRN.RuleCurve=pd.read_csv('fern_ridge_rule_curve.csv')
-FRN.Composite=pd.read_csv('FR_composite_rc.csv')
-FRN.RO=pd.read_csv('FR_RO_capacity.csv')
-FRN.RulePriorityTable=pd.read_csv('fern_ridge_rule_priorities.csv')
-FRN.Buffer=pd.read_csv('FR_buffer.csv')
-FRN.Spillway=pd.read_csv('FR_spillway_capacity.csv')
-FRN.InitVol=float(reservoirs[id-1]["@initVolume"])
-FRN.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-FRN.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-FRN.Td_elev=float(reservoirs[id-1]["@td_elev"])
-FRN.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-FRN.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-FRN.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-
-
-#COUGAR
-id=8
-CGR=Reservoir(8)
-CGR.Restype='Storage'
-CGR.AreaVolCurve=pd.read_csv('cougar_area_capacity.csv')
-CGR.RuleCurve=pd.read_csv('cougar_rule_curve.csv')
-CGR.Composite=pd.read_csv('Cougar_composite_rc.csv')
-CGR.RO=pd.read_csv('Cougar_RO_capacity.csv')
-CGR.RulePriorityTable=pd.read_csv('cougar_rule_priorities.csv')
-CGR.Buffer=pd.read_csv('Cougar_buffer.csv')
-CGR.Spillway=pd.read_csv('Cougar_spillway_capacity.csv')
-CGR.InitVol=float(reservoirs[id-1]["@initVolume"])
-CGR.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-CGR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-CGR.Td_elev=float(reservoirs[id-1]["@td_elev"])
-CGR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-CGR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-CGR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-CGR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
-CGR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
-
-#BLUE RIVER
-id=9
-BLU=Reservoir(9)
-BLU.Restype='Storage'
-BLU.AreaVolCurve=pd.read_csv('blue_river_area_capacity.csv')
-BLU.RuleCurve=pd.read_csv('blue_river_rule_curve.csv')
-BLU.Composite=pd.read_csv('BR_composite_rc.csv')
-BLU.RO=pd.read_csv('BR_RO_capacity.csv')
-BLU.RulePriorityTable=pd.read_csv('blue_river_rule_priorities.csv')
-BLU.Buffer=pd.read_csv('BR_buffer.csv')
-BLU.Spillway=pd.read_csv('BR_spillway_capacity.csv')
-BLU.InitVol=float(reservoirs[id-1]["@initVolume"])
-BLU.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-BLU.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-BLU.Td_elev=float(reservoirs[id-1]["@td_elev"])
-BLU.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-BLU.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-BLU.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-
-
-#GREEN PETER
-id=10
-GPR=Reservoir(10)
-GPR.Restype='Storage'
-GPR.AreaVolCurve=pd.read_csv('green_peter_area_capacity.csv')
-GPR.RuleCurve=pd.read_csv('green_peter_rule_curve.csv')
-GPR.Composite=pd.read_csv('GP_composite_rc.csv')
-GPR.RO=pd.read_csv('GP_RO_capacity.csv')
-GPR.RulePriorityTable=pd.read_csv('green_peter_rule_priorities.csv')
-GPR.Buffer=pd.read_csv('GP_buffer.csv')
-GPR.Spillway=pd.read_csv('GP_spillway_capacity.csv')
-GPR.InitVol=float(reservoirs[id-1]["@initVolume"])
-GPR.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-GPR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-GPR.Td_elev=float(reservoirs[id-1]["@td_elev"])
-GPR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-GPR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-GPR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-GPR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
-GPR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
-
-
-#FOSTER
-id=11
-FOS=Reservoir(11)
-FOS.Restype='Storage'
-FOS.AreaVolCurve=pd.read_csv('foster_area_capacity.csv')
-FOS.RuleCurve=pd.read_csv('foster_rule_curve.csv')
-FOS.Composite=pd.read_csv('Foster_composite_rc.csv')
-FOS.RO=pd.read_csv('Foster_RO_capacity.csv')
-FOS.RulePriorityTable=pd.read_csv('foster_rule_priorities.csv')
-FOS.Buffer=pd.read_csv('Foster_buffer.csv')
-FOS.Spillway=pd.read_csv('Foster_spillway_capacity.csv')
-FOS.InitVol=float(reservoirs[id-1]["@initVolume"])
-FOS.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-FOS.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-FOS.Td_elev=float(reservoirs[id-1]["@td_elev"])
-FOS.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-FOS.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-FOS.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-FOS.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
-FOS.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
-
-
-#DETROIT
-id=12
-DET=Reservoir(12)
-DET.Restype='Storage'
-DET.AreaVolCurve=pd.read_csv('Detroit_area_capacity.csv')
-DET.Composite=pd.read_csv('Detroit_composite_rc.csv')
-DET.RO=pd.read_csv('Detroit_RO_capacity.csv')
-DET.RulePriorityTable=pd.read_csv('detroit_rule_priorities.csv')
-DET.Buffer=pd.read_csv('Detroit_buffer.csv')
-DET.Spillway=pd.read_csv('Detroit_spillway_capacity.csv')
-DET.InitVol=float(reservoirs[id-1]["@initVolume"])
-DET.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-DET.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-DET.Td_elev=float(reservoirs[id-1]["@td_elev"])
-DET.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-DET.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-DET.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-DET.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
-DET.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
-
-
-#BIG CLIFF re-regulating
-id=13
-BCL=Reservoir(13)
-BCL.Restype='RunOfRiver'
-BCL.AreaVolCurve=pd.read_csv('Big_Cliff_area_capacity.csv')
-BCL.Composite=pd.read_csv('BC_composite_rc.csv')
-BCL.RO=pd.read_csv('BC_RO_capacity.csv')
-BCL.Spillway=pd.read_csv('BC_Spillway_capacity.csv')
-BCL.InitVol=float(reservoirs[id-1]["@initVolume"])
-BCL.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-BCL.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-BCL.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-BCL.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
-BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
-
-res_list =[HCR, LOP, DEX, FAL, DOR, COT, FRN, CGR, BLU, GPR, FOS, DET, BCL]
 
 #CONTROL POINTS
 #in order of ID
 
 #SALEM
 SAL=ControlPoint(1)
-SAL.influencedReservoirs = []
-SAL.COMID = str(23791083)
-
-
-
+SAL.influencedReservoirs =float(controlPoints[id-1]["@reservoirs"])
+SAL.COMID=str(controlPoints[id-1]["@location"])
+#SAL.COMID = str(23791083)
 
 
 #ALBANY
@@ -417,7 +452,7 @@ FOS=ControlPoint(11)
 FOS.influencedReservoirs = []
 FOS.COMID  =str(23787257)
 
-cp_list =[SAL, ALB, JEF, MEH, HAR, VID, JAS, GOS, WAT, MON, FOS]
+
 
 
 #import control point historical data-- shifted one day before
@@ -489,15 +524,8 @@ n_res=13
 n_HPres=8
 n_cp = 11
 
-<<<<<<< HEAD
-outflows_all = np.zeros((k,13)) #we can fill these in later, or make them empty and 'append' the values
-hydropower_all = np.zeros((k,8))
-volumes_all = np.zeros((k,13))
-elevations_all = np.zeros((k,13))
-cp_discharges = np.zeros((k,11))
 
-
-=======
+#=======
 # allocate output 
 outflows_all = np.nan((T+1,n_res)) #we can fill these in later, or make them empty and 'append' the values
 hydropower_all = np.nan((T+1,n_HPres))
@@ -513,7 +541,6 @@ for  i in range(0,n_res):
 
 for  i in range(0,n_cp):
     cp_discharge_all[0,i] = cp_list[i].init_discharge
->>>>>>> 068d53d9df2f0c3eeb5d4556306ecdcf9fe4d3ba
 
 #define an outer fnt here that takes date, name, vol as inputs?
 
