@@ -135,6 +135,50 @@ for cp in CP:
 cfs_to_cms = 0.0283168
 
 #cp_hist: start this at 12/31/2004
+SAL_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Salem')
+SAL_2005_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
+
+ALB_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Albany')
+ALB_2005_dis = np.array(ALB_2005.iloc[:,1])*cfs_to_cms #change this to index by discharge later...not working for some reason
+
+JEF_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Jefferson')
+JEF_2005_dis = np.array(JEF_2005['Discharge'])*cfs_to_cms
+
+MEH_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Mehama')
+MEH_2005_dis = np.array(MEH_2005['Discharge'])*cfs_to_cms
+
+HAR_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Harrisburg')
+HAR_2005_dis = np.array(HAR_2005['Discharge'])*cfs_to_cms
+
+VID_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Vida')
+VID_2005_dis = np.array(VID_2005['Discharge'])*cfs_to_cms
+
+JAS_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Jasper')
+JAS_2005_dis = np.array(JAS_2005['Discharge'])*cfs_to_cms
+
+GOS_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Goshen')
+GOS_2005_dis = np.array(GOS_2005['Discharge'])*cfs_to_cms
+
+WAT_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Waterloo')
+WAT_2005_dis = np.array(WAT_2005['Discharge'])*cfs_to_cms
+
+MON_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Monroe')
+MON_2005_dis = np.array(MON_2005['Discharge'])*cfs_to_cms
+
+FOS_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Foster')
+FOS_2005_dis = np.array(FOS_2005['Discharge'])*cfs_to_cms
+
+cp_discharge_2005_all = np.stack((SAL_2005_dis,ALB_2005_dis,JEF_2005_dis,MEH_2005_dis,HAR_2005_dis,VID_2005_dis,JAS_2005_dis,GOS_2005_dis,WAT_2005_dis,MON_2005_dis,FOS_2005_dis),axis=1)
+    
+    
+
+
+ 
+
+cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) #when does this data come into play?
+#add in fnt that updates control pt discharge after every timestep
+
+
 #reservoirs:
 #read in historical reservoir inflows -- this will contain the array of 'dates' to use
 BLU5A = pd.read_excel('Data/BLU5A_daily.xls',skiprows=27943,skip_footer =1004) #only using data from 2005
@@ -207,7 +251,7 @@ for  i in range(0,n_res):
     elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i],RES[i])
 
 for  i in range(0,n_cp):
-    cp_discharge_all[0,i] = CP[i].init_discharge
+    cp_discharge_all[0,i] = cp_discharge_2005_all[0,i]
 
 #define an outer fnt here that takes date, name, vol as inputs?
 
