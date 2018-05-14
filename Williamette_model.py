@@ -466,6 +466,7 @@ def UpdateMaxGateOutflows(name,poolElevation):
         name.maxSpillwayFlow = np.interp(poolElevation,name.Spillway['pool_elev_m'],name.Spillway['release_cap_cms'])
         return (name.maxRO_flow,name.maxSpillway_flow)
 
+
 def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp_discharge):
     currentPoolElevation = GetPoolElevationFromVolume(volume,name)
     UpdateMaxGateOutflows( name, currentPoolElevation )

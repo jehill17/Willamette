@@ -462,7 +462,6 @@ cp_local = pd.read_excel('Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,
 #add in fnt that updates control pt discharge after every timestep
 
 
-
 #read in historical reservoir inflows -- this will contain the array of 'dates' to use
 BLU5A = pd.read_excel('BLU5A_daily.xls',skiprows=27943,skip_footer =1004) #only using data from 2005
 BLU5A.columns = ['Date','Inflow']
