@@ -1,0 +1,12 @@
+Control_Point,influenced_Reservoirs ,,,,,,
+JAS,HCR,LOP,FAL,,,,
+GOS,COT,DOR,,,,,
+VID,CGR,BLU,,,,,
+HAR,HCR,LOP,FAL,COT,DOR,CGR,BLU
+MON,FRN,,,,,,
+ALB,,,,,,,
+WAT,GPR,,,,,,
+MEH,DET,,,,,,
+JEF,FOS,DET,,,,,
+SAL,FOS,DET,,,,,
+FOS,GPR,,,,,,
