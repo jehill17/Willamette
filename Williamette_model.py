@@ -248,7 +248,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp
                         resallocation = constraintValue - cp_discharge[cp_id]/len(cp_name.influencedReservoirs) 
                       else:  
                         resallocation = 0
-              actualRelease += resallocation #add/subract cp allocation
+                  actualRelease += resallocation #add/subract cp allocation
               
           #GATE SPECIFIC RULES:   
           elif constraint_array[i].startswith('Pow_Max'): # case RCT_POWERPLANT:  //maximum Power plant rule  Assign m_maxPowerFlow attribute.
@@ -284,7 +284,9 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp
 
           outflow = actualRelease;
 
-    return (outflow, name.maxPowerFlow, name.minPowerFlow, name.maxRO_Flow, name.minRO_Flow, name.maxSpillwayFlow, name.minSpillwayFlow)
+    #return (outflow, name.maxPowerFlow, name.minPowerFlow, name.maxRO_Flow, name.minRO_Flow, name.maxSpillwayFlow, name.minSpillwayFlow)
+    return outflow
+
 
 
 def AssignReservoirOutletFlows(name,outflow):
@@ -335,7 +337,7 @@ def CalculateHydropowerOutput(name,elevation,powerFlow):
 
     return powerOut
 
-def UpdateVolume (name, inflow, outflow, lag_volume):
+def UpdateVolume_elev (name, inflow, outflow, lag_volume):
     volume = lag_volume + (inflow - outflow)*86400
     elevation = GetPoolElevationFromVolume(volume,name)
     

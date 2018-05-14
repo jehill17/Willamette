@@ -55,7 +55,6 @@ class Reservoir:
         self.Buffer=pd.DataFrame
         self.Spillway=pd.DataFrame
         self.ruleDir =str()
-        self.cpDir =str()
         self.InitVol=[]
         self.init_outflow =[]
         self.minOutflow=[]
@@ -82,7 +81,6 @@ class ControlPoint:
         self.ID=ID
         self.COMID=str()
         self.influencedReservoirs=[]
-        self.init_discharge = []
 
 
 
@@ -126,58 +124,14 @@ for cp in CP:
     cp.name = cp_list[id-1]
     cp.influencedReservoirs =np.asarray((controlPoints[id-1]["@reservoirs"]).split(','))
     cp.COMID=str(controlPoints[id-1]["@location"])
-    #cp.init_discharge=float(controlPoints[id-1]["@initDischarge"]) TO BE ADDED in the xml file
 
 
 #import control point historical data-- shifted one day before
 
 #convert data
 cfs_to_cms = 0.0283168
-
-#cp_hist: start this at 12/31/2004
-SAL_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Salem')
-SAL_2005_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
-
-ALB_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Albany')
-ALB_2005_dis = np.array(ALB_2005.iloc[:,1])*cfs_to_cms #change this to index by discharge later...not working for some reason
-
-JEF_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Jefferson')
-JEF_2005_dis = np.array(JEF_2005['Discharge'])*cfs_to_cms
-
-MEH_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Mehama')
-MEH_2005_dis = np.array(MEH_2005['Discharge'])*cfs_to_cms
-
-HAR_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Harrisburg')
-HAR_2005_dis = np.array(HAR_2005['Discharge'])*cfs_to_cms
-
-VID_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Vida')
-VID_2005_dis = np.array(VID_2005['Discharge'])*cfs_to_cms
-
-JAS_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Jasper')
-JAS_2005_dis = np.array(JAS_2005['Discharge'])*cfs_to_cms
-
-GOS_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Goshen')
-GOS_2005_dis = np.array(GOS_2005['Discharge'])*cfs_to_cms
-
-WAT_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Waterloo')
-WAT_2005_dis = np.array(WAT_2005['Discharge'])*cfs_to_cms
-
-MON_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Monroe')
-MON_2005_dis = np.array(MON_2005['Discharge'])*cfs_to_cms
-
-FOS_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Foster')
-FOS_2005_dis = np.array(FOS_2005['Discharge'])*cfs_to_cms
-
-cp_discharge_2005_all = np.stack((SAL_2005_dis,ALB_2005_dis,JEF_2005_dis,MEH_2005_dis,HAR_2005_dis,VID_2005_dis,JAS_2005_dis,GOS_2005_dis,WAT_2005_dis,MON_2005_dis,FOS_2005_dis),axis=1)
-    
-    
-
-
  
-
 cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) #when does this data come into play?
-#add in fnt that updates control pt discharge after every timestep
-
 
 #reservoirs:
 #read in historical reservoir inflows -- this will contain the array of 'dates' to use
@@ -200,29 +154,31 @@ LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=27943,skip_f
 
 
 #control points
-#filename='Data/Control point historical discharge 2005.xlsx'
-#SAL_2005 = pd.read_excel(filename,sheetname='Salem')
-#SAL_2005_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
-#ALB_2005 = pd.read_excel(filename,sheetname='Albany')
-#ALB_2005_dis = np.array(ALB_2005['Discharge'])*cfs_to_cms
-#JEF_2005 = pd.read_excel(filename,sheetname='Jefferson')
-#JEF_2005_dis = np.array(JEF_2005['Discharge'])*cfs_to_cms
-#MEH_2005 = pd.read_excel(filename,sheetname='Mehama')
-#MEH_2005_dis = np.array(MEH_2005['Discharge'])*cfs_to_cms
-#HAR_2005 = pd.read_excel(filename,sheetname='Harrisburg')
-#HAR_2005_dis = np.array(HAR_2005['Discharge'])*cfs_to_cms
-#VID_2005 = pd.read_excel(filename,sheetname='Vida')
-#VID_2005_dis = np.array(VID_2005['Discharge'])*cfs_to_cms
-#JAS_2005 = pd.read_excel(filename,sheetname='Jasper')
-#JAS_2005_dis = np.array(JAS_2005['Discharge'])*cfs_to_cms
-#GOS_2005 = pd.read_excel(filename,sheetname='Goshen')
-#GOS_2005_dis = np.array(GOS_2005['Discharge'])*cfs_to_cms
-#WAT_2005 = pd.read_excel(filename,sheetname='Waterloo')
-#WAT_2005_dis = np.array(WAT_2005['Discharge'])*cfs_to_cms
-#MON_2005 = pd.read_excel(filename,sheetname='Monroe')
-#MON_2005_dis = np.array(MON_2005['Discharge'])*cfs_to_cms
-#FOS_2005 = pd.read_excel(filename,sheetname='Foster')
-#FOS_2005_dis = np.array(FOS_2005['Discharge'])*cfs_to_cms
+#cp_hist: start this at 12/31/2004
+filename='Data/Control point historical discharge 2005.xlsx'
+SAL_2005 = pd.read_excel(filename,sheetname='Salem')
+SAL_2005_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
+ALB_2005 = pd.read_excel(filename,sheetname='Albany')
+ALB_2005_dis = np.array(ALB_2005['Discharge'])*cfs_to_cms
+JEF_2005 = pd.read_excel(filename,sheetname='Jefferson')
+JEF_2005_dis = np.array(JEF_2005['Discharge'])*cfs_to_cms
+MEH_2005 = pd.read_excel(filename,sheetname='Mehama')
+MEH_2005_dis = np.array(MEH_2005['Discharge'])*cfs_to_cms
+HAR_2005 = pd.read_excel(filename,sheetname='Harrisburg')
+HAR_2005_dis = np.array(HAR_2005['Discharge'])*cfs_to_cms
+VID_2005 = pd.read_excel(filename,sheetname='Vida')
+VID_2005_dis = np.array(VID_2005['Discharge'])*cfs_to_cms
+JAS_2005 = pd.read_excel(filename,sheetname='Jasper')
+JAS_2005_dis = np.array(JAS_2005['Discharge'])*cfs_to_cms
+GOS_2005 = pd.read_excel(filename,sheetname='Goshen')
+GOS_2005_dis = np.array(GOS_2005['Discharge'])*cfs_to_cms
+WAT_2005 = pd.read_excel(filename,sheetname='Waterloo')
+WAT_2005_dis = np.array(WAT_2005['Discharge'])*cfs_to_cms
+MON_2005 = pd.read_excel(filename,sheetname='Monroe')
+MON_2005_dis = np.array(MON_2005['Discharge'])*cfs_to_cms
+FOS_2005 = pd.read_excel(filename,sheetname='Foster')
+FOS_2005_dis = np.array(FOS_2005['Discharge'])*cfs_to_cms
+cp_discharge_2005_all = np.stack((SAL_2005_dis,ALB_2005_dis,JEF_2005_dis,MEH_2005_dis,HAR_2005_dis,VID_2005_dis,JAS_2005_dis,GOS_2005_dis,WAT_2005_dis,MON_2005_dis,FOS_2005_dis),axis=1)    
 
 cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) #when does this data come into play?
 
@@ -251,140 +207,185 @@ for  i in range(0,n_res):
     elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i],RES[i])
 
 for  i in range(0,n_cp):
-    cp_discharge_all[0,i] = cp_discharge_2005_all[0,i]
+     cp_discharge_all[0,i] = cp_discharge_2005_all[0,i]
 
 #define an outer fnt here that takes date, name, vol as inputs?
 
 InitwaterYear = 1.2
 
-for t in range(0,T+1):
-    
+#for t in range(0,T+1):
+    t=0
+    waterYear = InitwaterYear
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     
-    waterYear = inner.UpdateReservoirWaterYear(doy) #function missing
+    #waterYear = inner.UpdateReservoirWaterYear(doy) #function missing
     #calculate waterYear
     #conditional based on doy 
     #calculate at doy = 140
     
-    #COTTAGE GROVE ID=6 count=5
-    COT_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,RES[5].ID],RES[5])
-    COT_outflow = inner.GetResOutflow(RES[5],volumes_all[t,RES[5].ID],COT5A.iloc[t,1],outflows_all[t,RES[5].ID],doy,waterYear,cp_list,cp_discharge_all[t,:])
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(RES[5],COT_outflow)
-    COT_power_output = inner.CalculateHydropowerOutput(RES[5],COT_poolElevation,powerFlow) #do I need to give a unique name to poweroutflow?
+    #COTTAGE GROVE ID=6 count=5 NO HYDROPOWER
+    COT = RES[5]
+    COT_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,COT.ID],COT)
+    COT_outflow = inner.GetResOutflow(COT,volumes_all[t,COT.ID],COT5A.iloc[t,1],outflows_all[t,COT.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [COT_volume,COT_elevation] = inner.UpdateVolume_elev (COT, COT5A.iloc[t,1], COT_outflow, volumes_all[t,COT.ID])
     
-    outflows_all[t+1,RES[5].ID] = COT_outflow
-#    hydropower_all[t,0] = COT_power_output
+    outflows_all[t+1,COT.ID] = COT_outflow 
+    volumes_all[t+1,COT.ID] =  COT_volume
+    elevations_all[t+1,COT.ID]=  COT_elevation
     
+    #DORENA ID=5 count=4 NO HYDROPOWER
+    DOR = RES[4]
+    DOR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,DOR.ID],DOR)
+    DOR_outflow = inner.GetResOutflow(DOR,volumes_all[t,DOR.ID],DOR5A.iloc[t,1],outflows_all[t,DOR.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [DOR_volume,DOR_elevation] = inner.UpdateVolume_elev (DOR, DOR5A.iloc[t,1], DOR_outflow,volumes_all[t,DOR.ID])
     
-    #DORENA ID=5
-    DOR_poolElevation = inner.GetPoolElevationFromVolume(DOR,DOR.volume)
-    DOR_outflow = inner.GetResOutflow(DOR,DOR.InitVol,DOR5A.iloc[t,1],doy,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(DOR,DOR_outflow)
-    DOR_power_output = inner.CalculateHydropowerOutput(DOR,DOR_poolElevation,powerFlow)
+    outflows_all[t+1,DOR.ID] = DOR_outflow 
+    volumes_all[t+1,DOR.ID] =  DOR_volume
+    elevations_all[t+1,DOR.ID]=  DOR_elevation
     
-    outflows_all[t,DOR.ID] = DOR_outflow
-#    hydropower_all[t,1] = DOR_power_output
+    #FERN RIDGE ID=7 count=6 NO HYDROPOWER
+    FRN = RES[6]
+    FRN_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,FRN.ID],FRN)
+    FRN_outflow = inner.GetResOutflow(FRN,volumes_all[t,FRN.ID],FRN5A.iloc[t,1],outflows_all[t,FRN.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [FRN_volume,FRN_elevation] = inner.UpdateVolume_elev (FRN, FRN5A.iloc[t,1], FRN_outflow,volumes_all[t,FRN.ID])
     
-    #FERN RIDGE ID=7
-    FRN_poolElevation = inner.GetPoolElevationFromVolume(FRN,FRN.volume)
-    FRN_outflow = inner.GetResOutflow(FRN,FRN.InitVol,FRN5M.iloc[t,1],doy,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(FRN,FRN_outflow)
-    FRN_power_output = inner.CalculateHydropowerOutput(FRN,FRN_poolElevation,powerFlow)
+    outflows_all[t+1,FRN.ID] = FRN_outflow 
+    volumes_all[t+1,FRN.ID] =  FRN_volume
+    elevations_all[t+1,FRN.ID]=  FRN_elevation
     
-    outflows_all[t,FRN.ID] = FRN_outflow
-#    hydropower_all[t,2] = FRN_power_output
-    
-    #HILLS CREEK ID=1
-    HCR_poolElevation = inner.GetPoolElevationFromVolume(HCR,HCR.volume)
-    HCR_outflow = inner.GetResOutflow(HCR,HCR.InitVol,HCR5A.iloc[t,1],doy,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(HCR,HCR_outflow)
+    #HILLS CREEK ID=1 count =0
+    HCR = RES[0]
+    HCR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,HCR.ID],HCR)
+    HCR_outflow = inner.GetResOutflow(HCR,volumes_all[t,HCR.ID],HCR5A.iloc[t,1],outflows_all[t,HCR.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(HCR,HCR_outflow)
     HCR_power_output = inner.CalculateHydropowerOutput(HCR,HCR_poolElevation,powerFlow)
+    [HCR_volume,HCR_elevation] = inner.UpdateVolume_elev (HCR, HCR5A.iloc[t,1], HCR_outflow,volumes_all[t,HCR.ID])
     
-    outflows_all[t,HCR.ID] = HCR_outflow
+    outflows_all[t+1,HCR.ID] = HCR_outflow 
+    volumes_all[t+1,HCR.ID] =  HCR_volume
+    elevations_all[t+1,HCR.ID]=  HCR_elevation
     hydropower_all[t,1] = HCR_power_output
     
-    #LOOKOUT POINT ID=2
-    LOP_poolElevation = inner.GetPoolElevationFromVolume(LOP,LOP.volume)
-    LOP_in = HCR_outflow + LOP_loc[t] + LOP5E[t]
-    LOP_outflow = inner.GetResOutflow(LOP,LOP.InitVol,LOP_in,doy,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(LOP,LOP_outflow)
+    #LOOKOUT POINT ID=2 count=1
+    LOP = RES[1]
+    LOP_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,LOP.ID],LOP)
+    LOP_outflow = inner.GetResOutflow(LOP,volumes_all[t,LOP.ID],LOP5A.iloc[t,1],outflows_all[t,LOP.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(LOP,LOP_outflow)
     LOP_power_output = inner.CalculateHydropowerOutput(LOP,LOP_poolElevation,powerFlow)
+    [LOP_volume,LOP_elevation] = inner.UpdateVolume_elev (LOP, LOP5A.iloc[t,1], LOP_outflow,volumes_all[t,LOP.ID])
     
-    outflows_all[t,LOP.ID] = LOP_outflow
+    outflows_all[t+1,LOP.ID] = LOP_outflow 
+    volumes_all[t+1,LOP.ID] =  LOP_volume
+    elevations_all[t+1,LOP.ID]=  LOP_elevation
     hydropower_all[t,2] = LOP_power_output
     
-    #DEXTER ID=3
-    DEX_poolElevation = inner.GetPoolElevationFromVolume(DEX,DEX.volume)
-    DEX_outflow = inner.GetResOutflow(DEX,DEX.InitVol,LOP_outflow,doy,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(DEX,DEX_outflow)
+    #DEXTER ID=3 count=2
+    DEX = RES[2]
+    DEX_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,DEX.ID],DEX)
+    DEX_outflow = inner.GetResOutflow(DEX,volumes_all[t,DEX.ID],DEX5A.iloc[t,1],outflows_all[t,DEX.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(DEX,DEX_outflow)
     DEX_power_output = inner.CalculateHydropowerOutput(DEX,DEX_poolElevation,powerFlow)
+    [DEX_volume,DEX_elevation] = inner.UpdateVolume_elev (DEX, DEX5A.iloc[t,1], DEX_outflow,volumes_all[t,DEX.ID])
     
-    outflows_all[t,DEX.ID] = DEX_outflow
-    hydropower_all[t,3] = DEX_power_output
+    outflows_all[t+1,DEX.ID] = DEX_outflow 
+    volumes_all[t+1,DEX.ID] =  DEX_volume
+    elevations_all[t+1,DEX.ID]=  DEX_elevation
+    hydropower_all[t,3] = DEX_power_output   
     
-    #FALL CREEK ID=4
-    FAL_poolElevation = inner.GetPoolElevationFromVolume(FAL,FAL.volume)
-    FAL_outflow = inner.GetResOutflow(FAL,FAL.InitVol,FAL5A.iloc[t,1],doy,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(FAL,FAL_outflow)
-    FAL_power_output = inner.CalculateHydropowerOutput(FAL,FAL_poolElevation,powerFlow)
+    #FALL CREEK ID=4 count=3 NO HYDROPOWER
+    FAL = RES[3]
+    FAL_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,FAL.ID],FAL)
+    FAL_outflow = inner.GetResOutflow(FAL,volumes_all[t,FAL.ID],FAL5A.iloc[t,1],outflows_all[t,FAL.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [FAL_volume,FAL_elevation] = inner.UpdateVolume_elev (FAL, FAL5A.iloc[t,1], FAL_outflow,volumes_all[t,FAL.ID])
     
-    #COUGAR ID=8
-    CGR_poolElevation = inner.GetPoolElevationFromVolume(CGR,CGR.volume)
-    CGR_outflow = inner.GetResOutflow(CGR,CGR.InitVol,CGR5A.iloc[t,1],doy,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(CGR,CGR_outflow)
+    outflows_all[t+1,FAL.ID] = FAL_outflow 
+    volumes_all[t+1,FAL.ID] =  FAL_volume
+    elevations_all[t+1,FAL.ID]=  FAL_elevation
+
+    
+    #COUGAR ID=8 count=7
+    CGR = RES[7]
+    CGR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,CGR.ID],CGR)
+    CGR_outflow = inner.GetResOutflow(CGR,volumes_all[t,CGR.ID],CGR5A.iloc[t,1],outflows_all[t,CGR.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(CGR,CGR_outflow)
     CGR_power_output = inner.CalculateHydropowerOutput(CGR,CGR_poolElevation,powerFlow)
+    [CGR_volume,CGR_elevation] = inner.UpdateVolume_elev (CGR, CGR5A.iloc[t,1], CGR_outflow,volumes_all[t,CGR.ID])
     
-    outflows_all[t,CGR.ID] = CGR_outflow
-    hydropower_all[t,4] = CGR_power_output
+    outflows_all[t+1,CGR.ID] = CGR_outflow 
+    volumes_all[t+1,CGR.ID] =  CGR_volume
+    elevations_all[t+1,CGR.ID]=  CGR_elevation
+    hydropower_all[t,4] = CGR_power_output  
+
     
-    #BLUE RIVER ID=9
-    BLU_poolElevation = inner.GetPoolElevationFromVolume(BLU,BLU.volume)
-    BLU_outflow = inner.GetResOutflow(BLU,BLU.InitVol,BLU5A.iloc[t,1],doy,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(BLU,BLU_outflow)
-    BLU_power_output = inner.CalculateHydropowerOutput(BLU,BLU_poolElevation,powerFlow)
+    #BLUE RIVER ID=9 count= 8 NO HYDROPOWER
+    BLU = RES[8]
+    BLU_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,BLU.ID],BLU)
+    BLU_outflow = inner.GetResOutflow(BLU,volumes_all[t,BLU.ID],BLU5A.iloc[t,1],outflows_all[t,BLU.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [BLU_volume,BLU_elevation] = inner.UpdateVolume_elev (BLU, BLU5A.iloc[t,1], BLU_outflow,volumes_all[t,BLU.ID])
     
+    outflows_all[t+1,BLU.ID] = BLU_outflow 
+    volumes_all[t+1,BLU.ID] =  BLU_volume
+    elevations_all[t+1,BLU.ID]=  BLU_elevation    
     
     #the above reservoirs are at time "t-2"
     
-    #GREEN PETER ID=10
-    GPR_poolElevation = inner.GetPoolElevationFromVolume(GPR,GPR.volume)
-    GPR_outflow = inner.GetResOutflow(GPR,GPR.InitVol,GPR5A.iloc[t+2,1],doy+2,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(GPR,GPR_outflow)
+    #GREEN PETER ID=10 count=9
+    GPR = RES[9]
+    GPR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+2,GPR.ID],GPR)
+    GPR_outflow = inner.GetResOutflow(GPR,volumes_all[t+2,GPR.ID],GPR5A.iloc[t+2,1],outflows_all[t+2,GPR.ID],doy,waterYear,CP,cp_discharge_all[t+2,:])
+    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(GPR,GPR_outflow)
     GPR_power_output = inner.CalculateHydropowerOutput(GPR,GPR_poolElevation,powerFlow)
+    [GPR_volume,GPR_elevation] = inner.UpdateVolume_elev (GPR, GPR5A.iloc[t+2,1], GPR_outflow,volumes_all[t+2,GPR.ID])
     
-    outflows_all[t+2,GPR.ID] = GPR_outflow
-    hydropower_all[t+2,5] = GPR_power_output
+    outflows_all[t+2,GPR.ID] = GPR_outflow 
+    volumes_all[t+2,GPR.ID] =  GPR_volume
+    elevations_all[t+2,GPR.ID]=  GPR_elevation
+    hydropower_all[t+2,5] = GPR_power_output      
     
-    #FOSTER ID=11
-    FOS_poolElevation = inner.GetPoolElevationFromVolume(FOS,FOS.volume)
-    FOS_in = GPR_outflow + FOS_loc[t+2]
-    FOS_outflow = inner.GetResOutflow(FOS,FOS.InitVol,FOS_in,doy+2,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(FOS,FOS_outflow)
+    
+    #FOSTER ID=11 count=10
+    FOS = RES[10]
+    FOS_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+2,FOS.ID],FOS)
+    FOS_outflow = inner.GetResOutflow(FOS,volumes_all[t+2,FOS.ID],FOS5A.iloc[t+2,1],outflows_all[t+2,FOS.ID],doy,waterYear,CP,cp_discharge_all[t+2,:])
+    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(FOS,FOS_outflow)
     FOS_power_output = inner.CalculateHydropowerOutput(FOS,FOS_poolElevation,powerFlow)
+    [FOS_volume,FOS_elevation] = inner.UpdateVolume_elev (FOS, FOS5A.iloc[t+2,1], FOS_outflow,volumes_all[t+2,FOS.ID])
     
-    outflows_all[t+2,FOS.ID] = FOS_outflow
-    hydropower_all[t+2,6] = FOS_power_output
+    outflows_all[t+2,FOS.ID] = FOS_outflow 
+    volumes_all[t+2,FOS.ID] =  FOS_volume
+    elevations_all[t+2,FOS.ID]=  FOS_elevation
+    hydropower_all[t+2,6] = FOS_power_output   
     
     
-    #DETROIT ID=12
-    DET_poolElevation = inner.GetPoolElevationFromVolume(DET,DET.volume)
-    DET_outflow = inner.GetResOutflow(DET,DET.InitVol,DET5A.iloc[t+2,1],doy+2,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(DET,DET_outflow)
+    #DETROIT ID=12 count=11
+    DET = RES[11]
+    DET_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+2,DET.ID],DET)
+    DET_outflow = inner.GetResOutflow(DET,volumes_all[t+2,DET.ID],DET5A.iloc[t+2,1],outflows_all[t+2,DET.ID],doy,waterYear,CP,cp_discharge_all[t+2,:])
+    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(DET,DET_outflow)
     DET_power_output = inner.CalculateHydropowerOutput(DET,DET_poolElevation,powerFlow)
+    [DET_volume,DET_elevation] = inner.UpdateVolume_elev (DET, DET5A.iloc[t+2,1], DET_outflow,volumes_all[t+2,DET.ID])
     
-    outflows_all[t+2,DET.ID] = DET_outflow
-    hydropower_all[t+2,7] = DET_power_output
-    
-    #BIG CLIFF ID=13
-    BCL_poolElevation = inner.GetPoolElevationFromVolume(BCL,BCL.volume)
-    BCL_outflow = inner.GetResOutflow(BCL,BCL.InitVol,DET_outflow,doy+2,waterYear)
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(BCL,BCL_outflow)
+    outflows_all[t+2,DET.ID] = DET_outflow 
+    volumes_all[t+2,DET.ID] =  DET_volume
+    elevations_all[t+2,DET.ID]=  DET_elevation
+    hydropower_all[t+2,7] = DET_power_output   
+        
+    #BIG CLIFF ID=13 count=12
+    BCL = RES[12]
+    BCL_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+2,BCL.ID],BCL)
+    BCL_outflow = inner.GetResOutflow(BCL,volumes_all[t+2,BCL.ID],BCL5A.iloc[t+2,1],outflows_all[t+2,BCL.ID],doy,waterYear,CP,cp_discharge_all[t+2,:])
+    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(BCL,BCL_outflow)
     BCL_power_output = inner.CalculateHydropowerOutput(BCL,BCL_poolElevation,powerFlow)
+    [BCL_volume,BCL_elevation] = inner.UpdateVolume_elev (BCL, BCL5A.iloc[t+2,1], BCL_outflow,volumes_all[t+2,BCL.ID])
     
-    outflows_all[t+2,BCL.ID] = BCL_outflow
-    hydropower_all[t+2,8] = BCL_power_output
+    outflows_all[t+2,BCL.ID] = BCL_outflow 
+    volumes_all[t+2,BCL.ID] =  BCL_volume
+    elevations_all[t+2,BCL.ID]=  BCL_elevation
+    hydropower_all[t+2,8] = BCL_power_output      
+
+
+    #UPDATE CONTROL POINTS DISCHARGE
     
-    #the above reservoirs are at time "t"
     
     
     
