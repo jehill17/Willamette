@@ -407,7 +407,7 @@ dynamic="0"
         location ="23772903" />
 
       <controlPoint id="7"     name="Max_Jasper_Bankfull"              path="Reservoirs\ControlPoints\{ScenarioName}\"
-        control_point="cp_Max_Jasper_Bankfull_23751778.csv"             reservoirs="2,4"
+        control_point="cp_Max_Jasper_Bankfull_23751778.csv"             reservoirs="2,4" 
         location ="23751778" />
 
       <controlPoint id="8"     name="Max_Bankfull_Flow_at_Goshen"      path="Reservoirs\ControlPoints\{ScenarioName}\"
