@@ -120,7 +120,7 @@ CP = [ControlPoint(id) for id in range(1, len(cp_list)+1)]
 for cp in CP:
     id = cp.ID
     cp.name = cp_list[id-1]
-    cp.influencedReservoirs =str(controlPoints[id-1]["@reservoirs"])
+    cp.influencedReservoirs =np.asarray((controlPoints[id-1]["@reservoirs"]).split(','))
     cp.COMID=str(controlPoints[id-1]["@location"])
     #cp.init_discharge=float(controlPoints[id-1]["@initDischarge"]) TO BE ADDED in the xml file
 
