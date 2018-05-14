@@ -135,7 +135,6 @@ for cp in CP:
 cfs_to_cms = 0.0283168
 
 #cp_hist: start this at 12/31/2004
-<<<<<<< HEAD
 SAL_2005 = pd.read_excel('Data/Control point historical discharge 2005.xlsx',sheetname='Salem')
 SAL_2005_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
 
