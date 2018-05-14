@@ -192,17 +192,17 @@ n_cp = 11
 
 #=======
 # allocate output 
-outflows_all = np.nan(T+1,n_res) #we can fill these in later, or make them empty and 'append' the values
-hydropower_all = np.nan((T+1,n_HPres))
-volumes_all = np.nan((T+1,n_res))
-elevations_all = np.nan((T+1,n_res))
-cp_discharge_all = np.nan((T+1,n_cp))
+outflows_all = np.full((T+1,n_res),np.nan) #we can fill these in later, or make them empty and 'append' the values
+hydropower_all = np.full((T+1,n_HPres), np.nan)
+volumes_all = np.full((T+1,n_res),np.nan)
+elevations_all = np.full((T+1,n_res),np.nan)
+cp_discharge_all = np.full((T+1,n_cp),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
     #outflows_all[0,i] = RES[i].init_outflow
     volumes_all[0,i] = RES[i].InitVol 
-    elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i])
+    elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i],RES[i])
 
 for  i in range(0,n_cp):
     cp_discharge_all[0,i] = CP[i].init_discharge
@@ -220,13 +220,13 @@ for t in range(0,T+1):
     #conditional based on doy 
     #calculate at doy = 140
     
-    #COTTAGE GROVE ID =6 
-    COT_poolElevation = inner.GetPoolElevationfromVolume(RES[6],volumes_all[t,RES[6].ID]) 
-    COT_outflow = inner.GetResOutflow(RES[6],volumes_all[t,RES[6].ID],COT5A.iloc[t,1],outflows_all[t,RES[6].ID],doy,waterYear,cp_list,cp_discharge_all[t,:])
-    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(RES[6],COT_outflow)
-    COT_power_output = inner.CalculateHydropowerOutput(RES[6],COT_poolElevation,powerFlow) #do I need to give a unique name to poweroutflow?
+    #COTTAGE GROVE ID=6 count=5
+    COT_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,RES[5].ID],RES[5])
+    COT_outflow = inner.GetResOutflow(RES[5],volumes_all[t,RES[5].ID],COT5A.iloc[t,1],outflows_all[t,RES[5].ID],doy,waterYear,cp_list,cp_discharge_all[t,:])
+    [powerFlow,RO_flow,spillwayFlow] = inner.AssignReservoirOutletFlows(RES[5],COT_outflow)
+    COT_power_output = inner.CalculateHydropowerOutput(RES[5],COT_poolElevation,powerFlow) #do I need to give a unique name to poweroutflow?
     
-    outflows_all[t+1,RES[6].ID] = COT_outflow
+    outflows_all[t+1,RES[5].ID] = COT_outflow
 #    hydropower_all[t,0] = COT_power_output
     
     
