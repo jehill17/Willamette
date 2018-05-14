@@ -118,11 +118,8 @@ CP = [ControlPoint(id) for id in range(1, len(cp_list)+1)]
 for cp in CP:
     id = cp.ID
     cp.name = cp_list[id-1]
-<<<<<<< HEAD
     cp.influencedReservoirs =np.asarray((controlPoints[id-1]["@reservoirs"]).split(','))
-=======
     cp.influencedReservoirs = pd.read_csv(os.path.join('ControlPoints/',str(controlPoints[id-1]["@reservoirs"])))
->>>>>>> ca4bf5cf7db7264598735f363a1f341643274040
     cp.COMID=str(controlPoints[id-1]["@location"])
 
 
@@ -135,7 +132,7 @@ for cp in CP:
 cfs_to_cms = 0.0283168
 
 #cp_hist: start this at 12/31/2004
-SAL_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Salem')
+SAL_2005 = pd.read_excel(os.path.join('Data/'Control point historical discharge 2005.xlsx',sheetname='Salem')
 SAL_2005_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
 ALB_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Albany')
 ALB_2005_dis = np.array(ALB_2005['Discharge'])*cfs_to_cms
