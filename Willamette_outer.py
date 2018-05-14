@@ -54,12 +54,14 @@ class Reservoir:
         self.RulePriorityTable=pd.DataFrame
         self.Buffer=pd.DataFrame
         self.Spillway=pd.DataFrame
+        self.ruleDir =str()
+        self.cpDir =str()
         self.InitVol=[]
         self.init_outflow =[]
         self.minOutflow=[]
         self.maxVolume=[]
         self.Td_elev=[]
-        self.Inactive_elev=[]
+        self.inactive_elev=[]
         self.Fc1_elev=[]
         self.Fc2_elev=[]
         self.Fc3_elev=[]
@@ -100,11 +102,13 @@ for res in RES:
     res.InitVol=float(reservoirs[id-1]["@initVolume"])
     #res.InitVol=float(reservoirs[id-1]["@initOutflow"]) TO BE ADDED in the xml file
     res.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-    res.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
+    res.inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
     res.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
     res.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
     res.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
     if res.Restype == "Storage":
+        res.ruleDir=str(reservoirs[id-1]["@rp_dir"])
+        res.cpDir=str(reservoirs[id-1]["@cp_dir"])
         res.RuleCurve=pd.read_csv(os.path.join('Rule_Curves/', str(reservoirs[id-1]['@rule_curve'])))
         res.RulePriorityTable=pd.read_csv(os.path.join('Rule_Priorities/', str(reservoirs[id-1]['@rule_priorities'])))
         res.Buffer=pd.read_csv(os.path.join('Rule_Curves/', str(reservoirs[id-1]['@buffer_zone'])))
@@ -121,10 +125,6 @@ for cp in CP:
     id = cp.ID
     cp.name = cp_list[id-1]
     cp.influencedReservoirs =np.asarray((controlPoints[id-1]["@reservoirs"]).split(','))
-<<<<<<< HEAD
-    cp.influencedReservoirs = pd.read_csv(os.path.join('ControlPoints/',str(controlPoints[id-1]["@reservoirs"])))
-=======
->>>>>>> 37cc07be000107ab68229cf439f102162c71c043
     cp.COMID=str(controlPoints[id-1]["@location"])
     #cp.init_discharge=float(controlPoints[id-1]["@initDischarge"]) TO BE ADDED in the xml file
 
@@ -135,45 +135,6 @@ for cp in CP:
 cfs_to_cms = 0.0283168
 
 #cp_hist: start this at 12/31/2004
-<<<<<<< HEAD
-SAL_2005 = pd.read_excel(os.path.join('Data/'Control point historical discharge 2005.xlsx',sheetname='Salem')
-SAL_2005_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
-ALB_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Albany')
-ALB_2005_dis = np.array(ALB_2005['Discharge'])*cfs_to_cms
-JEF_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Jefferson')
-JEF_2005_dis = np.array(JEF_2005['Discharge'])*cfs_to_cms
-MEH_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Mehama')
-MEH_2005_dis = np.array(MEH_2005['Discharge'])*cfs_to_cms
-HAR_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Harrisburg')
-HAR_2005_dis = np.array(HAR_2005['Discharge'])*cfs_to_cms
-
-VID_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Vida')
-VID_2005_dis = np.array(VID_2005['Discharge'])*cfs_to_cms
-
-JAS_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Jasper')
-JAS_2005_dis = np.array(JAS_2005['Discharge'])*cfs_to_cms
-
-GOS_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Goshen')
-GOS_2005_dis = np.array(GOS_2005['Discharge'])*cfs_to_cms
-
-WAT_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Waterloo')
-WAT_2005_dis = np.array(WAT_2005['Discharge'])*cfs_to_cms
-
-MON_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Monroe')
-MON_2005_dis = np.array(MON_2005['Discharge'])*cfs_to_cms
-
-FOS_2005 = pd.read_excel('Control point historical discharge 2005.xlsx',sheetname='Foster')
-FOS_2005_dis = np.array(FOS_2005['Discharge'])*cfs_to_cms
-
-
- 
-
-cp_local = pd.read_excel('Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) #when does this data come into play?
-#add in fnt that updates control pt discharge after every timestep
-
-=======
->>>>>>> 37cc07be000107ab68229cf439f102162c71c043
-
 #reservoirs:
 #read in historical reservoir inflows -- this will contain the array of 'dates' to use
 BLU5A = pd.read_excel('Data/BLU5A_daily.xls',skiprows=27943,skip_footer =1004) #only using data from 2005
@@ -192,7 +153,6 @@ LOP5E = pd.read_excel('Data/LOP5E_daily.xls',skiprows=27943,skip_footer =1004)
 COT5A = pd.read_excel('Data/COT5A_daily.xls',skiprows=27943,skip_footer =1004)
 FOS_loc = pd.read_excel('Data/FOS_loc.xls',usecols = [0,3],skiprows=27943,skip_footer =1004)
 LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=27943,skip_footer =1004)
-
 
 
 #control points

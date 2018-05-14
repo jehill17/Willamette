@@ -23,6 +23,7 @@ import xmltodict as xmld
 from collections import OrderedDict
 import dict_digger as dd
 import datetime as dt
+import os
 
 
 
@@ -138,7 +139,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp
       #Loop through constraints and modify actual release.  Apply the flood control rules in order here.
       for i in range (0, len(constraint_array)-1):
           #open the csv file and get first column label and appropriate data to use for lookup
-          constraintRules = pd.read_csv(constraint_array[i])
+          constraintRules = pd.read_csv(os.path.join(name.ruleDir, constraint_array[i])) 
           xlabel = list(constraintRules)[0]   
           xvalue = []
           yvalue = []
