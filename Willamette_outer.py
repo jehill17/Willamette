@@ -121,10 +121,6 @@ for cp in CP:
     id = cp.ID
     cp.name = cp_list[id-1]
     cp.influencedReservoirs =np.asarray((controlPoints[id-1]["@reservoirs"]).split(','))
-<<<<<<< HEAD
-    cp.influencedReservoirs = pd.read_csv(os.path.join('ControlPoints/',str(controlPoints[id-1]["@reservoirs"])))
-=======
->>>>>>> 37cc07be000107ab68229cf439f102162c71c043
     cp.COMID=str(controlPoints[id-1]["@location"])
     #cp.init_discharge=float(controlPoints[id-1]["@initDischarge"]) TO BE ADDED in the xml file
 
