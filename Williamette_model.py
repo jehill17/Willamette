@@ -78,10 +78,10 @@ def UpdateMaxGateOutflows(name,poolElevation):
     if name.Restype == 'Storage':
         if name.RO is not None:
             name.maxRO_Flow = np.interp(poolElevation,name.RO['pool_elev_m'],name.RO['release_cap_cms'])
-#         return maxRO_flow
+#         return maxRO_Flow
         name.maxSpillwayFlow = np.interp(poolElevation,name.Spillway['pool_elev_m'],name.Spillway['release_cap_cms'])
         
-    return (name.maxPowerFlow, name.maxRO_flow, name.maxSpillway_flow)
+    return (name.maxPowerFlow, name.maxRO_Flow, name.maxSpillwayFlow)
 
 
 def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp_discharge):
@@ -299,13 +299,13 @@ def AssignReservoirOutletFlows(name,outflow):
     else:
         powerFlow = name.maxPowerFlow
         excessFlow = outflow - name.maxPowerFlow
-        if excessFlow <= name.maxRO_flow:
+        if excessFlow <= name.maxRO_Flow:
             RO_flow = excessFlow
             if RO_flow < name.minRO_flow: #why is this condition less than where as the previous are <=
                 RO_flow = name.minRO_flow
                 powerFlow = outflow - name.minRO_flow
         else:
-            RO_flow = name.maxRO_flow
+            RO_flow = name.maxRO_Flow
             excessFlow = RO_flow
 
             spillwayFlow = excessFlow
