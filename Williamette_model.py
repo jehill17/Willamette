@@ -55,16 +55,16 @@ class Reservoir:
         self.Fc1_elev=[]
         self.Fc2_elev=[]
         self.Fc3_elev=[]
+        self.GateMaxPowerFlow=[]
         self.maxPowerFlow=[]
+        self.maxRO_Flow =[]
+        self.maxSpillwayFlow=[]
+        self.minPowerFlow=0
+        self.minRO_Flow =0
+        self.minSpillwayFlow=0
         self.Tailwater_elev=[]
         self.Turbine_eff=[]
-        self.inflow=[]
-        self.outflow=[]
-        self.powerflow=[]
-        self.RO_flow =[]
-        self.spillwayflow =[]
-        self.zone=[]
-
+   
 
 #Create ControlPoint class
 class ControlPoint:
@@ -99,7 +99,7 @@ HCR.Td_elev=float(reservoirs[id-1]["@td_elev"])
 HCR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 HCR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 #HCR.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-HCR.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+HCR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 HCR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 HCR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -123,7 +123,7 @@ LOP.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 LOP.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 LOP.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
 LOP.Fc3_elev=float(reservoirs[id-1]["@fc3_elev"])
-LOP.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+LOP.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 LOP.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 LOP.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -139,7 +139,7 @@ DEX.Spillway=pd.read_csv('Dexter_Spillway_capacity.csv')
 DEX.InitVol=float(reservoirs[id-1]["@initVolume"])
 DEX.minOutflow=float(reservoirs[id-1]["@minOutflow"])
 DEX.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-DEX.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+DEX.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 DEX.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 DEX.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -162,7 +162,7 @@ FAL.Td_elev=float(reservoirs[id-1]["@td_elev"])
 FAL.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 FAL.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 FAL.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-FAL.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+FAL.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #DORENA
@@ -183,7 +183,7 @@ DOR.Td_elev=float(reservoirs[id-1]["@td_elev"])
 DOR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 DOR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 DOR.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-DOR.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+DOR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #COTTAGE GROVE
@@ -204,7 +204,7 @@ COT.Td_elev=float(reservoirs[id-1]["@td_elev"])
 COT.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 COT.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
 COT.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-COT.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+COT.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #FERN RIDGE
@@ -224,7 +224,7 @@ FRN.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 FRN.Td_elev=float(reservoirs[id-1]["@td_elev"])
 FRN.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 FRN.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-FRN.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+FRN.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #COUGAR
@@ -244,7 +244,7 @@ CGR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 CGR.Td_elev=float(reservoirs[id-1]["@td_elev"])
 CGR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 CGR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-CGR.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+CGR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 CGR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 CGR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -265,7 +265,7 @@ BLU.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 BLU.Td_elev=float(reservoirs[id-1]["@td_elev"])
 BLU.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 BLU.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-BLU.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+BLU.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 
 
 #GREEN PETER
@@ -285,7 +285,7 @@ GPR.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 GPR.Td_elev=float(reservoirs[id-1]["@td_elev"])
 GPR.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 GPR.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-GPR.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+GPR.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 GPR.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 GPR.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -307,7 +307,7 @@ FOS.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 FOS.Td_elev=float(reservoirs[id-1]["@td_elev"])
 FOS.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 FOS.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-FOS.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+FOS.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 FOS.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 FOS.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -328,7 +328,7 @@ DET.maxVolume=float(reservoirs[id-1]["@maxVolume"])
 DET.Td_elev=float(reservoirs[id-1]["@td_elev"])
 DET.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
 DET.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-DET.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+DET.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 DET.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 DET.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -344,7 +344,7 @@ BCL.Spillway=pd.read_csv('BC_Spillway_capacity.csv')
 BCL.InitVol=float(reservoirs[id-1]["@initVolume"])
 BCL.minOutflow=float(reservoirs[id-1]["@minOutflow"])
 BCL.Inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-BCL.maxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
+BCL.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
 BCL.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
 BCL.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
 
@@ -457,20 +457,20 @@ def GetTargetElevationFromRuleCurve(doy,name): #target_table is same as rule_cur
 
         return target #target pool elevation in m
 
-
-def UpdateMaxGateOutflows(name,poolElevation): #not sure if these are the right inputs
+def UpdateMaxGateOutflows(name,poolElevation): 
+    name.maxPowerFlow=name.GateMaxPowerFlow    #does not depend on elevation but can change due to constraints
     if name.Restype == 'Storage':
         if name.RO is not None:
-            name.maxRO_flow = np.interp(poolElevation,name.RO['pool_elev_m'],name.RO['release_cap_cms'])
+            name.maxRO_Flow = np.interp(poolElevation,name.RO['pool_elev_m'],name.RO['release_cap_cms'])
 #         return maxRO_flow
-        name.maxSpillway_flow = np.interp(poolElevation,name.Spillway['pool_elev_m'],name.Spillway['release_cap_cms'])
+        name.maxSpillwayFlow = np.interp(poolElevation,name.Spillway['pool_elev_m'],name.Spillway['release_cap_cms'])
         return (name.maxRO_flow,name.maxSpillway_flow)
 
-def GetResOutflow(name, res_volume, res_inflow, res_outflow, doy, waterYear, cp_list, cp_discharge, t):
-    currentPoolElevation = GetPoolElevationFromVolume(res_volume[t,name.ID-1],name)
+def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp_discharge):
+    currentPoolElevation = GetPoolElevationFromVolume(volume,name)
     UpdateMaxGateOutflows( name, currentPoolElevation )
     if name.Restype=='RunOfRiver':
-      outflow = res_inflow[t+1,name.ID-1]
+      outflow = inflow
     else:
       targetPoolElevation = GetTargetElevationFromRuleCurve( doy, name );
       targetPoolVolume    = GetPoolVolumeFromElevation(targetPoolElevation, name);
@@ -527,13 +527,13 @@ def GetResOutflow(name, res_volume, res_inflow, res_outflow, doy, waterYear, cp_
           if xlabel=="Date":                           # Date based rule?  xvalue = current date.
              xvalue = doy
           elif xlabel=="release_cms":                  # Release based rule?  xvalue = release last timestep
-               xvalue = res_outflow[t,name.ID-1]       
+               xvalue = lag_outflow       
           elif xlabel=="pool_elev_m" :                 # Pool elevation based rule?  xvalue = pool elevation (meters)
                xvalue = currentPoolElevation
           elif xlabel=="inflow_cms":                    # Inflow based rule?   xvalue = inflow to reservoir
-               xvalue = res_inflow[t+1,name.ID-1]             
+               xvalue = inflow            
           elif xlabel=="Outflow_lagged_24h":            #24h lagged outflow based rule?   xvalue = outflow from reservoir at last timestep
-               xvalue = res_outflow[t,name.ID-1]               #placeholder (assumes that timestep=24 hours)
+               xvalue = lag_outflow               #placeholder (assumes that timestep=24 hours)
           elif xlabel=="Date_pool_elev_m":             # Lookup based on two values...date and pool elevation.  x value is date.  y value is pool elevation
                xvalue = doy
                yvalue = currentPoolElevation
@@ -542,7 +542,7 @@ def GetResOutflow(name, res_volume, res_inflow, res_outflow, doy, waterYear, cp_
                yvalue = waterYear
           elif xlabel == "Date_release_cms": 
                xvalue = doy
-               yvalue = res_outflow[t,name.ID-1] 
+               yvalue = lag_outflow 
           else:                                            #Unrecognized xvalue for constraint lookup table
              print "Unrecognized x value for reservoir constraint lookup label = ", xlabel 
    
@@ -583,8 +583,8 @@ def GetResOutflow(name, res_volume, res_inflow, res_outflow, doy, waterYear, cp_
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                  constraintValue = constraintValue*24   #Covert hourly to daily
-             if actualRelease >= res_outflow[t,name.ID-1]  + constraintValue:  #Is planned release more than current release + contstraint? 
-                actualRelease = res_outflow[t,name.ID-1]  + constraintValue  #If so, planned release can be no more than current release + constraint.
+             if actualRelease >= lag_outflow  + constraintValue:  #Is planned release more than current release + contstraint? 
+                actualRelease = lag_outflow  + constraintValue  #If so, planned release can be no more than current release + constraint.
                  
 
           elif constraint_array[i].startswith('MaxD_'):    #case RCT_DECREASINGRATE:  //Decreasing Rate
@@ -598,8 +598,8 @@ def GetResOutflow(name, res_volume, res_inflow, res_outflow, doy, waterYear, cp_
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                  constraintValue = constraintValue*24   #Covert hourly to daily
-             if actualRelease >= res_outflow[t,name.ID-1]  - constraintValue:  #Is planned release less than current release - contstraint? 
-                actualRelease = res_outflow[t,name.ID-1]  - constraintValue  #If so, planned release can be no less than current release - constraint.
+             if actualRelease >= lag_outflow  - constraintValue:  #Is planned release less than current release - contstraint? 
+                actualRelease = lag_outflow  - constraintValue  #If so, planned release can be no less than current release - constraint.
 
 
           elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point  
@@ -620,13 +620,13 @@ def GetResOutflow(name, res_volume, res_inflow, res_outflow, doy, waterYear, cp_
                      #Compare to current discharge and allocate flow increases or decreases
                      #Currently allocated evenly......need to update based on storage balance curves in ResSIM 
                   if constraint_array[i].startswith('cp_Max'):  #maximum    
-                     if cp_discharge[t,cp_id] > constraintValue:   #Are we above the maximum flow?   
-                        resallocation = constraintValue - cp_discharge[t,cp_id]/len(cp_name.influencedReservoirs) #Allocate decrease in releases (should be negative) over "controlled" reservoirs if maximum, evenly for now
+                     if cp_discharge[cp_id] > constraintValue:   #Are we above the maximum flow?   
+                        resallocation = constraintValue - cp_discharge[cp_id]/len(cp_name.influencedReservoirs) #Allocate decrease in releases (should be negative) over "controlled" reservoirs if maximum, evenly for now
                      else:  
                         resallocation = 0
                   elif constraint_array[i].startswith('cp_Min'):  #minimum
-                      if cp_discharge[t,cp_id] < constraintValue:   #Are we below the minimum flow?  
-                        resallocation = constraintValue - cp_discharge[t,cp_id]/len(cp_name.influencedReservoirs) 
+                      if cp_discharge[cp_id] < constraintValue:   #Are we below the minimum flow?  
+                        resallocation = constraintValue - cp_discharge[cp_id]/len(cp_name.influencedReservoirs) 
                       else:  
                         resallocation = 0
               actualRelease += resallocation #add/subract cp allocation
@@ -634,26 +634,26 @@ def GetResOutflow(name, res_volume, res_inflow, res_outflow, doy, waterYear, cp_
           #GATE SPECIFIC RULES:   
           elif constraint_array[i].startswith('Pow_Max'): # case RCT_POWERPLANT:  //maximum Power plant rule  Assign m_maxPowerFlow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
-               maxPowerFlow = constraintValue  #Just for this timestep.  name.MaxPowerFlow is the physical limitation for the reservoir.
+               name.maxPowerFlow = constraintValue  #Just for this timestep.  name.MaxPowerFlow is the physical limitation for the reservoir.
           elif constraint_array[i].startswith('Pow_Min'): # case RCT_POWERPLANT:  //minimum Power plant rule  Assign m_minPowerFlow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
-               minPowerFlow = constraintValue 
+               name.minPowerFlow = constraintValue 
            
             
           elif constraint_array[i].startswith('RO_Max'): #case RCT_REGULATINGOUTLET:  Max Regulating outlet rule, Assign m_maxRO_Flow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
-               maxRO_Flow  = constraintValue  
+               name.maxRO_Flow  = constraintValue  
           elif constraint_array[i].startswith('RO_Min'): #Min Regulating outlet rule, Assign m_maxRO_Flow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
-               minRO_Flow  = constraintValue 
+               name.minRO_Flow  = constraintValue 
 
 
           elif constraint_array[i].startswith('Spill_Max'): #  case RCT_SPILLWAY:   //Max Spillway rule
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
-               maxSpillwayFlow  = constraintValue  
+               name.maxSpillwayFlow  = constraintValue  
           elif constraint_array[i].startswith('Spill_Min'): #Min Spillway rule
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
-               minSpillwayFlow  = constraintValue 
+               name.minSpillwayFlow  = constraintValue 
                 
                
           if actualRelease < 0:
@@ -661,11 +661,11 @@ def GetResOutflow(name, res_volume, res_inflow, res_outflow, doy, waterYear, cp_
           if actualRelease < name.minOutflow:         # No release values less than the minimum
              actualRelease = name.minOutflow
           if currentPoolElevation < name.inactive_elev:     #In the inactive zone, water is not accessible for release from any of the gates.
-             actualRelease = 0 #res_outflow[t,name.ID-1] *0.5
+             actualRelease = 0 #lag_outflow *0.5
 
           outflow = actualRelease;
 
-    return (outflow, maxPowerFlow, minPowerFlow, maxRO_Flow, minRO_Flow, maxSpillwayFlow, minSpillwayFlow)
+    return (outflow, name.maxPowerFlow, name.minPowerFlow, name.maxRO_Flow, name.minRO_Flow, name.maxSpillwayFlow, name.minSpillwayFlow)
 
 
 def AssignReservoirOutletFlows(name,outflow):
@@ -695,21 +695,23 @@ def AssignReservoirOutletFlows(name,outflow):
             if spillwayFlow < name.minSpillwayFlow:
                 spillwayFlow = name.minSpillwayFlow
                 RO_flow =- name.minSpillwayFlow - excessFlow
-            if spillwayFlow > name.maxSpillwayflow:
-                print('Flow: Maximum spillway volume exceed')
-
-    #reset max outflows to gate maximums for next timestep
-    maxPowerFlow = gateMaxPowerFlow #where are these gate values?
-    maxROFlow = gateMaxRO_flow
-    maxSpillwayFlow = gateMaxSpillwayFlow
-
+            if spillwayFlow > name.maxSpillwayFlow:
+                print('Maximum spillway volume exceed')
+   
+    #Reset min outflows to gate maximums for next timestep
+    name.minPowerFlow=0
+    name.minRO_Flow =0
+    name.minSpillwayFlow=0 
+            
     massbalancecheck = outflow - (powerFlow + RO_flow + spillwayFlow)
     #does this equal 0?
+    if massbalancecheck != 0:
+        print ("Mass balance didn't close, massbalancecheck = ", massbalancecheck )
 
     return(powerFlow,RO_flow,spillwayFlow, massbalancecheck)
 
 def CalculateHydropowerOutput(name,elevation,powerFlow):
-    head = elevation - name.Tailwater_elev #should this input be poolElevation? or target?
+    head = elevation - name.Tailwater_elev 
     powerOut = (1000*powerFlow*9.81*head*0.9)/1000000  #assume a 0.9 turbine efficiency
 
     return powerOut
