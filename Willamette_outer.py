@@ -153,7 +153,26 @@ COT5A = np.array(pd.read_excel('Data/COT5A_daily.xls',skiprows=27942,skip_footer
 FOS_loc = np.array(pd.read_excel('Data/FOS_loc.xls',usecols = [0,3],skiprows=27942,skip_footer =1004)*cfs_to_cms)
 LOP_loc = np.array(pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=27942,skip_footer =1004)*cfs_to_cms)
 
-outflows_all_2005 = np.stack((BLU5A,CGR5A[:,1],DET5A[:,1],DEX5M[:,1],DOR5A[:,1],FAL5A[:,1],FOS5A[:,1],FRN5M[:,1],GPR5A[:,1],HCR5A[:,1],LOP_loc[:,1],COT5A[:,1],FOS_loc[:,1]),axis=1)
+
+#historical inflows 
+BLU5H = np.array(pd.read_excel('Data/BLU5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms) #only using data from 2005
+BCL5H = np.array(pd.read_excel('Data/BCL5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms) #only using data from 2005
+CGR5H = np.array(pd.read_excel('Data/CGR5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+DET5H = np.array(pd.read_excel('Data/DET5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+DEX5H = np.array(pd.read_excel('Data/DEX5M_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+DOR5H = np.array(pd.read_excel('Data/DOR5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+FAL5H = np.array(pd.read_excel('Data/FAL5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+FRN5H = np.array(pd.read_excel('Data/FRN5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+GPR5H = np.array(pd.read_excel('Data/GPR5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+HCR5H = np.array(pd.read_excel('Data/HCR5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+COT5H = np.array(pd.read_excel('Data/COT5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
+
+outflows_all_2005 = np.stack((BLU5H[:,1],BCL5H[:,1],CGR5H[:,1],DET5H[:,1],DEX5H[:,1],DOR5H[:,1],FAL5H[:,1],FOS5H[:,1],FRN5H[:,1],GPR5H[:,1],HCR5H[:,1],LOP5H[:,1],COT5H[:,1],FOS5H[:,1]),axis=1)
 
 
 #control points
