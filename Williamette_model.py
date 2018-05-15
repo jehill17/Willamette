@@ -167,9 +167,9 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp
              xvalue = doy
           elif xlabel=="Release_cms":                  # Release based rule?  xvalue = release last timestep
                xvalue = lag_outflow       
-          elif xlabel=="pool_elev_m" :                 # Pool elevation based rule?  xvalue = pool elevation (meters)
+          elif xlabel=="Pool_elev_m" :                 # Pool elevation based rule?  xvalue = pool elevation (meters)
                xvalue = currentPoolElevation
-          elif xlabel=="inflow_cms":                    # Inflow based rule?   xvalue = inflow to reservoir
+          elif xlabel=="Inflow_cms":                    # Inflow based rule?   xvalue = inflow to reservoir
                xvalue = inflow            
           elif xlabel=="Outflow_lagged_24h":            #24h lagged outflow based rule?   xvalue = outflow from reservoir at last timestep
                xvalue = lag_outflow               #placeholder (assumes that timestep=24 hours)
