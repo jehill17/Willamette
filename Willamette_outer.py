@@ -131,7 +131,7 @@ for cp in CP:
 #convert data
 cfs_to_cms = 0.0283168
  
-cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) #when does this data come into play?
+cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) 
 
 #reservoirs:
 #read in historical reservoir inflows -- this will contain the array of 'dates' to use
@@ -155,7 +155,7 @@ LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=27943,skip_f
 
 
 #control points
-#cp_hist: start this at 12/31/2004
+#cp_hist discharge: start this at 12/31/2004
 filename='Data/Control point historical discharge 2005.xlsx'
 SAL_2005 = pd.read_excel(filename,sheetname='Salem')
 SAL_2005_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
@@ -181,7 +181,29 @@ FOS_2005 = pd.read_excel(filename,sheetname='Foster')
 FOS_2005_dis = np.array(FOS_2005['Discharge'])*cfs_to_cms
 cp_discharge_2005_all = np.stack((SAL_2005_dis,ALB_2005_dis,JEF_2005_dis,MEH_2005_dis,HAR_2005_dis,VID_2005_dis,JAS_2005_dis,GOS_2005_dis,WAT_2005_dis,MON_2005_dis,FOS_2005_dis),axis=1)    
 
-cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) #when does this data come into play?
+
+
+#cp local flows, starts at 1/1/2005
+ALB_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Ablany',skiprows=5844,skip_footer=730)
+ALB_loc.columns = ['Date','Local Flow']
+SAL_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Salem',skiprows=5844,skip_footer=730)
+SAL_loc.columns = ['Date','Local Flow']
+JEF_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Jefferson',skiprows=5844,skip_footer=730)
+JEF_loc.columns = ['Date','Local Flow']
+MEH_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Mehama',skiprows=5844,skip_footer=730)
+MEH_loc.columns = ['Date','Local Flow']
+HAR_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Harrisburg',skiprows=5844,skip_footer=730)
+HAR_loc.columns = ['Date','Local Flow']
+VID_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Vida',skiprows=5844,skip_footer=730)
+VID_loc.columns = ['Date','Local Flow']
+JAS_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Jasper',skiprows=5844,skip_footer=730)
+JAS_loc.columns = ['Date','Local Flow']
+GOS_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Goshen',skiprows=5844,skip_footer=730)
+GOS_loc.columns = ['Date','Local Flow']
+WAT_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Waterloo',skiprows=5844,skip_footer=730)
+WAT_loc.columns = ['Date','Local Flow']
+MON_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Monroe',skiprows=5844,skip_footer=730)
+MON_loc.columns = ['Date','Local Flow']
 
 dates = np.array(BLU5Ad['Date'])
 
@@ -199,7 +221,7 @@ outflows_all = np.full((T+1,n_res),np.nan) #we can fill these in later, or make 
 hydropower_all = np.full((T+1,n_HPres), np.nan)
 volumes_all = np.full((T+1,n_res),np.nan)
 elevations_all = np.full((T+1,n_res),np.nan)
-cp_discharge_all = np.full((T+1,n_cp),np.nan)
+cp_discharge_all = np.full((T+1,(n_cp-1)),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
@@ -207,7 +229,7 @@ for  i in range(0,n_res):
     volumes_all[0,i] = RES[i].InitVol 
     elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i],RES[i])
 
-for  i in range(0,n_cp):
+for  i in range(0,n_cp-1):
      cp_discharge_all[0,i] = cp_discharge_2005_all[0,i]
 
 #define an outer fnt here that takes date, name, vol as inputs?
@@ -215,8 +237,8 @@ for  i in range(0,n_cp):
 InitwaterYear = 1.2
 waterYear = InitwaterYear
 
-for t in range(0,T+1):
-    t=0
+for t in range(1,T+2):
+    #t=0
     
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     
@@ -248,8 +270,8 @@ for t in range(0,T+1):
     #FERN RIDGE ID=7 count=6 NO HYDROPOWER
     FRN = RES[6]
     FRN_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,FRN.ID],FRN)
-    FRN_outflow = inner.GetResOutflow(FRN,volumes_all[t,FRN.ID],FRN5A.iloc[t,1],outflows_all[t,FRN.ID],doy,waterYear,CP,cp_discharge_all[t,:])
-    [FRN_volume,FRN_elevation] = inner.UpdateVolume_elev (FRN, FRN5A.iloc[t,1], FRN_outflow,volumes_all[t,FRN.ID])
+    FRN_outflow = inner.GetResOutflow(FRN,volumes_all[t,FRN.ID],FRN5M.iloc[t,1],outflows_all[t,FRN.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [FRN_volume,FRN_elevation] = inner.UpdateVolume_elev (FRN, FRN5M.iloc[t,1], FRN_outflow,volumes_all[t,FRN.ID])
     
     outflows_all[t+1,FRN.ID] = FRN_outflow 
     volumes_all[t+1,FRN.ID] =  FRN_volume
@@ -284,10 +306,10 @@ for t in range(0,T+1):
     #DEXTER ID=3 count=2
     DEX = RES[2]
     DEX_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,DEX.ID],DEX)
-    DEX_outflow = inner.GetResOutflow(DEX,volumes_all[t,DEX.ID],DEX5A.iloc[t,1],outflows_all[t,DEX.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    DEX_outflow = inner.GetResOutflow(DEX,volumes_all[t,DEX.ID],LOP_outflow,outflows_all[t,DEX.ID],doy,waterYear,CP,cp_discharge_all[t,:])
     [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(DEX,DEX_outflow)
     DEX_power_output = inner.CalculateHydropowerOutput(DEX,DEX_poolElevation,powerFlow)
-    [DEX_volume,DEX_elevation] = inner.UpdateVolume_elev (DEX, DEX5A.iloc[t,1], DEX_outflow,volumes_all[t,DEX.ID])
+    [DEX_volume,DEX_elevation] = inner.UpdateVolume_elev (DEX, LOP_outflow, DEX_outflow,volumes_all[t,DEX.ID])
     
     outflows_all[t+1,DEX.ID] = DEX_outflow 
     volumes_all[t+1,DEX.ID] =  DEX_volume
@@ -375,10 +397,10 @@ for t in range(0,T+1):
     #BIG CLIFF ID=13 count=12
     BCL = RES[12]
     BCL_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+2,BCL.ID],BCL)
-    BCL_outflow = inner.GetResOutflow(BCL,volumes_all[t+2,BCL.ID],BCL5A.iloc[t+2,1],outflows_all[t+2,BCL.ID],doy,waterYear,CP,cp_discharge_all[t+2,:])
+    BCL_outflow = inner.GetResOutflow(BCL,volumes_all[t+2,BCL.ID],DET_outflow,outflows_all[t+2,BCL.ID],doy,waterYear,CP,cp_discharge_all[t+2,:])
     [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(BCL,BCL_outflow)
     BCL_power_output = inner.CalculateHydropowerOutput(BCL,BCL_poolElevation,powerFlow)
-    [BCL_volume,BCL_elevation] = inner.UpdateVolume_elev (BCL, BCL5A.iloc[t+2,1], BCL_outflow,volumes_all[t+2,BCL.ID])
+    [BCL_volume,BCL_elevation] = inner.UpdateVolume_elev (BCL, DET_outflow, BCL_outflow,volumes_all[t+2,BCL.ID])
     
     outflows_all[t+2,BCL.ID] = BCL_outflow 
     volumes_all[t+2,BCL.ID] =  BCL_volume
@@ -388,10 +410,50 @@ for t in range(0,T+1):
 
     #UPDATE CONTROL POINTS DISCHARGE
     #add in balance eqns
+    #cp_list =['SAL', 'ALB', 'JEF', 'MEH', 'HAR', 'VID', 'JAS', 'GOS', 'WAT', 'MON', 'FOS']
     
-    #SALEM_out = ALB_out 
-    cp_discharge_all[t,0] =  
+#SALin(t) = ALBin(t) + JEFin(t) + SALloc(t)
+#JEFin(t) = WATin(t) +MEHin(t) + JEFloc(t)
+#MEHin(t) = BCL5H(t) +MEHloc(t)
+#WATin = FOS5H(t) +WATloc(t)
+#ALBin(t) = MONin(t 􀀀 1) + HARin(t 􀀀 1) + ALBloc(t)
+#MONin(t) = FER5H(t) +MONloc(t)
+#HARin(t) = VIDin(t) + GOSin(t) + JASin(t) + HARloc(t)
+#V IDin(t) = CGR5H(t) + BLU5H(t) + V IDloc(t)
+#JASin(t) = DEX5H(t) + FAL5H(t) + JASloc(t)
+#GOSin(t) = COT5H(t) + DOR5H(t) + GOSloc(t)
+
+    #in order of upstream to down
     
+    #GOSHEN
+    cp_discharge_all[t,7] = COT_outflow + DOR_outflow + GOS_loc.iloc[t,1] 
+    
+    #JASPER
+    cp_discharge_all[t,6] = DEX_outflow + FAL_outflow + JAS_loc.iloc[t,1]
+    
+    #VIDA
+    cp_discharge_all[t,5] = CGR_outflow + BLU_outflow + VID_loc.iloc[t,1]
+    
+    #HARRISBURG
+    cp_discharge_all[t,4] = cp_discharge_all[t,7] + cp_discharge_all[t,6] + cp_discharge_all[t,5] + HAR_loc.iloc[t,1]
+    
+    #MONROE
+    cp_discharge_all[t,9] = FRN_outflow + MON_loc.iloc[t,1]
+    
+    #ALBANY
+    cp_discharge_all[t,1] = cp_discharge_all[t-1,9] + cp_discharge_all[t-1,4]+ ALB_loc.iloc[t,1]
+    
+    #WATERLOO
+    cp_discharge_all[t,8] = FOS_outflow + WAT_loc.iloc[t,1]
+    
+    #MEHAMA
+    cp_discharge_all[t,3] = BCL_outflow + MEH_loc.iloc[t,1]
+    
+    #JEFFERSON
+    cp_discharge_all[t,2] = cp_discharge_all[t,8] + cp_discharge_all[t,3] + JEF_loc.iloc[t,1]
+    
+    #SALEM
+    cp_discharge_all[t,0] = cp_discharge_all[t,1] + cp_discharge_all[t,2] + SAL_loc.iloc[t,1]
     
     
     
