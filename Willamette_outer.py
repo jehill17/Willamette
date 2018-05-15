@@ -225,7 +225,7 @@ cp_discharge_all = np.full((T+1,(n_cp-1)),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
-    #outflows_all[0,i] = outflows_2005_all[0,i] #remember to stack outflows historical values
+    outflows_all[0,i] = outflows_2005_all[0,i] #remember to stack outflows historical values
     volumes_all[0,i] = RES[i].InitVol 
     elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i],RES[i])
 
@@ -292,7 +292,8 @@ for t in range(1,T+2):
     #LOOKOUT POINT ID=2 count=1
     LOP = RES[1]
     LOP_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,LOP.ID],LOP)
-    LOP_outflow = inner.GetResOutflow(LOP,volumes_all[t,LOP.ID],LOP5A.iloc[t,1],outflows_all[t-1,LOP.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    LOP_inflow =  HCR_outflow + LOP_loc.iloc[t,1] + LOP5E.iloc[t,1] #balance equation
+    LOP_outflow = inner.GetResOutflow(LOP,volumes_all[t,LOP.ID],LOP_inflow,outflows_all[t-1,LOP.ID],doy,waterYear,CP,cp_discharge_all[t,:])
     [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(LOP,LOP_outflow)
     LOP_power_output = inner.CalculateHydropowerOutput(LOP,LOP_poolElevation,powerFlow)
     [LOP_volume,LOP_elevation] = inner.UpdateVolume_elev (LOP, LOP5A.iloc[t,1], LOP_outflow,volumes_all[t,LOP.ID])
@@ -368,7 +369,8 @@ for t in range(1,T+2):
     #FOSTER ID=11 count=10
     FOS = RES[10]
     FOS_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+2,FOS.ID],FOS)
-    FOS_outflow = inner.GetResOutflow(FOS,volumes_all[t+2,FOS.ID],FOS5A.iloc[t+2,1],outflows_all[t+1,FOS.ID],doy,waterYear,CP,cp_discharge_all[t+2,:])
+    FOS_inflow =GPR_outflow + FOS_loc.iloc[t+1,1] #balance equation
+    FOS_outflow = inner.GetResOutflow(FOS,volumes_all[t+2,FOS.ID],FOS_inflow,outflows_all[t+1,FOS.ID],doy,waterYear,CP,cp_discharge_all[t+2,:])
     [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(FOS,FOS_outflow)
     FOS_power_output = inner.CalculateHydropowerOutput(FOS,FOS_poolElevation,powerFlow)
     [FOS_volume,FOS_elevation] = inner.UpdateVolume_elev (FOS, FOS5A.iloc[t+2,1], FOS_outflow,volumes_all[t+2,FOS.ID])
