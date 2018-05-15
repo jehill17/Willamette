@@ -246,7 +246,7 @@ cp_discharge_all = np.full((T+1,(n_cp-1)),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
-    outflows_all[0,i] = outflows_2005_all[0,i] #remember to stack outflows historical values
+    outflows_all[0,i] = outflows_all_2005[0,i] #remember to stack outflows historical values
     volumes_all[0,i] = RES[i].InitVol 
     elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i],RES[i])
 
