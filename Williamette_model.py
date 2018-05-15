@@ -53,8 +53,8 @@ def UpdateReservoirWaterYear(doy,t, volumes_all):
             waterYear = float(0.9) #Insufficient
         elif resVolumeBasin < float(0.9):
             waterYear = 0 #Deficit
-        waterYeartype = waterYear
-    return waterYear
+
+        return waterYear
         
         
 
@@ -105,16 +105,16 @@ def UpdateMaxGateOutflows(name,poolElevation):
     return (name.maxPowerFlow, name.maxRO_Flow, name.maxSpillwayFlow)
 
 
-def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp_discharge):
+def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp_discharge):
     currentPoolElevation = GetPoolElevationFromVolume(volume,name)
     UpdateMaxGateOutflows( name, currentPoolElevation )
     if name.Restype=='RunOfRiver':
       outflow = inflow
     else:
-      targetPoolElevation = GetTargetElevationFromRuleCurve( doy, name );
-      targetPoolVolume    = GetPoolVolumeFromElevation(targetPoolElevation, name);
-      currentVolume = GetPoolVolumeFromElevation(currentPoolElevation, name);
-      bufferZoneElevation = GetBufferZoneElevation( doy, name );
+      targetPoolElevation = GetTargetElevationFromRuleCurve( doy, name )
+      targetPoolVolume    = GetPoolVolumeFromElevation(targetPoolElevation, name)
+      currentVolume = GetPoolVolumeFromElevation(currentPoolElevation, name)
+      bufferZoneElevation = GetBufferZoneElevation( doy, name )
 
       if currentVolume > name.maxVolume:
          currentVolume = name.maxVolume;   #Don't allow res volumes greater than max volume.This code may be removed once hydro model is calibrated.
@@ -125,12 +125,12 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp
       desiredRelease = (currentVolume - targetPoolVolume)/86400     #This would bring pool elevation back to the rule curve in one timestep.  Converted from m3/day to m3/s  (cms).
                                                                           #This would be ideal if possible within the given constraints.
       if currentVolume < targetPoolVolume: #if we want to fill the reservoir
-         desiredRelease=name.minOutflow;
+         desiredRelease=name.minOutflow
 
       actualRelease = desiredRelease   #Before any constraints are applied
       
       # ASSIGN ZONE:  zone 0 = top of dam, zone 1 = flood control high, zone 2 = conservation operations, zone 3 = buffer, zone 4 = alternate flood control 1, zone 5 = alternate flood control 2.  
-
+      zone=[]
       if currentPoolElevation > name.Td_elev:
          print ("Reservoir elevation at ", name, "on day of year ", doy," exceeds dam top elevation.")
          currentPoolElevation = name.Td_elev - 0.1    #Set just below top elev to keep from exceeding values in lookup tables
@@ -157,7 +157,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp
       constraint_array=name.RulePriorityTable.iloc[:,zone]
       constraint_array=constraint_array[(constraint_array !='Missing')] #eliminate 'Missing' rows
       #Loop through constraints and modify actual release.  Apply the flood control rules in order here.
-      for i in range (0, len(constraint_array)-1):
+      for i in range (0, len(constraint_array)):
           #open the csv file and get first column label and appropriate data to use for lookup
           constraintRules = pd.read_csv(os.path.join(name.ruleDir, constraint_array[i])) 
           xlabel = list(constraintRules)[0]   
@@ -243,10 +243,10 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp
 
           elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point  
               #Determine which control point this is.....use COMID to identify
-              for j in range(len(cp_list)):
-                  if cp_list[j].COMID in constraint_array[i]:
-                      cp_name = cp_list[j]
-                      cp_id = cp_list[j].ID        
+              for j in range(len(CP_list)):
+                  if CP_list[j].COMID in constraint_array[i]:
+                      cp_name = CP_list[j]
+                      cp_id = CP_list[j].ID        
               if name in cp_name.influencedReservoirs:  #Make sure that the reservoir is on the influenced reservoir list
                   if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
                      cols=constraintRules.iloc[0,1::]

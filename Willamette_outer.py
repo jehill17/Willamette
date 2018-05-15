@@ -184,7 +184,7 @@ cp_discharge_2005_all = np.stack((SAL_2005_dis,ALB_2005_dis,JEF_2005_dis,MEH_200
 
 
 #cp local flows, starts at 1/1/2005
-ALB_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Ablany',skiprows=5844,skip_footer=730)
+ALB_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Albany',skiprows=5844,skip_footer=730)
 ALB_loc.columns = ['Date','Local Flow']
 SAL_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Salem',skiprows=5844,skip_footer=730)
 SAL_loc.columns = ['Date','Local Flow']
@@ -208,7 +208,7 @@ MON_loc.columns = ['Date','Local Flow']
 dates = np.array(BLU5Ad['Date'])
 
 #=======
-T = 365 # Set the simulation horizon
+T = 7 # Set the simulation horizon
 
 n_res=13
 n_HPres=8
@@ -225,7 +225,7 @@ cp_discharge_all = np.full((T+1,(n_cp-1)),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
-    #outflows_all[0,i] = RES[i].init_outflow
+    #outflows_all[0,i] = outflows_2005_all[0,i] #remember to stack outflows historical values
     volumes_all[0,i] = RES[i].InitVol 
     elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i],RES[i])
 
@@ -242,7 +242,7 @@ for t in range(1,T+2):
     
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     
-    waterYear = inner.UpdateReservoirWaterYear(doy,t) #function missing
+    waterYear = inner.UpdateReservoirWaterYear(doy,t, volumes_all) #function missing
     #calculate waterYear
     #conditional based on doy 
     #calculate at doy = 140
@@ -256,7 +256,7 @@ for t in range(1,T+2):
     outflows_all[t+1,COT.ID] = COT_outflow 
     volumes_all[t+1,COT.ID] =  COT_volume
     elevations_all[t+1,COT.ID]=  COT_elevation
-    
+    ###fix lag_outflow as input t-1
     #DORENA ID=5 count=4 NO HYDROPOWER
     DOR = RES[4]
     DOR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,DOR.ID],DOR)
