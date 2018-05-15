@@ -225,7 +225,7 @@ cp_discharge_all = np.full((T+1,(n_cp-1)),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
-    #outflows_all[0,i] = RES[i].init_outflow
+    #outflows_all[0,i] = outflows_2005_all[0,i] #remember to stack outflows historical values
     volumes_all[0,i] = RES[i].InitVol 
     elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i],RES[i])
 
@@ -245,7 +245,11 @@ for t in range(1,T+2):
     
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     
+<<<<<<< HEAD
     waterYear = inner.UpdateReservoirWaterYear(doy,t,volumes_all) #function missing
+=======
+    waterYear = inner.UpdateReservoirWaterYear(doy,t, volumes_all) #function missing
+>>>>>>> 5b592a63faff54338d49190b318313238de69489
     #calculate waterYear
     #conditional based on doy 
     #calculate at doy = 140
@@ -259,7 +263,7 @@ for t in range(1,T+2):
     outflows_all[t+1,COT.ID] = COT_outflow 
     volumes_all[t+1,COT.ID] =  COT_volume
     elevations_all[t+1,COT.ID]=  COT_elevation
-    
+    ###fix lag_outflow as input t-1
     #DORENA ID=5 count=4 NO HYDROPOWER
     DOR = RES[4]
     DOR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,DOR.ID],DOR)
