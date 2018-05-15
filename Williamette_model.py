@@ -38,6 +38,26 @@ def DatetoDayOfYear(val, fmt):
 
     return doy
 
+def UpdateReservoirWaterYear(doy,t, volumes_all):
+    M3_PER_ACREFT = 1233.48
+#    if doy < 120:
+#        waterYear = InitwaterYear
+    if doy == 120:
+        resVolumeBasin = np.sum(volumes_all[t-1,:])
+        resVolumeBasin = resVolumeBasin*M3_PER_ACREFT*1000000
+        if resVolumeBasin > float(1.48):
+            waterYear = float(1.48) #Abundant
+        elif resVolumeBasin < float(1.48) and resVolumeBasin >  float(1.2):
+            waterYear = float(1.2) #Adequate
+        elif resVolumeBasin < float(1.2) and resVolumeBasin > float(0.9):
+            waterYear = float(0.9) #Insufficient
+        elif resVolumeBasin < float(0.9):
+            waterYear = 0 #Deficit
+        waterYeartype = waterYear
+    return waterYear
+        
+        
+
 
 def GetPoolElevationFromVolume(volume,name):
     if name.AreaVolCurve is None:
@@ -61,7 +81,7 @@ def GetBufferZoneElevation(doy,name):
     if name.Buffer is None:
         return 0
     else:
-        bufferZoneElevation = np.interp(doy,name.Buffer['Date'],name.Buffer['Pool_elevation_m'])
+        bufferZoneElevation = np.interp(doy,name.Buffer['Day'],name.Buffer['Pool_elevation_m'])
 
         return bufferZoneElevation #returns what the buffer zone elevation level is for this time of year (in m)
 
