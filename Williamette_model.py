@@ -165,7 +165,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, cp_list, cp
           yvalue = []
           if xlabel=="Date":                           # Date based rule?  xvalue = current date.
              xvalue = doy
-          elif xlabel=="release_cms":                  # Release based rule?  xvalue = release last timestep
+          elif xlabel=="Release_cms":                  # Release based rule?  xvalue = release last timestep
                xvalue = lag_outflow       
           elif xlabel=="pool_elev_m" :                 # Pool elevation based rule?  xvalue = pool elevation (meters)
                xvalue = currentPoolElevation
