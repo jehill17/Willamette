@@ -213,13 +213,14 @@ for  i in range(0,n_cp):
 #define an outer fnt here that takes date, name, vol as inputs?
 
 InitwaterYear = 1.2
+waterYear = InitwaterYear
 
 for t in range(0,T+1):
     t=0
-    waterYear = InitwaterYear
+    
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     
-    #waterYear = inner.UpdateReservoirWaterYear(doy) #function missing
+    waterYear = inner.UpdateReservoirWaterYear(doy,t) #function missing
     #calculate waterYear
     #conditional based on doy 
     #calculate at doy = 140
