@@ -135,22 +135,23 @@ cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3
 
 #reservoirs:
 #read in historical reservoir inflows -- this will contain the array of 'dates' to use
-BLU5A = pd.read_excel('Data/BLU5A_daily.xls',skiprows=27943,skip_footer =1004) #only using data from 2005
-BLU5A.columns = ['Date','Inflow']
-CGR5A = pd.read_excel('Data/CGR5A_daily.xls',skiprows=27943,skip_footer =1004)
-DET5A = pd.read_excel('Data/DET5A_daily.xls',skiprows=27943,skip_footer =1004)
-DEX5M = pd.read_excel('Data/DEX5M_daily.xls',skiprows=27943,skip_footer =1004)
-DOR5A = pd.read_excel('Data/DOR5A_daily.xls',skiprows=27943,skip_footer =1004)
-FAL5A = pd.read_excel('Data/FAL5A_daily.xls',skiprows=27943,skip_footer =1004)
-FOS5A = pd.read_excel('Data/FOS5A_daily.xls',skiprows=27943,skip_footer =1004)
-FRN5M = pd.read_excel('Data/FRN5M_daily.xls',skiprows=27943,skip_footer =1004)
-GPR5A = pd.read_excel('Data/GPR5A_daily.xls',skiprows=27943,skip_footer =1004)
-HCR5A = pd.read_excel('Data/HCR5A_daily.xls',skiprows=27943,skip_footer =1004)
-LOP5A = pd.read_excel('Data/LOP5A_daily.xls',skiprows=27943,skip_footer =1004)
-LOP5E = pd.read_excel('Data/LOP5E_daily.xls',skiprows=27943,skip_footer =1004)
-COT5A = pd.read_excel('Data/COT5A_daily.xls',skiprows=27943,skip_footer =1004)
-FOS_loc = pd.read_excel('Data/FOS_loc.xls',usecols = [0,3],skiprows=27943,skip_footer =1004)
-LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=27943,skip_footer =1004)
+BLU5Ad = pd.read_excel('Data/BLU5A_daily.xls',skiprows=27943,skip_footer =1004) #only using data from 2005
+BLU5Ad.columns = ['Date','Inflow']
+BLU5A = BLU5Ad['Inflow']*cfs_to_cms
+CGR5A = pd.read_excel('Data/CGR5A_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+DET5A = pd.read_excel('Data/DET5A_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+DEX5M = pd.read_excel('Data/DEX5M_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+DOR5A = pd.read_excel('Data/DOR5A_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+FAL5A = pd.read_excel('Data/FAL5A_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+FOS5A = pd.read_excel('Data/FOS5A_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+FRN5M = pd.read_excel('Data/FRN5M_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+GPR5A = pd.read_excel('Data/GPR5A_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+HCR5A = pd.read_excel('Data/HCR5A_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+LOP5A = pd.read_excel('Data/LOP5A_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+LOP5E = pd.read_excel('Data/LOP5E_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+COT5A = pd.read_excel('Data/COT5A_daily.xls',skiprows=27943,skip_footer =1004)*cfs_to_cms
+FOS_loc = pd.read_excel('Data/FOS_loc.xls',usecols = [0,3],skiprows=27943,skip_footer =1004)*cfs_to_cms
+LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=27943,skip_footer =1004)*cfs_to_cms
 
 
 #control points
@@ -182,7 +183,7 @@ cp_discharge_2005_all = np.stack((SAL_2005_dis,ALB_2005_dis,JEF_2005_dis,MEH_200
 
 cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) #when does this data come into play?
 
-dates = np.array(BLU5A['Date'])
+dates = np.array(BLU5Ad['Date'])
 
 #=======
 T = 365 # Set the simulation horizon
@@ -213,7 +214,7 @@ for  i in range(0,n_cp):
 
 InitwaterYear = 1.2
 
-#for t in range(0,T+1):
+for t in range(0,T+1):
     t=0
     waterYear = InitwaterYear
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
@@ -385,7 +386,10 @@ InitwaterYear = 1.2
 
 
     #UPDATE CONTROL POINTS DISCHARGE
+    #add in balance eqns
     
+    #SALEM_out = ALB_out 
+    cp_discharge_all[t,0] =  
     
     
     
