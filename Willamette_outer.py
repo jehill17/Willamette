@@ -237,12 +237,19 @@ for  i in range(0,n_cp-1):
 InitwaterYear = 1.2
 waterYear = InitwaterYear
 
+
+
+
 for t in range(1,T+2):
     #t=0
     
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     
+<<<<<<< HEAD
+    waterYear = inner.UpdateReservoirWaterYear(doy,t,volumes_all) #function missing
+=======
     waterYear = inner.UpdateReservoirWaterYear(doy,t, volumes_all) #function missing
+>>>>>>> 5b592a63faff54338d49190b318313238de69489
     #calculate waterYear
     #conditional based on doy 
     #calculate at doy = 140

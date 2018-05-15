@@ -53,7 +53,11 @@ def UpdateReservoirWaterYear(doy,t, volumes_all):
             waterYear = float(0.9) #Insufficient
         elif resVolumeBasin < float(0.9):
             waterYear = 0 #Deficit
+<<<<<<< HEAD
+        
+=======
 
+>>>>>>> 5b592a63faff54338d49190b318313238de69489
         return waterYear
         
         
