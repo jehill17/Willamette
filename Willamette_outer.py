@@ -240,19 +240,10 @@ waterYear = InitwaterYear
 
 
 
-for t in range(1,T+2):
-    #t=0
-    
+for t in range(1,T+2):    
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     
-<<<<<<< HEAD
     waterYear = inner.UpdateReservoirWaterYear(doy,t,volumes_all) #function missing
-=======
-    waterYear = inner.UpdateReservoirWaterYear(doy,t, volumes_all) #function missing
->>>>>>> 5b592a63faff54338d49190b318313238de69489
-    #calculate waterYear
-    #conditional based on doy 
-    #calculate at doy = 140
     
     #COTTAGE GROVE ID=6 count=5 NO HYDROPOWER
     COT = RES[5]
@@ -263,7 +254,8 @@ for t in range(1,T+2):
     outflows_all[t+1,COT.ID] = COT_outflow 
     volumes_all[t+1,COT.ID] =  COT_volume
     elevations_all[t+1,COT.ID]=  COT_elevation
-    ###fix lag_outflow as input t-1
+
+
     #DORENA ID=5 count=4 NO HYDROPOWER
     DOR = RES[4]
     DOR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,DOR.ID],DOR)
@@ -332,7 +324,6 @@ for t in range(1,T+2):
     outflows_all[t+1,FAL.ID] = FAL_outflow 
     volumes_all[t+1,FAL.ID] =  FAL_volume
     elevations_all[t+1,FAL.ID]=  FAL_elevation
-
     
     #COUGAR ID=8 count=7
     CGR = RES[7]
@@ -358,8 +349,8 @@ for t in range(1,T+2):
     volumes_all[t+1,BLU.ID] =  BLU_volume
     elevations_all[t+1,BLU.ID]=  BLU_elevation    
     
-    #the above reservoirs are at time "t-2"
     
+    #the next reservoirs are at time "t+2" #check!!!
     #GREEN PETER ID=10 count=9
     GPR = RES[9]
     GPR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+2,GPR.ID],GPR)
