@@ -268,11 +268,11 @@ for t in range(1,T+2):
     
     #COTTAGE GROVE ID=6 count=5 NO HYDROPOWER
     COT = RES[5]
-    COT_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,COT.ID],COT)
-    COT_outflow = inner.GetResOutflow(COT,volumes_all[t,COT.ID],COT5A.iloc[t,1],outflows_all[t-1,COT.ID],doy,waterYear,CP,cp_discharge_all[t,:])
-    [COT_volume,COT_elevation] = inner.UpdateVolume_elev (COT, COT5A.iloc[t,1], COT_outflow, volumes_all[t,COT.ID])
+    COT_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,COT.ID],COT)
+    COT_outflow = inner.GetResOutflow(COT,volumes_all[t-1,COT.ID],COT5A.iloc[t-1,1],outflows_all[t-1,COT.ID],doy,waterYear,CP,cp_discharge_all[t,:])
+    [COT_volume,COT_elevation] = inner.UpdateVolume_elev (COT, COT5A.iloc[t-1,1], COT_outflow[0], volumes_all[t-1,COT.ID])
     
-    outflows_all[t+1,COT.ID] = COT_outflow 
+    outflows_all[t+1,COT.ID] = COT_outflow[0] 
     volumes_all[t+1,COT.ID] =  COT_volume
     elevations_all[t+1,COT.ID]=  COT_elevation
 
