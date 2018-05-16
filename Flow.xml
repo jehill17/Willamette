@@ -553,7 +553,7 @@ dynamic="0"
                ressim_output_r="BR_ressim_rule_1935_2008.csv"     inactive_elev="359.66"                              reservoir_type="Storage_flood"
                turbine_efficiency="nan"                           tailwater_elev="nan"  />
 
-    <reservoir id="10"  name="Green Peter Reservoir (USACE)"      path="Reservoirs/"     initVolume="197233746"
+    <reservoir id="10"  name="Green Peter Reservoir (USACE)"      path="Reservoirs/"                               initVolume="199854963.3"
                area_vol_curve="green_peter_area_capacity.csv"     av_dir="Area_Capacity_Curves/"                      minOutflow="22.6"
                rule_curve="green_peter_rule_curve.csv"            rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="551246341"
                composite_rc="GP_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="125.1"
@@ -564,7 +564,7 @@ dynamic="0"
                buffer_zone="GP_buffer.csv"                        ressim_output_f="GP_ressim_flow_1935_2008.csv"      ressim_output_r="GP_ressim_rule_1935_2008.csv"
                inactive_elev="281.03"                             reservoir_type="Storage_HP" />
 
-    <reservoir id="11"  name="Foster Reservoir (USACE)"           path="Reservoirs/"     initVolume="39471419"
+    <reservoir id="11"  name="Foster Reservoir (USACE)"           path="Reservoirs/"                                  initVolume="41534504.55"
                area_vol_curve="foster_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="22.6"
                rule_curve="foster_rule_curve.csv"                 rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="90167522"
                composite_rc="Foster_composite_rc.csv"             re_dir="Rel_Cap/"                                   maxPowerFlow="96.8"
