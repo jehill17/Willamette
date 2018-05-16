@@ -120,9 +120,9 @@ def AssignReservoirOutletFlows(name,outflow):
         excessFlow = outflow - name.maxPowerFlow
         if excessFlow <= name.maxRO_Flow:
             RO_flow = excessFlow
-            if RO_flow < name.minRO_flow: #why is this condition less than where as the previous are <=
-                RO_flow = name.minRO_flow
-                powerFlow = outflow - name.minRO_flow
+            if RO_flow < name.minRO_Flow: #why is this condition less than where as the previous are <=
+                RO_flow = name.minRO_Flow
+                powerFlow = outflow - name.minRO_Flow
         else:
             RO_flow = name.maxRO_Flow
             excessFlow = RO_flow
@@ -203,7 +203,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
       constraint_array=name.RulePriorityTable.iloc[:,zone]
       constraint_array=constraint_array[(constraint_array !='Missing')] #eliminate 'Missing' rows
       #Loop through constraints and modify actual release.  Apply the flood control rules in order here.
-      for i in range (0, len(constraint_array)):
+      for i in range (0, (len(constraint_array)-1)):
           #open the csv file and get first column label and appropriate data to use for lookup
           constraintRules = pd.read_csv(os.path.join(name.ruleDir, constraint_array[i])) 
           xlabel = list(constraintRules)[0]   
