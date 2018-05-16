@@ -53,11 +53,7 @@ def UpdateReservoirWaterYear(doy,t, volumes_all):
             waterYear = float(0.9) #Insufficient
         elif resVolumeBasin < float(0.9):
             waterYear = 0 #Deficit
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> 5b592a63faff54338d49190b318313238de69489
+            
         return waterYear
         
         
@@ -109,9 +105,55 @@ def UpdateMaxGateOutflows(name,poolElevation):
     return (name.maxPowerFlow, name.maxRO_Flow, name.maxSpillwayFlow)
 
 
+def AssignReservoirOutletFlows(name,outflow):
+    #flow file has a condition on reservoir not being null...dk if we need that here
+    outflow = outflow * 86400  # convert to daily volume    m3 per day 
+    #initialize values to 0.0
+    powerFlow = 0.0
+    RO_flow = 0.0
+    spillwayFlow = 0.0
+
+    if outflow < name.maxPowerFlow: #this value is stored
+        powerFlow = outflow
+    else:
+        powerFlow = name.maxPowerFlow
+        excessFlow = outflow - name.maxPowerFlow
+        if excessFlow <= name.maxRO_Flow:
+            RO_flow = excessFlow
+            if RO_flow < name.minRO_flow: #why is this condition less than where as the previous are <=
+                RO_flow = name.minRO_flow
+                powerFlow = outflow - name.minRO_flow
+        else:
+            RO_flow = name.maxRO_Flow
+            excessFlow = RO_flow
+
+            spillwayFlow = excessFlow
+
+            if spillwayFlow < name.minSpillwayFlow:
+                spillwayFlow = name.minSpillwayFlow
+                RO_flow =- name.minSpillwayFlow - excessFlow
+            if spillwayFlow > name.maxSpillwayFlow:
+                print('Maximum spillway volume exceed')
+
+            
+    massbalancecheck = outflow - (powerFlow + RO_flow + spillwayFlow)
+    #does this equal 0?
+    if massbalancecheck != 0:
+        print ("Mass balance didn't close, massbalancecheck = ", massbalancecheck )
+
+    return(powerFlow,RO_flow,spillwayFlow)
+
+
 def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp_discharge):
     currentPoolElevation = GetPoolElevationFromVolume(volume,name)
-    UpdateMaxGateOutflows( name, currentPoolElevation )
+    
+    #reset gate specific flows
+    [name.maxPowerFlow, name.maxRO_Flow, name.maxSpillwayFlow]=UpdateMaxGateOutflows( name, currentPoolElevation )
+    #Reset min outflows to 0 for next timestep (max outflows are reset by the function UpdateMaxGateOutflows)
+    name.minPowerFlow=0
+    name.minRO_Flow =0
+    name.minSpillwayFlow=0 
+    
     if name.Restype=='RunOfRiver':
       outflow = inflow
     else:
@@ -307,53 +349,10 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
              actualRelease = 0 #lag_outflow *0.5
 
           outflow = actualRelease;
+          [powerFlow,RO_flow,spillwayFlow]=AssignReservoirOutletFlows(name,outflow)
+    return (outflow, powerFlow,RO_flow,spillwayFlow)
+    #return outflow
 
-    #return (outflow, name.maxPowerFlow, name.minPowerFlow, name.maxRO_Flow, name.minRO_Flow, name.maxSpillwayFlow, name.minSpillwayFlow)
-    return outflow
-
-
-
-def AssignReservoirOutletFlows(name,outflow):
-    #flow file has a condition on reservoir not being null...dk if we need that here
-    outflow = outflow * 86400  # convert to daily volume    m3 per day 
-    #initialize values to 0.0
-    powerFlow = 0.0
-    RO_flow = 0.0
-    spillwayFlow = 0.0
-
-    if outflow < name.maxPowerFlow: #this value is stored
-        powerFlow = outflow
-    else:
-        powerFlow = name.maxPowerFlow
-        excessFlow = outflow - name.maxPowerFlow
-        if excessFlow <= name.maxRO_Flow:
-            RO_flow = excessFlow
-            if RO_flow < name.minRO_flow: #why is this condition less than where as the previous are <=
-                RO_flow = name.minRO_flow
-                powerFlow = outflow - name.minRO_flow
-        else:
-            RO_flow = name.maxRO_Flow
-            excessFlow = RO_flow
-
-            spillwayFlow = excessFlow
-
-            if spillwayFlow < name.minSpillwayFlow:
-                spillwayFlow = name.minSpillwayFlow
-                RO_flow =- name.minSpillwayFlow - excessFlow
-            if spillwayFlow > name.maxSpillwayFlow:
-                print('Maximum spillway volume exceed')
-   
-    #Reset min outflows to 0 for next timestep (max outflows are reset by the function UpdateMaxGateOutflows)
-    name.minPowerFlow=0
-    name.minRO_Flow =0
-    name.minSpillwayFlow=0 
-            
-    massbalancecheck = outflow - (powerFlow + RO_flow + spillwayFlow)
-    #does this equal 0?
-    if massbalancecheck != 0:
-        print ("Mass balance didn't close, massbalancecheck = ", massbalancecheck )
-
-    return(powerFlow,RO_flow,spillwayFlow, massbalancecheck)
 
 def CalculateHydropowerOutput(name,elevation,powerFlow):
     head = elevation - name.Tailwater_elev 

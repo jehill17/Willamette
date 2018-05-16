@@ -172,7 +172,7 @@ COT5H = np.array(pd.read_excel('Data/COT5H_daily.xls',skiprows=27942,skip_footer
 FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
 LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
 
-outflows_all_2005 = np.stack((BLU5H[:,1],BCL5H[:,1],CGR5H[:,1],DET5H[:,1],DEX5H[:,1],DOR5H[:,1],FAL5H[:,1],FOS5H[:,1],FRN5H[:,1],GPR5H[:,1],HCR5H[:,1],LOP5H[:,1],COT5H[:,1],FOS5H[:,1]),axis=1)
+outflows_2005_all = np.stack((BLU5H[:,1],BCL5H[:,1],CGR5H[:,1],DET5H[:,1],DEX5H[:,1],DOR5H[:,1],FAL5H[:,1],FOS5H[:,1],FRN5H[:,1],GPR5H[:,1],HCR5H[:,1],LOP5H[:,1],COT5H[:,1],FOS5H[:,1]),axis=1)
 
 
 #control points
