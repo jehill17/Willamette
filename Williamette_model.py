@@ -350,7 +350,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
 
           outflow = actualRelease;
           [powerFlow,RO_flow,spillwayFlow]=AssignReservoirOutletFlows(name,outflow)
-    return (outflow, powerFlow,RO_flow,spillwayFlow)
+    return outflow, powerFlow,RO_flow,spillwayFlow
     #return outflow
 
 
