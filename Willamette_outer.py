@@ -32,7 +32,7 @@ import datetime as dt
 import Williamette_model as inner #reading in the inner function
 import os
 
-# load reservoirs and control point infos
+#%%  load reservoirs and control point infos
 with open('Flow.xml') as fd:
     flow = xmld.parse(fd.read())
 
@@ -228,7 +228,7 @@ MON_loc.columns = ['Date','Local Flow']
 
 dates = np.array(BLU5Ad['Date'])
 
-#=======
+#%% Allocate and initialize
 T = 365 # Set the simulation horizon
 
 n_res=13
@@ -259,6 +259,7 @@ for  i in range(0,n_cp-1):
 InitwaterYear = 1.2
 waterYear = InitwaterYear
 
+#%% Daily loop
 for t in range(1,T+2):    
     doy = inner.DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
     

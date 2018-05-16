@@ -140,8 +140,7 @@ def AssignReservoirOutletFlows(name,outflow):
 
 
 def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp_discharge):
-    currentPoolElevation = GetPoolElevationFromVolume(volume,name)
-    
+    currentPoolElevation = GetPoolElevationFromVolume(volume,name)    
     if name.Restype!='Storage_flood': #if it produces hydropower
         #reset gate specific flows
         [name.maxPowerFlow, name.maxRO_Flow, name.maxSpillwayFlow]=UpdateMaxGateOutflows( name, currentPoolElevation )
@@ -233,9 +232,10 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue = interp_table(xvalue, yvalue)    
+                 constraintValue =float(interp_table(xvalue, yvalue))   
+                 #constraintValue =interp_table(xvalue, yvalue)  
              else:             #//If not, just use xvalue
-                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
+                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease >= constraintValue:
                 actualRelease = constraintValue;
 
@@ -246,7 +246,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue = interp_table(xvalue, yvalue)                 
+                 constraintValue =float(interp_table(xvalue, yvalue))                
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease <= constraintValue:
@@ -259,7 +259,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue = interp_table(xvalue, yvalue)
+                 constraintValue =float(interp_table(xvalue, yvalue))
                  constraintValue = constraintValue*24   #Covert hourly to daily                  
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
@@ -274,7 +274,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue = interp_table(xvalue, yvalue)
+                 constraintValue =float(interp_table(xvalue, yvalue))
                  constraintValue = constraintValue*24   #Covert hourly to daily                  
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
@@ -296,7 +296,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                               rows=constraintRules.iloc[1::,0]
                               vals=constraintRules.iloc[1::,1::]
                               interp_table = interp2d(cols, rows, vals, kind='linear')
-                              constraintValue = interp_table(xvalue, yvalue)
+                              constraintValue =float(interp_table(xvalue, yvalue))
                           else:             #//If not, just use xvalue
                               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                               #Compare to current discharge and allocate flow increases or decreases
