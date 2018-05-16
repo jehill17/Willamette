@@ -101,7 +101,7 @@ for res in RES:
     #res.InitVol=float(reservoirs[id-1]["@initOutflow"]) TO BE ADDED in the xml file
     res.minOutflow=float(reservoirs[id-1]["@minOutflow"])
     res.inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-    res.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+    res.GateMaxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
     res.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
     res.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
     if res.Restype != "RunOfRiver":
@@ -154,7 +154,7 @@ FOS_loc = pd.read_excel('Data/FOS_loc.xls',usecols = [0,3],skiprows=27942,skip_f
 LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=27942,skip_footer =1004)*cfs_to_cms
 
 
-#historical inflows 
+#historical outflows
 BLU5H = np.array(pd.read_excel('Data/BLU5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms) #only using data from 2005
 BCL5H = np.array(pd.read_excel('Data/BCL5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms) #only using data from 2005
 CGR5H = np.array(pd.read_excel('Data/CGR5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
@@ -299,16 +299,16 @@ for t in range(1,T+2):
     
     #HILLS CREEK ID=1 count =0
     HCR = RES[0]
-    HCR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,HCR.ID],HCR)
-    HCR_outflow = inner.GetResOutflow(HCR,volumes_all[t,HCR.ID],HCR5A.iloc[t,1],outflows_all[t-1,HCR.ID],doy,waterYear,CP,cp_discharge_all[t,:])
-    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(HCR,HCR_outflow)
+    HCR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,HCR.ID],HCR)
+    [HCR_outflow,powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(HCR,volumes_all[t-1,HCR.ID],HCR5A.iloc[t,1],outflows_all[t-1,HCR.ID],doy,waterYear,CP,cp_discharge_all[t-1,:])
+#    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(HCR,HCR_outflow)
     HCR_power_output = inner.CalculateHydropowerOutput(HCR,HCR_poolElevation,powerFlow)
-    [HCR_volume,HCR_elevation] = inner.UpdateVolume_elev (HCR, HCR5A.iloc[t,1], HCR_outflow,volumes_all[t,HCR.ID])
+    [HCR_volume,HCR_elevation] = inner.UpdateVolume_elev (HCR, HCR5A.iloc[t,1], HCR_outflow,volumes_all[t-1,HCR.ID])
     
-    outflows_all[t+1,HCR.ID] = HCR_outflow 
-    volumes_all[t+1,HCR.ID] =  HCR_volume
-    elevations_all[t+1,HCR.ID]=  HCR_elevation
-    hydropower_all[t,1] = HCR_power_output
+    outflows_all[t,HCR.ID] = HCR_outflow 
+    volumes_all[t,HCR.ID] =  HCR_volume
+    elevations_all[t,HCR.ID]=  HCR_elevation
+    hydropower_all[t-1,1] = HCR_power_output
     
     #LOOKOUT POINT ID=2 count=1
     LOP = RES[1]
@@ -349,9 +349,9 @@ for t in range(1,T+2):
     
     #COUGAR ID=8 count=7
     CGR = RES[7]
-    CGR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,CGR.ID],CGR)
-    CGR_outflow = inner.GetResOutflow(CGR,volumes_all[t,CGR.ID],CGR5A.iloc[t,1],outflows_all[t-1,CGR.ID],doy,waterYear,CP,cp_discharge_all[t,:])
-    [powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(CGR,CGR_outflow)
+    CGR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,CGR.ID],CGR)
+    [CGR_outflow,powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(CGR,volumes_all[t-1,CGR.ID],CGR5A.iloc[t,1],outflows_all[t-1,CGR.ID],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    #[powerFlow,RO_flow,spillwayFlow, massbalancecheck] = inner.AssignReservoirOutletFlows(CGR,CGR_outflow)
     CGR_power_output = inner.CalculateHydropowerOutput(CGR,CGR_poolElevation,powerFlow)
     [CGR_volume,CGR_elevation] = inner.UpdateVolume_elev (CGR, CGR5A.iloc[t,1], CGR_outflow,volumes_all[t,CGR.ID])
     
