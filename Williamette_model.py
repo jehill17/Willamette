@@ -39,22 +39,20 @@ def DatetoDayOfYear(val, fmt):
     return doy
 
 def UpdateReservoirWaterYear(doy,t, volumes_all):
-    M3_PER_ACREFT = 1233.48
-#    if doy < 120:
-#        waterYear = InitwaterYear
-    if doy == 120:
-        resVolumeBasin = np.sum(volumes_all[t-1,:])
-        resVolumeBasin = resVolumeBasin*M3_PER_ACREFT*1000000
-        if resVolumeBasin > float(1.48):
-            waterYear = float(1.48) #Abundant
-        elif resVolumeBasin < float(1.48) and resVolumeBasin >  float(1.2):
-            waterYear = float(1.2) #Adequate
-        elif resVolumeBasin < float(1.2) and resVolumeBasin > float(0.9):
-            waterYear = float(0.9) #Insufficient
-        elif resVolumeBasin < float(0.9):
-            waterYear = 0 #Deficit
+    waterYear=np.nan
+    M3_PER_ACREFT = 1233.4
+    resVolumeBasin = np.sum(volumes_all[t-1,:])
+    resVolumeBasin = resVolumeBasin*M3_PER_ACREFT*1000000
+    if resVolumeBasin > float(1.48):
+        waterYear = float(1.48) #Abundant
+    elif resVolumeBasin < float(1.48) and resVolumeBasin >  float(1.2):
+        waterYear = float(1.2) #Adequate
+    elif resVolumeBasin < float(1.2) and resVolumeBasin > float(0.9):
+        waterYear = float(0.9) #Insufficient
+    elif resVolumeBasin < float(0.9):
+        waterYear = 0 #Deficit
             
-        return waterYear
+    return waterYear
         
         
 
@@ -163,7 +161,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
       if currentVolume > name.maxVolume:
          currentVolume = name.maxVolume;   #Don't allow res volumes greater than max volume.This code may be removed once hydro model is calibrated.
          currentPoolElevation = GetPoolElevationFromVolume(currentVolume, name);  #Adjust pool elevation
-         print ("Reservoir volume at ", name, " on day of year ", doy, " exceeds maximum. Volume set to maxVolume. Mass Balance not closed.")
+         print ("Reservoir volume at ", name.name , " on day of year ", doy, " exceeds maximum. Volume set to maxVolume. Mass Balance not closed.")
         
 
       desiredRelease = (currentVolume - targetPoolVolume)/86400     #This would bring pool elevation back to the rule curve in one timestep.  Converted from m3/day to m3/s  (cms).
@@ -176,7 +174,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
       # ASSIGN ZONE:  zone 0 = top of dam, zone 1 = flood control high, zone 2 = conservation operations, zone 3 = buffer, zone 4 = alternate flood control 1, zone 5 = alternate flood control 2.  
       zone=[]
       if currentPoolElevation > name.Td_elev:
-         print ("Reservoir elevation at ", name, "on day of year ", doy," exceeds dam top elevation.")
+         print ("Reservoir elevation at ", name.name, "on day of year ", doy," exceeds dam top elevation.")
          currentPoolElevation = name.Td_elev - 0.1    #Set just below top elev to keep from exceeding values in lookup tables
          zone = 0    
       elif currentPoolElevation > name.Fc1_elev:
@@ -194,7 +192,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
          else:                                           #in the conservation zone
             zone = 2
       else:
-         print ("*** GetResOutflow(): We should never get here. doy = ", doy ,"reservoir = ", name)
+         print ("*** GetResOutflow(): We should never get here. doy = ", doy ,"reservoir = ", name.name)
       
         # Once we know what zone we are in, we can access the array of appropriate constraints for the particular reservoir and zone.       
 
