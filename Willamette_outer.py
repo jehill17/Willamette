@@ -246,7 +246,7 @@ cp_discharge_all = np.full((T+1,(n_cp-1)),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
-    outflows_all[0,i] = outflows_all_2005[0,i] #remember to stack outflows historical values
+    outflows_all[0,i] = outflows_2005_all[0,i] #remember to stack outflows historical values
     volumes_all[0,i] = RES[i].InitVol 
     elevations_all[0,i]=inner.GetPoolElevationFromVolume(volumes_all[0,i],RES[i])
 
@@ -268,9 +268,9 @@ for t in range(1,T+2):
     
     #COTTAGE GROVE ID=6 count=5 NO HYDROPOWER
     COT = RES[5]
-    COT_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t,COT.ID],COT)
-    COT_outflow = inner.GetResOutflow(COT,volumes_all[t,COT.ID],COT5A.iloc[t,1],outflows_all[t-1,COT.ID],doy,waterYear,CP,cp_discharge_all[t,:])
-    [COT_volume,COT_elevation] = inner.UpdateVolume_elev (COT, COT5A.iloc[t,1], COT_outflow, volumes_all[t,COT.ID])
+    COT_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,COT.ID],COT)
+    [COT_outflow, _,_,_] = inner.GetResOutflow(COT,volumes_all[t-1,COT.ID],COT5A.iloc[t,1],outflows_all[t-1,COT.ID],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [COT_volume,COT_elevation] = inner.UpdateVolume_elev (COT, COT5A.iloc[t,1], COT_outflow, volumes_all[t-1,COT.ID])
     
     outflows_all[t+1,COT.ID] = COT_outflow 
     volumes_all[t+1,COT.ID] =  COT_volume
