@@ -104,7 +104,7 @@ for res in RES:
     res.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
     res.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
     res.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
-    if res.Restype == "Storage":
+    if res.Restype != "RunOfRiver":
         res.ruleDir=str(reservoirs[id-1]["@rp_dir"])
         res.cpDir=str(reservoirs[id-1]["@cp_dir"])
         res.RuleCurve=pd.read_csv(os.path.join('Rule_Curves/', str(reservoirs[id-1]['@rule_curve'])))
@@ -272,9 +272,9 @@ for t in range(1,T+2):
     [COT_outflow, _,_,_] = inner.GetResOutflow(COT,volumes_all[t-1,COT.ID],COT5A.iloc[t,1],outflows_all[t-1,COT.ID],doy,waterYear,CP,cp_discharge_all[t-1,:])
     [COT_volume,COT_elevation] = inner.UpdateVolume_elev (COT, COT5A.iloc[t,1], COT_outflow, volumes_all[t-1,COT.ID])
     
-    outflows_all[t+1,COT.ID] = COT_outflow 
-    volumes_all[t+1,COT.ID] =  COT_volume
-    elevations_all[t+1,COT.ID]=  COT_elevation
+    outflows_all[t,COT.ID] = COT_outflow 
+    volumes_all[t,COT.ID] =  COT_volume
+    elevations_all[t,COT.ID]=  COT_elevation
 
 
     #DORENA ID=5 count=4 NO HYDROPOWER
