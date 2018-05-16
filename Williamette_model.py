@@ -96,11 +96,8 @@ def GetTargetElevationFromRuleCurve(doy,name): #target_table is same as rule_cur
 
 def UpdateMaxGateOutflows(name,poolElevation): 
     name.maxPowerFlow=name.GateMaxPowerFlow    #does not depend on elevation but can change due to constraints
-    if name.Restype == 'Storage':
-        if name.RO is not None:
-            name.maxRO_Flow = np.interp(poolElevation,name.RO['pool_elev_m'],name.RO['release_cap_cms'])
-#         return maxRO_Flow
-        name.maxSpillwayFlow = np.interp(poolElevation,name.Spillway['pool_elev_m'],name.Spillway['release_cap_cms'])
+    name.maxRO_Flow = np.interp(poolElevation,name.RO['pool_elev_m'],name.RO['release_cap_cms'])
+    name.maxSpillwayFlow = np.interp(poolElevation,name.Spillway['pool_elev_m'],name.Spillway['release_cap_cms'])
         
     return (name.maxPowerFlow, name.maxRO_Flow, name.maxSpillwayFlow)
 
@@ -147,12 +144,13 @@ def AssignReservoirOutletFlows(name,outflow):
 def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp_discharge):
     currentPoolElevation = GetPoolElevationFromVolume(volume,name)
     
-    #reset gate specific flows
-    [name.maxPowerFlow, name.maxRO_Flow, name.maxSpillwayFlow]=UpdateMaxGateOutflows( name, currentPoolElevation )
-    #Reset min outflows to 0 for next timestep (max outflows are reset by the function UpdateMaxGateOutflows)
-    name.minPowerFlow=0
-    name.minRO_Flow =0
-    name.minSpillwayFlow=0 
+    if name.Restype!='Storage_flood': #if it produces hydropower
+        #reset gate specific flows
+        [name.maxPowerFlow, name.maxRO_Flow, name.maxSpillwayFlow]=UpdateMaxGateOutflows( name, currentPoolElevation )
+        #Reset min outflows to 0 for next timestep (max outflows are reset by the function UpdateMaxGateOutflows)
+        name.minPowerFlow=0
+        name.minRO_Flow =0
+        name.minSpillwayFlow=0 
     
     if name.Restype=='RunOfRiver':
       outflow = inflow
@@ -348,8 +346,11 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
           if currentPoolElevation < name.inactive_elev:     #In the inactive zone, water is not accessible for release from any of the gates.
              actualRelease = 0 #lag_outflow *0.5
 
-          outflow = actualRelease;
-          [powerFlow,RO_flow,spillwayFlow]=AssignReservoirOutletFlows(name,outflow)
+          outflow = actualRelease
+    if name.Restype!='Storage_flood':
+        [powerFlow,RO_flow,spillwayFlow]=AssignReservoirOutletFlows(name,outflow)
+    else:
+        [powerFlow,RO_flow,spillwayFlow]=0
     return outflow, powerFlow,RO_flow,spillwayFlow
     #return outflow
 
