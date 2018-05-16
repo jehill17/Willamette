@@ -468,7 +468,7 @@ dynamic="0"
                fc2_elev="nan"
                fc3_elev="nan"
                buffer_zone="HC_buffer.csv"                        ressim_output_f="HC_ressim_flow_1935_2008.csv"      ressim_output_r="HC_ressim_rule_1935_2008.csv"
-               inactive_elev="441.046"                            reservoir_type="Storage"/>
+               inactive_elev="441.046"                            reservoir_type="Storage_HP"/>
 
     <reservoir id="2"   name="Lookout Point Reservoir (USACE)"    path="Reservoirs/"                                  initVolume="143948194"
                area_vol_curve="lookout_point_area_capacity.csv"   av_dir="Area_Capacity_Curves/"                      minOutflow="34"
@@ -479,7 +479,7 @@ dynamic="0"
                turbine_efficiency="0.9"                           td_elev="287.0"                                     fc1_elev="285.0"
                fc3_elev="283.0"                                   fc2_elev="261.0"                                    buffer_zone="LO_buffer.csv"
                ressim_output_f="LO_ressim_flow_1935_2008.csv"     ressim_output_r="LO_ressim_rule_1935_2008.csv"      inactive_elev="251.46"
-               reservoir_type="Storage"/>
+               reservoir_type="Storage_HP"/>
 
     <reservoir id="3"  name="Dexter Reservoir (USACE - re-regulating)"      path="Reservoirs/"                        initVolume="28863475"
                area_vol_curve="dexter_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="34"
@@ -495,7 +495,7 @@ dynamic="0"
                rule_priorities="fall_creek_rule_priorities.csv"   rp_dir="Rules_FC/"                                  td_elev="256.0"
                tailwater_elev="nan"                               fc1_elev="254.0"                                    fc2_elev="243.0"  
                fc3_elev="nan"                                     buffer_zone="FC_buffer.csv"                         ressim_output_f="FC_ressim_flow_1935_2008.csv"     
-               ressim_output_r="FC_ressim_rule_1935_2008.csv"      inactive_elev="217.32"                             reservoir_type="Storage" 
+               ressim_output_r="FC_ressim_rule_1935_2008.csv"      inactive_elev="217.32"                             reservoir_type="Storage_flood" 
                turbine_efficiency="nan" />
 
     <reservoir id="5"   name="Dorena Reservoir (USACE)"           path="Reservoirs/"                                  initVolume="9072259"
@@ -506,7 +506,7 @@ dynamic="0"
                rule_priorities="dorena_rule_priorities.csv"       rp_dir="Rules_Dorena/"                              td_elev="264.0"
                fc1_elev="255.0"                                   fc2_elev="247.0"                                    buffer_zone="Dorena_buffer.csv"
                ressim_output_f="Dorena_ressim_flow_1935_2008.csv" ressim_output_r="Dorena_ressim_rule_1935_2008.csv"  inactive_elev="235.0"
-               reservoir_type="Storage"                           fc3_elev="nan"                                      turbine_efficiency="nan"
+               reservoir_type="Storage_flood"                           fc3_elev="nan"                                      turbine_efficiency="nan"
                tailwater_elev="nan"  />
 
     <reservoir id="6"   name="Cottage Grove Reservoir (USACE)"    path="Reservoirs/"                                  initVolume="4647760"
@@ -517,7 +517,7 @@ dynamic="0"
                rule_priorities="cottage_grove_rule_priorities.csv" rp_dir="Rules_CG/"                                 td_elev="246.0"
                fc1_elev="241.0"                                   fc2_elev="237.0"                                    buffer_zone="CG_buffer.csv"
                ressim_output_f="CG_ressim_flow_1935_2008.csv"     ressim_output_r="CG_ressim_rule_1935_2008.csv"      inactive_elev="228.6"
-               reservoir_type="Storage"                           fc3_elev="nan"                                      turbine_efficiency="nan"
+               reservoir_type="Storage_flood"                           fc3_elev="nan"                                      turbine_efficiency="nan"
                tailwater_elev="nan" />
 
     <reservoir id="7"   name="Fern Ridge Reservoir (USACE)"       path="Reservoirs/"      initVolume="6472079"
@@ -528,7 +528,7 @@ dynamic="0"
                rule_priorities="fern_ridge_rule_priorities.csv"   rp_dir="Rules_FR/"                                  td_elev="116.0"
                fc1_elev="114.0"                  fc2_elev="nan"
                fc3_elev="nan"                                buffer_zone="FR_buffer.csv"                         ressim_output_f="FR_ressim_flow_1935_2008.csv"
-               ressim_output_r="FR_ressim_rule_1935_2008.csv"     inactive_elev="107.60"                              reservoir_type="Storage"
+               ressim_output_r="FR_ressim_rule_1935_2008.csv"     inactive_elev="107.60"                              reservoir_type="Storage_flood"
                turbine_efficiency="nan"                          tailwater_elev="nan" />
 
     <reservoir id="8"   name="Cougar Reservoir (USACE)"           path="Reservoirs/"     initVolume="69087752"
@@ -540,7 +540,7 @@ dynamic="0"
                turbine_efficiency="0.9"                           td_elev="520.0"                                     fc1_elev="518.0"
                fc2_elev="nan"                                     fc3_elev="nan"
                buffer_zone="Cougar_buffer.csv"                    ressim_output_f="Cougar_ressim_flow_1935_2008.csv"  ressim_output_r="Cougar_ressim_rule_1935_2008.csv"
-               inactive_elev="466.65"                             reservoir_type="Storage"/>
+               inactive_elev="466.65"                             reservoir_type="Storage_HP"/>
 
     <reservoir id="9"   name="Blue River Reservoir (USACE)"       path="Reservoirs/"     initVolume="5063443"
                area_vol_curve="blue_river_area_capacity.csv"      av_dir="Area_Capacity_Curves/"                      minOutflow="1.417"
@@ -550,7 +550,7 @@ dynamic="0"
                rule_priorities="blue_river_rule_priorities.csv"   rp_dir="Rules_BR/"                                  td_elev="415.0"
                fc1_elev="414.0"                                   fc2_elev="nan"                                      fc3_elev="nan"                                   
                buffer_zone="BR_buffer.csv"                         ressim_output_f="BR_ressim_flow_1935_2008.csv"
-               ressim_output_r="BR_ressim_rule_1935_2008.csv"     inactive_elev="359.66"                              reservoir_type="Storage"
+               ressim_output_r="BR_ressim_rule_1935_2008.csv"     inactive_elev="359.66"                              reservoir_type="Storage_flood"
                turbine_efficiency="nan"                           tailwater_elev="nan"  />
 
     <reservoir id="10"  name="Green Peter Reservoir (USACE)"      path="Reservoirs/"     initVolume="197233746"
@@ -562,7 +562,7 @@ dynamic="0"
                turbine_efficiency="0.9"                           td_elev="311.0"                                     fc1_elev="309.0"
                fc2_elev="nan"                                     fc3_elev="nan"     
                buffer_zone="GP_buffer.csv"                        ressim_output_f="GP_ressim_flow_1935_2008.csv"      ressim_output_r="GP_ressim_rule_1935_2008.csv"
-               inactive_elev="281.03"                             reservoir_type="Storage" />
+               inactive_elev="281.03"                             reservoir_type="Storage_HP" />
 
     <reservoir id="11"  name="Foster Reservoir (USACE)"           path="Reservoirs/"     initVolume="39471419"
                area_vol_curve="foster_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="22.6"
@@ -573,7 +573,7 @@ dynamic="0"
                turbine_efficiency="0.9"                           td_elev="197.0"                                     fc1_elev="195.0"
                fc2_elev="nan"                                     fc3_elev="nan"
                buffer_zone="Foster_buffer.csv"                    ressim_output_f="Foster_ressim_flow_1935_2008.csv"  ressim_output_r="Foster_ressim_rule_1935_2008.csv"
-               inactive_elev="186.84"                             reservoir_type="Storage"/>
+               inactive_elev="186.84"                             reservoir_type="Storage_HP"/>
 
     <reservoir id="12"  name="Detroit Reservoir (USACE)"          path="Reservoirs/"     initVolume="203449596"
                area_vol_curve="detroit_area_capacity.csv"         av_dir="Area_Capacity_Curves/"                      minOutflow="34"
@@ -584,7 +584,7 @@ dynamic="0"
                turbine_efficiency="0.9"                           td_elev="481.0"                                     fc1_elev="480.0"
                fc2_elev="nan"                                     fc3_elev="nan"
                buffer_zone="Detroit_buffer.csv"                   ressim_output_f="DET_ressim_flow_1935_2008.csv"     ressim_output_r="DET_ressim_rule_1935_2008.csv"
-               inactive_elev="441.96"                             reservoir_type="Storage" />
+               inactive_elev="441.96"                             reservoir_type="Storage_HP" />
 
     <reservoir id="13"  name="Big Cliff Reservoir (USACE - re-regulating)"  path="Reservoirs/"     initVolume="3885468"
                area_vol_curve="Big_Cliff_area_capacity.csv"       av_dir="Area_Capacity_Curves/"                      minOutflow="34"
