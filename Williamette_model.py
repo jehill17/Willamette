@@ -350,7 +350,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
     if name.Restype!='Storage_flood':
         [powerFlow,RO_flow,spillwayFlow]=AssignReservoirOutletFlows(name,outflow)
     else:
-        [powerFlow,RO_flow,spillwayFlow]=0
+        [powerFlow,RO_flow,spillwayFlow]=[np.nan, np.nan, np.nan]
     return outflow, powerFlow,RO_flow,spillwayFlow
     #return outflow
 
