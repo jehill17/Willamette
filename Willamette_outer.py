@@ -101,7 +101,7 @@ for res in RES:
     #res.InitVol=float(reservoirs[id-1]["@initOutflow"]) TO BE ADDED in the xml file
     res.minOutflow=float(reservoirs[id-1]["@minOutflow"])
     res.inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-    res.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+    res.GateMaxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
     res.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
     res.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
     if res.Restype != "RunOfRiver":
@@ -170,7 +170,7 @@ COT5H = np.array(pd.read_excel('Data/COT5H_daily.xls',skiprows=27942,skip_footer
 FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
 LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
 
-outflows_2005_all = np.stack((BLU5H[:,1],BCL5H[:,1],CGR5H[:,1],DET5H[:,1],DEX5H[:,1],DOR5H[:,1],FAL5H[:,1],FOS5H[:,1],FRN5H[:,1],GPR5H[:,1],HCR5H[:,1],LOP5H[:,1],COT5H[:,1],FOS5H[:,1]),axis=1)
+outflows_2005_all = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],FRN5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
 
 
 #control points
@@ -227,6 +227,7 @@ MON_loc.columns = ['Date','Local Flow']
 dates = np.array(BLU5Ad['Date'])
 
 #%% Allocate and initialize
+import Williamette_model as inner
 T = 365 # Set the simulation horizon
 
 n_res=13

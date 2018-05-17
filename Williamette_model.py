@@ -106,7 +106,7 @@ def AssignReservoirOutletFlows(name,outflow):
     RO_flow = 0.0
     spillwayFlow = 0.0
 
-    if outflow < name.maxPowerFlow: #this value is stored
+    if outflow <= name.maxPowerFlow: #this value is stored
         powerFlow = outflow
     else:
         powerFlow = name.maxPowerFlow
@@ -118,7 +118,7 @@ def AssignReservoirOutletFlows(name,outflow):
                 powerFlow = outflow - name.minRO_Flow
         else:
             RO_flow = name.maxRO_Flow
-            excessFlow = RO_flow
+            excessFlow -= RO_flow
 
             spillwayFlow = excessFlow
 
@@ -132,7 +132,7 @@ def AssignReservoirOutletFlows(name,outflow):
     massbalancecheck = outflow - (powerFlow + RO_flow + spillwayFlow)
     #does this equal 0?
     if massbalancecheck != 0:
-        print ("Mass balance didn't close, massbalancecheck = ", massbalancecheck )
+        print ("Mass balance didn't close for ", name.name," massbalancecheck = ", massbalancecheck, "Pow, Spill and RO =", powerFlow, spillwayFlow, RO_flow )
 
     return(powerFlow,RO_flow,spillwayFlow)
 
@@ -230,7 +230,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue =float(interp_table(xvalue, yvalue))   
+                 constraintValue =float(interp_table(yvalue, xvalue))    
                  #constraintValue =interp_table(xvalue, yvalue)  
              else:             #//If not, just use xvalue
                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
@@ -244,7 +244,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue =float(interp_table(xvalue, yvalue))                
+                 constraintValue =float(interp_table(yvalue, xvalue))                 
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease <= constraintValue:
@@ -257,7 +257,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue =float(interp_table(xvalue, yvalue))
+                 constraintValue =float(interp_table(yvalue, xvalue)) 
                  constraintValue = constraintValue*24   #Covert hourly to daily                  
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
@@ -272,7 +272,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue =float(interp_table(xvalue, yvalue))
+                 constraintValue =float(interp_table(yvalue, xvalue)) 
                  constraintValue = constraintValue*24   #Covert hourly to daily                  
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
@@ -294,7 +294,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                               rows=constraintRules.iloc[1::,0]
                               vals=constraintRules.iloc[1::,1::]
                               interp_table = interp2d(cols, rows, vals, kind='linear')
-                              constraintValue =float(interp_table(xvalue, yvalue))
+                              constraintValue =float(interp_table(yvalue, xvalue)) 
                           else:             #//If not, just use xvalue
                               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                               #Compare to current discharge and allocate flow increases or decreases
