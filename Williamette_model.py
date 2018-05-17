@@ -348,7 +348,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
           if actualRelease < name.minOutflow:         # No release values less than the minimum
              actualRelease = name.minOutflow
           if currentPoolElevation < name.inactive_elev:     #In the inactive zone, water is not accessible for release from any of the gates.
-             actualRelease = 0 #lag_outflow *0.5
+             actualRelease = lag_outflow *0.5
 
           outflow = actualRelease
     if name.Restype!='Storage_flood':
