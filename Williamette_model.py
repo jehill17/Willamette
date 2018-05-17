@@ -102,7 +102,7 @@ def UpdateMaxGateOutflows(name,poolElevation):
 
 def AssignReservoirOutletFlows(name,outflow):
     #flow file has a condition on reservoir not being null...dk if we need that here
-    outflow = outflow * 86400  # convert to daily volume    m3 per day 
+    #outflow = outflow * 86400  # convert to daily volume    m3 per day 
     #initialize values to 0.0
     powerFlow = 0.0
     RO_flow = 0.0
@@ -279,7 +279,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                  constraintValue = constraintValue*24   #Covert hourly to daily
-             if actualRelease >= lag_outflow  - constraintValue:  #Is planned release less than current release - contstraint? 
+             if actualRelease <= lag_outflow  - constraintValue:  #Is planned release less than current release - contstraint? 
                 actualRelease = lag_outflow  - constraintValue  #If so, planned release can be no less than current release - constraint.
 
 
