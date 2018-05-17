@@ -100,7 +100,7 @@ def UpdateMaxGateOutflows(name,poolElevation):
 
 def AssignReservoirOutletFlows(name,outflow):
     #flow file has a condition on reservoir not being null...dk if we need that here
-    outflow = outflow * 86400  # convert to daily volume    m3 per day 
+    #outflow = outflow * 86400  # convert to daily volume    m3 per day 
     #initialize values to 0.0
     powerFlow = 0.0
     RO_flow = 0.0
@@ -190,6 +190,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
             zone = 2
       else:
          print ("*** GetResOutflow(): We should never get here. doy = ", doy ,"reservoir = ", name.name)
+      print('zone is', zone)   
       
         # Once we know what zone we are in, we can access the array of appropriate constraints for the particular reservoir and zone.       
 
@@ -223,7 +224,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                yvalue = lag_outflow 
           else:                                            #Unrecognized xvalue for constraint lookup table
              print ("Unrecognized x value for reservoir constraint lookup label = ", xlabel) 
-   
+          print('The constraint array of i is',constraint_array[i])   
           if constraint_array[i].startswith('Max_'):  #case RCT_MAX  maximum
              if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
                  cols=constraintRules.iloc[0,1::]
@@ -236,7 +237,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease >= constraintValue:
                 actualRelease = constraintValue;
-
+             print('The constraint value is',constraintValue)   
 
           elif constraint_array[i].startswith('Min_'):  # case RCT_MIN:  //minimum
              if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
@@ -249,6 +250,8 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease <= constraintValue:
                 actualRelease = constraintValue;
+             print('The constraint value is',constraintValue)   
+
 
 
           elif constraint_array[i].startswith('MaxI_'):     #case RCT_INCREASINGRATE:  //Increasing Rate
@@ -263,7 +266,10 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                  constraintValue = constraintValue*24   #Covert hourly to daily
              if actualRelease >= lag_outflow  + constraintValue:  #Is planned release more than current release + contstraint? 
-                actualRelease = lag_outflow  + constraintValue  #If so, planned release can be no more than current release + constraint.
+                actualRelease = lag_outflow  + constraintValue
+             print('The constraint value is',constraintValue)   
+
+                #If so, planned release can be no more than current release + constraint.
                  
 
           elif constraint_array[i].startswith('MaxD_'):    #case RCT_DECREASINGRATE:  //Decreasing Rate
@@ -277,8 +283,9 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                  constraintValue = constraintValue*24   #Covert hourly to daily
-             if actualRelease >= lag_outflow  - constraintValue:  #Is planned release less than current release - contstraint? 
+             if actualRelease <= lag_outflow  - constraintValue:  #Is planned release less than current release - contstraint? 
                 actualRelease = lag_outflow  - constraintValue  #If so, planned release can be no less than current release - constraint.
+             print('The constraint value is',constraintValue)   
 
 
           elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point  
@@ -310,7 +317,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                               else:  
                                   resallocation = 0
                           actualRelease += resallocation #add/subract cp allocation
-              
+                          print('The resallocation is',resallocation)               
           #GATE SPECIFIC RULES:   
           elif constraint_array[i].startswith('Pow_Max'): # case RCT_POWERPLANT:  //maximum Power plant rule  Assign m_maxPowerFlow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
