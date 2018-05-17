@@ -18,10 +18,8 @@ from sklearn import linear_model
 from sklearn.metrics import r2_score
 from xml.dom import minidom
 import xml.etree.ElementTree as ET
-import untangle as unt
 import xmltodict as xmld
 from collections import OrderedDict
-import dict_digger as dd
 import datetime as dt
 import os
 
