@@ -19,6 +19,7 @@ from pandas.plotting import autocorrelation_plot
 from pandas import ExcelWriter
 import numpy as np
 import scipy as sp
+from scipy import stats
 from scipy.interpolate import interp2d
 from sklearn import linear_model
 from sklearn.metrics import r2_score
@@ -227,12 +228,10 @@ MON_loc.columns = ['Date','Local Flow']
 dates = np.array(BLU5Ad['Date'])
 
 #%% Allocate and initialize
-<<<<<<< HEAD
-T = 14 # Set the simulation horizon
-=======
+
+
 import Williamette_model as inner
 T = 365 # Set the simulation horizon
->>>>>>> 429f2ed40539137a4ee2daa42e88b396020f3140
 
 n_res=13
 n_HPres=8
@@ -471,8 +470,237 @@ for t in range(1,T+2):
     #SALEM
     cp_discharge_all[t,0] = cp_discharge_all[t,1] + cp_discharge_all[t,2] + SAL_loc.iloc[t,1]
     
-    
-    
+#%%    
+#historical validation
+Willamette_gen_2005 = pd.read_excel('Data/Williamette_historical_hydropower_gen.xlsx',sheetname='2005',skiprows=4) #this is hourly
+Willamette_gen_2005.columns = ['CGR','DET','DEX','FOS','GPR','HCR','LOP','BCL']
+
+
+#hydropower gen & outflows
+CGR_2005 = Willamette_gen_2005['CGR']
+CGR_2005_daily = np.mean(np.array(CGR_2005).reshape(-1,24),axis=1)
+plt.figure()
+plt.plot(CGR_2005_daily)
+plt.plot(hydropower_all[:,3])
+plt.legend(['CGR historical','CGR predicted'])
+plt.figure()
+plt.plot(CGR5H[:,1])
+plt.plot(outflows_all[:,7])
+plt.legend(['CGR historical outflows','CGR predicted'])
+
+x = (CGR5H[0:365,1].astype('float'))
+y = outflows_all[0:365,7]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+
+DET_2005 = Willamette_gen_2005['DET']
+DET_2005_daily = np.mean(np.array(DET_2005).reshape(-1,24),axis=1)  
+plt.figure()
+plt.plot(DET_2005_daily)
+plt.plot(hydropower_all[:,6])
+plt.legend(['DET historical','DET predicted'])
+plt.figure()
+plt.plot(DET5H[:,1])
+plt.plot(outflows_all[:,11])
+plt.legend(['DET historical outflows','DET predicted'])
+
+x = (DET5H[0:365,1].astype('float'))
+y = outflows_all[0:365,11]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+DEX_2005 = Willamette_gen_2005['DEX']
+DEX_2005_daily = np.mean(np.array(DEX_2005).reshape(-1,24),axis=1)  
+plt.figure()
+plt.plot(DEX_2005_daily)
+plt.plot(hydropower_all[:,2])
+plt.legend(['DEX historical','DEX predicted'])
+#plt.figure()
+#plt.plot(DEX5M[:,1])
+#plt.plot(outflows_all[:,2])
+#plt.legend(['DEX historical outflows','DEX predicted'])
+
+
+FOS_2005 = Willamette_gen_2005['FOS']
+FOS_2005_daily = np.mean(np.array(FOS_2005).reshape(-1,24),axis=1)  
+plt.figure()
+plt.plot(FOS_2005_daily)
+plt.plot(hydropower_all[:,5])
+plt.legend(['FOS historical','FOS predicted'])
+plt.figure()
+plt.plot(FOS5H[:,1])
+plt.plot(outflows_all[:,10])
+plt.legend(['FOS historical outflows','FOS predicted'])
+
+x = (FOS5H[0:365,1].astype('float'))
+y = outflows_all[0:365,10]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+GPR_2005 = Willamette_gen_2005['GPR']
+GPR_2005_daily = np.mean(np.array(GPR_2005).reshape(-1,24),axis=1)  
+plt.figure()
+plt.plot(GPR_2005_daily)
+plt.plot(hydropower_all[:,4])
+plt.legend(['GPR historical','GPR predicted'])
+plt.figure()
+plt.plot(GPR5H[:,1])
+plt.plot(outflows_all[:,9])
+plt.legend(['GPR historical outflows','GPR predicted'])
+
+x = (GPR5H[0:365,1].astype('float'))
+y = outflows_all[0:365,9]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+HCR_2005 = Willamette_gen_2005['HCR']
+HCR_2005_daily = np.mean(np.array(HCR_2005).reshape(-1,24),axis=1)  
+plt.figure()
+plt.plot(HCR_2005_daily)
+plt.plot(hydropower_all[:,0])
+plt.legend(['HCR historical','HCR predicted'])
+plt.figure()
+plt.plot(HCR5H[:,1])
+plt.plot(outflows_all[:,0])
+plt.legend(['HCR historical outflows','HCR predicted'])
+
+x = (HCR5H[0:365,1].astype('float'))
+y = outflows_all[0:365,0]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+LOP_2005 = Willamette_gen_2005['LOP']
+LOP_2005_daily = np.mean(np.array(LOP_2005).reshape(-1,24),axis=1)  
+plt.figure()
+plt.plot(LOP_2005_daily)
+plt.plot(hydropower_all[:,1])
+plt.legend(['LOP historical','LOP predicted'])
+plt.figure()
+plt.plot(LOP5H[:,1])
+plt.plot(outflows_all[:,1])
+plt.legend(['LOP historical outflows','LOP predicted'])
+
+x = (LOP5H[0:365,1].astype('float'))
+y = outflows_all[0:365,1]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+BCL_2005 = Willamette_gen_2005['BCL']
+BCL_2005_daily = np.mean(np.array(BCL_2005).reshape(-1,24),axis=1)  
+plt.figure()
+plt.plot(BCL_2005_daily)
+plt.plot(hydropower_all[:,7])
+plt.legend(['BCL historical','BCL predicted'])
+plt.figure()
+plt.plot(BCL5H[:,1])
+plt.plot(outflows_all[:,12])
+plt.legend(['BCL historical outflows','BCL predicted'])
+
+x = (BCL5H[0:365,1].astype('float'))
+y = outflows_all[0:365,12]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+
+#nonhydro outflows
+
+#COT
+plt.figure()
+plt.plot(COT5H[:,1])
+plt.plot(outflows_all[:,5])
+plt.legend(['COT historical outflows','COT predicted'])
+x = (COT5H[0:365,1].astype('float'))
+y = outflows_all[0:365,5]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+#DOR
+plt.figure()
+plt.plot(DOR5H[:,1])
+plt.plot(outflows_all[:,4])
+plt.legend(['DOR historical outflows','DOR predicted'])
+x = (DOR5H[0:365,1].astype('float'))
+y = outflows_all[0:365,4]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+
+#FRN
+plt.figure()
+plt.plot(FRN5H[:,1])
+plt.plot(outflows_all[:,6])
+plt.legend(['FRN historical outflows','FRN predicted'])
+
+x = (FRN5H[0:365,1].astype('float'))
+y = outflows_all[0:365,6]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+#FAL
+plt.figure()
+plt.plot(FAL5H[:,1])
+plt.plot(outflows_all[:,3])
+plt.legend(['FAL historical outflows','FAL predicted'])
+
+x = (FAL5H[0:365,1].astype('float'))
+y = outflows_all[0:365,3]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+#BLU
+plt.figure()
+plt.plot(BLU5H[:,1])
+plt.plot(outflows_all[:,8])
+plt.legend(['BLU historical outflows','BLU predicted'])
+
+x = (BLU5H[0:365,1].astype('float'))
+y = outflows_all[0:365,8]
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+R2 = r_val**2
+print(R2)
+
+
+#%%
+#volume validation
+
+M3_PER_ACREFT = 1233.4
+
+
+HCR2005_vol = pd.read_excel('Data/HCRvolume_2005.xlsx')
+HCR2005_vol.columns = ['Date','Time','Storage(AF)']
+HCR2005vol_d = np.array(HCR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+#HCR
+plt.figure()
+plt.plot(volumes_all[0:365,0])
+plt.plot(HCR2005vol_d)
+plt.legend(['HCR predicted daily storage (m^3)','HCR historic storage'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
     
     
     
