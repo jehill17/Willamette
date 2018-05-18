@@ -227,7 +227,12 @@ MON_loc.columns = ['Date','Local Flow']
 dates = np.array(BLU5Ad['Date'])
 
 #%% Allocate and initialize
+<<<<<<< HEAD
 T = 14 # Set the simulation horizon
+=======
+import Williamette_model as inner
+T = 365 # Set the simulation horizon
+>>>>>>> 429f2ed40539137a4ee2daa42e88b396020f3140
 
 n_res=13
 n_HPres=8
