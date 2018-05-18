@@ -228,9 +228,6 @@ MON_loc.columns = ['Date','Local Flow']
 dates = np.array(BLU5Ad['Date'])
 
 #%% Allocate and initialize
-
-
-import Williamette_model as inner
 T = 365 # Set the simulation horizon
 
 n_res=13
@@ -244,7 +241,7 @@ outflows_all = np.full((T+2,n_res),np.nan) #we can fill these in later, or make 
 hydropower_all = np.full((T+2,n_HPres), np.nan)
 volumes_all = np.full((T+2,n_res),np.nan)
 elevations_all = np.full((T+2,n_res),np.nan)
-cp_discharge_all = np.full((T+2,(n_cp-1)),np.nan)
+cp_discharge_all = np.full((T+2,(n_cp)),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
@@ -253,7 +250,7 @@ for  i in range(0,n_res):
     elevations_all[0:3,i]=inner.GetPoolElevationFromVolume(volumes_all[0:3,i],RES[i])
 
 
-for  i in range(0,n_cp-1):
+for  i in range(0,n_cp):
      cp_discharge_all[0,i] = cp_discharge_2005_all[0,i]
 
 #define an outer fnt here that takes date, name, vol as inputs?
@@ -441,35 +438,32 @@ for t in range(1,T+2):
     #in order of upstream to down
     
     #GOSHEN
-    cp_discharge_all[t,7] = COT_outflow + DOR_outflow + GOS_loc.iloc[t,1] 
-    
+    cp_discharge_all[t,7] = COT_outflow + DOR_outflow + GOS_loc.iloc[t,1]    
     #JASPER
-    cp_discharge_all[t,6] = DEX_outflow + FAL_outflow + JAS_loc.iloc[t,1]
-    
+    cp_discharge_all[t,6] = DEX_outflow + FAL_outflow + JAS_loc.iloc[t,1]    
     #VIDA
-    cp_discharge_all[t,5] = CGR_outflow + BLU_outflow + VID_loc.iloc[t,1]
-    
+    cp_discharge_all[t,5] = CGR_outflow + BLU_outflow + VID_loc.iloc[t,1]    
     #HARRISBURG
-    cp_discharge_all[t,4] = cp_discharge_all[t,7] + cp_discharge_all[t,6] + cp_discharge_all[t,5] + HAR_loc.iloc[t,1]
-    
+    cp_discharge_all[t,4] = cp_discharge_all[t,7] + cp_discharge_all[t,6] + cp_discharge_all[t,5] + HAR_loc.iloc[t,1]    
     #MONROE
-    cp_discharge_all[t,9] = FRN_outflow + MON_loc.iloc[t,1]
-    
+    cp_discharge_all[t,9] = FRN_outflow + MON_loc.iloc[t,1]    
     #ALBANY
-    cp_discharge_all[t,1] = cp_discharge_all[t-1,9] + cp_discharge_all[t-1,4]+ ALB_loc.iloc[t,1]
-    
+    cp_discharge_all[t,1] = cp_discharge_all[t-1,9] + cp_discharge_all[t-1,4]+ ALB_loc.iloc[t,1]    
     #WATERLOO
-    cp_discharge_all[t,8] = FOS_outflow + WAT_loc.iloc[t,1]
-    
+    cp_discharge_all[t,8] = FOS_outflow + WAT_loc.iloc[t,1]    
     #MEHAMA
-    cp_discharge_all[t,3] = BCL_outflow + MEH_loc.iloc[t,1]
-    
+    cp_discharge_all[t,3] = BCL_outflow + MEH_loc.iloc[t,1]    
     #JEFFERSON
-    cp_discharge_all[t,2] = cp_discharge_all[t,8] + cp_discharge_all[t,3] + JEF_loc.iloc[t,1]
-    
+    cp_discharge_all[t,2] = cp_discharge_all[t,8] + cp_discharge_all[t,3] + JEF_loc.iloc[t,1]    
     #SALEM
-    cp_discharge_all[t,0] = cp_discharge_all[t,1] + cp_discharge_all[t,2] + SAL_loc.iloc[t,1]
+    cp_discharge_all[t,0] = cp_discharge_all[t,1] + cp_discharge_all[t,2] + SAL_loc.iloc[t,1]   
+    #FOSTER ID=11 count=10
+    cp_discharge_all[t,10] = FOS_outflow
     
+    for j in range(0,n_cp):
+        if cp_discharge_all[t,j]<0:
+            print("cp discharge is negative for CP=",CP[j].name," t=", t)
+            
 #%%    
 #historical validation
 Willamette_gen_2005 = pd.read_excel('Data/Williamette_historical_hydropower_gen.xlsx',sheetname='2005',skiprows=4) #this is hourly
