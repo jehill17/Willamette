@@ -118,7 +118,7 @@ def AssignReservoirOutletFlows(name,outflow):
                 powerFlow = outflow - name.minRO_Flow
         else:
             RO_flow = name.maxRO_Flow
-            excessFlow = RO_flow
+            excessFlow -= RO_flow
 
             spillwayFlow = excessFlow
 
@@ -350,6 +350,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
           if currentPoolElevation < name.inactive_elev:     #In the inactive zone, water is not accessible for release from any of the gates.
              actualRelease = lag_outflow *0.5
 
+            
           outflow = actualRelease
     if name.Restype!='Storage_flood':
         [powerFlow,RO_flow,spillwayFlow]=AssignReservoirOutletFlows(name,outflow)

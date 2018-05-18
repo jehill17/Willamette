@@ -101,7 +101,7 @@ for res in RES:
     #res.InitVol=float(reservoirs[id-1]["@initOutflow"]) TO BE ADDED in the xml file
     res.minOutflow=float(reservoirs[id-1]["@minOutflow"])
     res.inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-    res.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
+    res.GateMaxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
     res.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
     res.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
     if res.Restype != "RunOfRiver":
@@ -140,7 +140,6 @@ BLU5Ad.columns = ['Date','Inflow']
 BLU5A = pd.read_excel('Data/BLU5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
 CGR5A = pd.read_excel('Data/CGR5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
 DET5A = pd.read_excel('Data/DET5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-DEX5M = pd.read_excel('Data/DEX5M_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
 DOR5A = pd.read_excel('Data/DOR5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
 FAL5A = pd.read_excel('Data/FAL5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
 FOS5A = pd.read_excel('Data/FOS5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
