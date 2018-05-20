@@ -677,16 +677,101 @@ print(R2)
 
 M3_PER_ACREFT = 1233.4
 
-
+#HCR
 HCR2005_vol = pd.read_excel('Data/HCRvolume_2005.xlsx')
 HCR2005_vol.columns = ['Date','Time','Storage(AF)']
 HCR2005vol_d = np.array(HCR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-#HCR
 plt.figure()
 plt.plot(volumes_all[0:365,0])
 plt.plot(HCR2005vol_d)
 plt.legend(['HCR predicted daily storage (m^3)','HCR historic storage'])
+
+#LOP
+LOP2005_vol = pd.read_excel('Data/LOPvolume_2005.xlsx')
+LOP2005_vol.columns = ['Date','Time','Storage(AF)']
+LOP2005vol_d = np.array(LOP2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+plt.figure()
+plt.plot(volumes_all[0:365,1])
+plt.plot(LOP2005vol_d)
+plt.legend(['LOP predicted daily storage (m^3)','LOP historic storage'])
+
+#FAL
+FAL2005_vol = pd.read_excel('Data/FALvolume_2005.xlsx')
+FAL2005_vol.columns = ['Date','Time','Storage(AF)']
+FAL2005vol_d = np.array(FAL2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+plt.figure()
+plt.plot(volumes_all[0:365,3])
+plt.plot(FAL2005vol_d)
+plt.legend(['FAL predicted daily storage (m^3)','FAL historic storage'])
+
+#DOR
+DOR2005_vol = pd.read_excel('Data/DORvolume_2005.xlsx')
+DOR2005_vol.columns = ['Date','Time','Storage(AF)']
+DOR2005vol_d = np.array(DOR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+plt.figure()
+plt.plot(volumes_all[0:365,4])
+plt.plot(DOR2005vol_d)
+plt.legend(['DOR predicted daily storage (m^3)','DOR historic storage'])
+
+#COT
+COT2005_vol = pd.read_excel('Data/COTvolume_2005.xlsx')
+COT2005_vol.columns = ['Date','Time','Storage(AF)']
+COT2005vol_d = np.array(COT2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+plt.figure()
+plt.plot(volumes_all[0:365,5])
+plt.plot(COT2005vol_d)
+plt.legend(['COT predicted daily storage (m^3)','COT historic storage'])
+
+#FRN
+FRN2005_vol = pd.read_excel('Data/FRNvolume_2005.xlsx')
+FRN2005_vol.columns = ['Date','Time','Storage(AF)']
+FRN2005vol_d = np.array(FRN2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+plt.figure()
+plt.plot(volumes_all[0:365,6])
+plt.plot(FRN2005vol_d)
+plt.legend(['FRN predicted daily storage (m^3)','FRN historic storage'])
+
+#after looking at the query, I have discovered that 2005 was quite an unusual year for FRN. Volume curve does not follow normal pattern.
+
+#CGR
+CGR2005_vol = pd.read_excel('Data/CGRvolume_2005.xlsx')
+CGR2005_vol.columns = ['Date','Time','Storage(AF)']
+CGR2005vol_d = np.array(CGR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+plt.figure()
+plt.plot(volumes_all[0:365,7])
+plt.plot(CGR2005vol_d)
+plt.legend(['CGR predicted daily storage (m^3)','CGR historic storage'])
+
+#BLU
+BLU2005_vol = pd.read_excel('Data/BLUvolume_2005.xlsx')
+BLU2005_vol.columns = ['Date','Time','Storage(AF)']
+BLU2005vol_d = np.array(BLU2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+plt.figure()
+plt.plot(volumes_all[0:365,8])
+plt.plot(BLU2005vol_d)
+plt.legend(['BLU predicted daily storage (m^3)','BLU historic storage'])
+
+#DET
+DET2005_vol = pd.read_excel('Data/DETvolume_2005.xlsx')
+DET2005_vol.columns = ['Date','Time','Storage(AF)']
+DET2005vol_d = np.array(DET2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+plt.figure()
+plt.plot(volumes_all[0:365,11])
+plt.plot(DET2005vol_d)
+plt.legend(['DET predicted daily storage (m^3)','DET historic storage'])
+
+
+#%%
+
+
 
 
 
