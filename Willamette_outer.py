@@ -473,20 +473,26 @@ Willamette_gen_2005.columns = ['CGR','DET','DEX','FOS','GPR','HCR','LOP','BCL']
 #hydropower gen & outflows
 CGR_2005 = Willamette_gen_2005['CGR']
 CGR_2005_daily = np.mean(np.array(CGR_2005).reshape(-1,24),axis=1)
-plt.figure()
-plt.plot(CGR_2005_daily)
-plt.plot(hydropower_all[:,3])
-plt.legend(['CGR historical','CGR predicted'])
-plt.figure()
-plt.plot(CGR5H[:,1])
-plt.plot(outflows_all[:,7])
-plt.legend(['CGR historical outflows','CGR predicted'])
 
 x = (CGR5H[0:365,1].astype('float'))
 y = outflows_all[0:365,7]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 R2 = r_val**2
 print(R2)
+
+fig1=plt.figure()
+plt.plot(CGR_2005_daily)
+plt.plot(hydropower_all[:,3])
+fig1.suptitle('Hydropower production')
+plt.legend(['CGR historical HP','CGR predicted HP'])
+ax=fig1.add_subplot(111)
+ax.text(1, 30,['R^2=',R2])
+
+fig2=plt.figure()
+plt.plot(CGR5H[:,1])
+plt.plot(outflows_all[:,7])
+fig2.suptitle('Outflows')
+plt.legend(['CGR historical','CGR predicted'])
 
 
 DET_2005 = Willamette_gen_2005['DET']
