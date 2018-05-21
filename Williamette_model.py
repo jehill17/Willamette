@@ -307,12 +307,12 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                               #Compare to current discharge and allocate flow increases or decreases
                               #Currently allocated evenly......need to update based on storage balance curves in ResSIM 
                           if constraint_array[i].startswith('cp_Max'):  #maximum    
-                              if cp_discharge[cp_id-1] > constraintValue:   #Are we above the maximum flow?   
+                              if cp_discharge[t-1,cp_id-1] > constraintValue:   #Are we above the maximum flow?   
                                   resallocation = constraintValue - cp_discharge[cp_id]/len(cp_name.influencedReservoirs) #Allocate decrease in releases (should be negative) over "controlled" reservoirs if maximum, evenly for now
                               else:  
                                   resallocation = 0
                           elif constraint_array[i].startswith('cp_Min'):  #minimum
-                              if cp_discharge[cp_id-1] < constraintValue:   #Are we below the minimum flow?  
+                              if cp_discharge[t-1,cp_id-1] < constraintValue:   #Are we below the minimum flow?  
                                  resallocation = constraintValue - cp_discharge[cp_id]/len(cp_name.influencedReservoirs) 
                               else:  
                                   resallocation = 0
