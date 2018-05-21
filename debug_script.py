@@ -34,348 +34,16 @@ import os
 
 ####################
 
-def DatetoDayOfYear(val, fmt):
-#val = '2012/11/07'
-#fmt = '%Y/%m/%d'
-    date_d = dt.datetime.strptime(val,fmt)
-    tt = date_d.timetuple()
-    doy = tt.tm_yday
-
-    return doy
-
-def UpdateReservoirWaterYear(doy,t, volumes_all):
-    waterYear=np.nan
-    M3_PER_ACREFT = 1233.4
-    resVolumeBasin = np.sum(volumes_all[t-1,:])
-    resVolumeBasin = resVolumeBasin*M3_PER_ACREFT*1000000
-    if resVolumeBasin > float(1.48):
-        waterYear = float(1.48) #Abundant
-    elif resVolumeBasin < float(1.48) and resVolumeBasin >  float(1.2):
-        waterYear = float(1.2) #Adequate
-    elif resVolumeBasin < float(1.2) and resVolumeBasin > float(0.9):
-        waterYear = float(0.9) #Insufficient
-    elif resVolumeBasin < float(0.9):
-        waterYear = 0 #Deficit
-            
-    return waterYear
-        
-        
-
-
-def GetPoolElevationFromVolume(volume,name):
-    if name.AreaVolCurve is None:
-        return 0
-    else:
-        poolElevation = np.interp(volume,name.AreaVolCurve['Storage_m3'],name.AreaVolCurve['Elevation_m'])
-
-        return poolElevation #returns pool elevation (m)
-
-
-def GetPoolVolumeFromElevation(pool_elev,name):
-    if name.AreaVolCurve is None:
-        return 0
-    else:
-        poolVolume = np.interp(pool_elev,name.AreaVolCurve['Elevation_m'],name.AreaVolCurve['Storage_m3'])
-
-        return poolVolume #returns pool vol(m^3)
-
-
-def GetBufferZoneElevation(doy,name):
-    if name.Buffer is None:
-        return 0
-    else:
-        bufferZoneElevation = np.interp(doy,name.Buffer['Day'],name.Buffer['Pool_elevation_m'])
-
-        return bufferZoneElevation #returns what the buffer zone elevation level is for this time of year (in m)
-
-
-def GetTargetElevationFromRuleCurve(doy,name): #target_table is same as rule_curve
-    if name.RuleCurve is None:
-        return 0
-    else:
-        target = np.interp(doy,name.RuleCurve['Day'],name.RuleCurve['Cons_Pool_elev_m'])
-
-        return target #target pool elevation in m
-
-def UpdateMaxGateOutflows(name,poolElevation): 
-    name.maxPowerFlow=name.GateMaxPowerFlow    #does not depend on elevation but can change due to constraints
-    name.maxRO_Flow = np.interp(poolElevation,name.RO['pool_elev_m'],name.RO['release_cap_cms'])
-    name.maxSpillwayFlow = np.interp(poolElevation,name.Spillway['pool_elev_m'],name.Spillway['release_cap_cms'])
-        
-    return (name.maxPowerFlow, name.maxRO_Flow, name.maxSpillwayFlow)
-
-
-def AssignReservoirOutletFlows(name,outflow):
-    #flow file has a condition on reservoir not being null...dk if we need that here
-    #outflow = outflow * 86400  # convert to daily volume    m3 per day 
-    #initialize values to 0.0
-    powerFlow = 0.0
-    RO_flow = 0.0
-    spillwayFlow = 0.0
-
-    if outflow < name.maxPowerFlow: #this value is stored
-        powerFlow = outflow
-    else:
-        powerFlow = name.maxPowerFlow
-        excessFlow = outflow - name.maxPowerFlow
-        if excessFlow <= name.maxRO_Flow:
-            RO_flow = excessFlow
-            if RO_flow < name.minRO_Flow: #why is this condition less than where as the previous are <=
-                RO_flow = name.minRO_Flow
-                powerFlow = outflow - name.minRO_Flow
-        else:
-            RO_flow = name.maxRO_Flow
-            excessFlow = RO_flow
-
-            spillwayFlow = excessFlow
-
-            if spillwayFlow < name.minSpillwayFlow:
-                spillwayFlow = name.minSpillwayFlow
-                RO_flow =- name.minSpillwayFlow - excessFlow
-            if spillwayFlow > name.maxSpillwayFlow:
-                print('Maximum spillway volume exceed')
-
-            
-    massbalancecheck = outflow - (powerFlow + RO_flow + spillwayFlow)
-    #does this equal 0?
-    if massbalancecheck != 0:
-        print ("Mass balance didn't close, massbalancecheck = ", massbalancecheck )
-
-    return(powerFlow,RO_flow,spillwayFlow)
-    
-    
-with open('Flow.xml') as fd:
-    flow = xmld.parse(fd.read())
-
-flow_model = flow["flow_model"]
-
-controlPoints = flow_model["controlPoints"]['controlPoint']
-
-reservoirs = flow_model["reservoirs"]['reservoir']
-
-#Create Reservoir class
-class Reservoir:
-    def __init__(self, ID):
-        self.ID=ID
-        self.Restype=[]
-        self.AreaVolCurve=pd.DataFrame
-        self.RuleCurve=pd.DataFrame
-        self.Composite=pd.DataFrame
-        self.RO=pd.DataFrame
-        self.RulePriorityTable=pd.DataFrame
-        self.Buffer=pd.DataFrame
-        self.Spillway=pd.DataFrame
-        self.ruleDir =str()
-        self.InitVol=[]
-        self.init_outflow =[]
-        self.minOutflow=[]
-        self.maxVolume=[]
-        self.Td_elev=[]
-        self.inactive_elev=[]
-        self.Fc1_elev=[]
-        self.Fc2_elev=[]
-        self.Fc3_elev=[]
-        self.GateMaxPowerFlow=[]
-        self.maxPowerFlow=[]
-        self.maxRO_Flow =[]
-        self.maxSpillwayFlow=[]
-        self.minPowerFlow=0
-        self.minRO_Flow =0
-        self.minSpillwayFlow=0
-        self.Tailwater_elev=[]
-        self.Turbine_eff=[]
-   
-
-#Create ControlPoint class
-class ControlPoint:
-    def __init__(self, ID):
-        self.ID=ID
-        self.COMID=str()
-        self.influencedReservoirs=[]
-
-
-
-#RESERVOIR rules
-#in order of RES ID
-res_list =('HCR', 'LOP', 'DEX', 'FAL', 'DOR', 'COT', 'FRN', 'CGR', 'BLU', 'GPR', 'FOS', 'DET', 'BCL')
-RES = [Reservoir(id) for id in range(1,len(res_list)+1)]
-
-for res in RES:
-    id = res.ID
-    res.name = res_list[id-1]
-    res.Restype = str(reservoirs[id-1]['@reservoir_type'])
-    res.AreaVolCurve=pd.read_csv(os.path.join('Area_Capacity_Curves/', str(reservoirs[id-1]['@area_vol_curve'])))
-    res.Composite=pd.read_csv(os.path.join('Rel_Cap/', str(reservoirs[id-1]['@composite_rc'])))
-    res.RO=pd.read_csv(os.path.join('Rel_Cap/', str(reservoirs[id-1]['@RO_rc'])))
-    res.Spillway=pd.read_csv(os.path.join('Rel_Cap/', str(reservoirs[id-1]['@spillway_rc'])))
-    res.InitVol=float(reservoirs[id-1]["@initVolume"])
-    #res.InitVol=float(reservoirs[id-1]["@initOutflow"]) TO BE ADDED in the xml file
-    res.minOutflow=float(reservoirs[id-1]["@minOutflow"])
-    res.inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
-    res.GateMaxPowerFlow==float(reservoirs[id-1]["@maxPowerFlow"])
-    res.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
-    res.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
-    if res.Restype != "RunOfRiver":
-        res.ruleDir=str(reservoirs[id-1]["@rp_dir"])
-        res.cpDir=str(reservoirs[id-1]["@cp_dir"])
-        res.RuleCurve=pd.read_csv(os.path.join('Rule_Curves/', str(reservoirs[id-1]['@rule_curve'])))
-        res.RulePriorityTable=pd.read_csv(os.path.join('Rule_Priorities/', str(reservoirs[id-1]['@rule_priorities'])))
-        res.Buffer=pd.read_csv(os.path.join('Rule_Curves/', str(reservoirs[id-1]['@buffer_zone'])))
-        res.maxVolume=float(reservoirs[id-1]["@maxVolume"])
-        res.Td_elev=float(reservoirs[id-1]["@td_elev"])
-        res.Fc1_elev=float(reservoirs[id-1]["@fc1_elev"])
-        res.Fc2_elev=float(reservoirs[id-1]["@fc2_elev"])
-        res.Fc2_elev=float(reservoirs[id-1]["@fc3_elev"])
-       
-cp_list =['SAL', 'ALB', 'JEF', 'MEH', 'HAR', 'VID', 'JAS', 'GOS', 'WAT', 'MON', 'FOS']
-CP = [ControlPoint(id) for id in range(1, len(cp_list)+1)]
-
-for cp in CP:
-    id = cp.ID
-    cp.name = cp_list[id-1]
-    cp.influencedReservoirs =np.asarray((controlPoints[id-1]["@reservoirs"]).split(','))
-    cp.COMID=str(controlPoints[id-1]["@location"])
-
-
-#import control point historical data-- shifted one day before
-
-#convert data
-cfs_to_cms = 0.0283168
- 
-cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) 
-
-#reservoirs:
-#read in historical reservoir inflows -- this will contain the array of 'dates' to use
-BLU5Ad = pd.read_excel('Data/BLU5A_daily.xls',skiprows=27942,skip_footer =1004) #only using data from 2005
-BLU5Ad.columns = ['Date','Inflow']
-BLU5A = pd.read_excel('Data/BLU5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-CGR5A = pd.read_excel('Data/CGR5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-DET5A = pd.read_excel('Data/DET5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-DEX5M = pd.read_excel('Data/DEX5M_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-DOR5A = pd.read_excel('Data/DOR5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-FAL5A = pd.read_excel('Data/FAL5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-FOS5A = pd.read_excel('Data/FOS5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-FRN5M = pd.read_excel('Data/FRN5M_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-GPR5A = pd.read_excel('Data/GPR5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-HCR5A = pd.read_excel('Data/HCR5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-LOP5A = pd.read_excel('Data/LOP5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-LOP5E = pd.read_excel('Data/LOP5E_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-COT5A = pd.read_excel('Data/COT5A_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms
-FOS_loc = pd.read_excel('Data/FOS_loc.xls',usecols = [0,3],skiprows=27942,skip_footer =1004)*cfs_to_cms
-LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=27942,skip_footer =1004)*cfs_to_cms
-
-
-#historical inflows 
-BLU5H = np.array(pd.read_excel('Data/BLU5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms) #only using data from 2005
-BCL5H = np.array(pd.read_excel('Data/BCL5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms) #only using data from 2005
-CGR5H = np.array(pd.read_excel('Data/CGR5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-DET5H = np.array(pd.read_excel('Data/DET5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-DEX5H = np.array(pd.read_excel('Data/DEX5M_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-DOR5H = np.array(pd.read_excel('Data/DOR5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-FAL5H = np.array(pd.read_excel('Data/FAL5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-FRN5H = np.array(pd.read_excel('Data/FRN5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-GPR5H = np.array(pd.read_excel('Data/GPR5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-HCR5H = np.array(pd.read_excel('Data/HCR5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-COT5H = np.array(pd.read_excel('Data/COT5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
-
-outflows_2005_all = np.stack((BLU5H[:,1],BCL5H[:,1],CGR5H[:,1],DET5H[:,1],DEX5H[:,1],DOR5H[:,1],FAL5H[:,1],FOS5H[:,1],FRN5H[:,1],GPR5H[:,1],HCR5H[:,1],LOP5H[:,1],COT5H[:,1],FOS5H[:,1]),axis=1)
-
-
-#control points
-#cp_hist discharge: start this at 12/31/2004
-filename='Data/Control point historical discharge 2005.xlsx'
-SAL_2005 = pd.read_excel(filename,sheetname='Salem')
-SAL_2005_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
-ALB_2005 = pd.read_excel(filename,sheetname='Albany')
-ALB_2005_dis = np.array(ALB_2005['Discharge'])*cfs_to_cms
-JEF_2005 = pd.read_excel(filename,sheetname='Jefferson')
-JEF_2005_dis = np.array(JEF_2005['Discharge'])*cfs_to_cms
-MEH_2005 = pd.read_excel(filename,sheetname='Mehama')
-MEH_2005_dis = np.array(MEH_2005['Discharge'])*cfs_to_cms
-HAR_2005 = pd.read_excel(filename,sheetname='Harrisburg')
-HAR_2005_dis = np.array(HAR_2005['Discharge'])*cfs_to_cms
-VID_2005 = pd.read_excel(filename,sheetname='Vida')
-VID_2005_dis = np.array(VID_2005['Discharge'])*cfs_to_cms
-JAS_2005 = pd.read_excel(filename,sheetname='Jasper')
-JAS_2005_dis = np.array(JAS_2005['Discharge'])*cfs_to_cms
-GOS_2005 = pd.read_excel(filename,sheetname='Goshen')
-GOS_2005_dis = np.array(GOS_2005['Discharge'])*cfs_to_cms
-WAT_2005 = pd.read_excel(filename,sheetname='Waterloo')
-WAT_2005_dis = np.array(WAT_2005['Discharge'])*cfs_to_cms
-MON_2005 = pd.read_excel(filename,sheetname='Monroe')
-MON_2005_dis = np.array(MON_2005['Discharge'])*cfs_to_cms
-FOS_2005 = pd.read_excel(filename,sheetname='Foster')
-FOS_2005_dis = np.array(FOS_2005['Discharge'])*cfs_to_cms
-cp_discharge_2005_all = np.stack((SAL_2005_dis,ALB_2005_dis,JEF_2005_dis,MEH_2005_dis,HAR_2005_dis,VID_2005_dis,JAS_2005_dis,GOS_2005_dis,WAT_2005_dis,MON_2005_dis,FOS_2005_dis),axis=1)    
-
-
-
-#cp local flows, starts at 1/1/2005
-ALB_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Albany',skiprows=5844,skip_footer=730)
-ALB_loc.columns = ['Date','Local Flow']
-SAL_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Salem',skiprows=5844,skip_footer=730)
-SAL_loc.columns = ['Date','Local Flow']
-JEF_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Jefferson',skiprows=5844,skip_footer=730)
-JEF_loc.columns = ['Date','Local Flow']
-MEH_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Mehama',skiprows=5844,skip_footer=730)
-MEH_loc.columns = ['Date','Local Flow']
-HAR_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Harrisburg',skiprows=5844,skip_footer=730)
-HAR_loc.columns = ['Date','Local Flow']
-VID_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Vida',skiprows=5844,skip_footer=730)
-VID_loc.columns = ['Date','Local Flow']
-JAS_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Jasper',skiprows=5844,skip_footer=730)
-JAS_loc.columns = ['Date','Local Flow']
-GOS_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Goshen',skiprows=5844,skip_footer=730)
-GOS_loc.columns = ['Date','Local Flow']
-WAT_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Waterloo',skiprows=5844,skip_footer=730)
-WAT_loc.columns = ['Date','Local Flow']
-MON_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Monroe',skiprows=5844,skip_footer=730)
-MON_loc.columns = ['Date','Local Flow']
-
-dates = np.array(BLU5Ad['Date'])
+runfile('C:/Users/sdenaro/OneDrive - University of North Carolina at Chapel Hill/UNC_2017/PNW/INFEWSgroup_Willamette/Willamette_model/Williamette/Williamette_model.py', wdir='C:/Users/sdenaro/OneDrive - University of North Carolina at Chapel Hill/UNC_2017/PNW/INFEWSgroup_Willamette/Willamette_model/Williamette')
+runfile('C:/Users/sdenaro/OneDrive - University of North Carolina at Chapel Hill/UNC_2017/PNW/INFEWSgroup_Willamette/Willamette_model/Williamette/Williamette_outer.py', wdir='C:/Users/sdenaro/OneDrive - University of North Carolina at Chapel Hill/UNC_2017/PNW/INFEWSgroup_Willamette/Willamette_model/Williamette')
 
 #%% Allocate and initialize
-T = 364 # Set the simulation horizon
-
-n_res=13
-n_HPres=8
-n_cp = 11
-
-
-#=======
-# allocate output 
-outflows_all = np.full((T+2,n_res),np.nan) #we can fill these in later, or make them empty and 'append' the values
-hydropower_all = np.full((T+2,n_HPres), np.nan)
-volumes_all = np.full((T+2,n_res),np.nan)
-elevations_all = np.full((T+2,n_res),np.nan)
-cp_discharge_all = np.full((T+2,(n_cp-1)),np.nan)
-
-#initialize values
-for  i in range(0,n_res):
-    outflows_all[0:3,i] = outflows_2005_all[0:3,i] #remember to stack outflows historical values
-    volumes_all[0:3,i] = np.tile(RES[i].InitVol,(3)) #TO BE CHANGED!
-    elevations_all[0:3,i]=GetPoolElevationFromVolume(volumes_all[0:3,i],RES[i])
-
-
-for  i in range(0,n_cp-1):
-     cp_discharge_all[0,i] = cp_discharge_2005_all[0,i]
-
-#define an outer fnt here that takes date, name, vol as inputs?
 
 InitwaterYear = 1.2
 waterYear = InitwaterYear
-#%%
-#%%
 CGR = RES[7]
-
 name = CGR
-
-t=1
+t=265
 doy = DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
 
 volume = volumes_all[t,7]
@@ -383,10 +51,10 @@ inflow = CGR5A.iloc[t,1]
 lag_outflow = outflows_all[t-1,7]
 
 CP_list = CP
-
 cp_discharge = cp_discharge_all
 #%%
  #GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp_discharge):
+for t in range (265, 290):
     currentPoolElevation = GetPoolElevationFromVolume(volume,name)    
     if name.Restype!='Storage_flood': #if it produces hydropower
         #reset gate specific flows
@@ -439,7 +107,7 @@ cp_discharge = cp_discharge_all
             zone = 2
       else:
          print ("*** GetResOutflow(): We should never get here. doy = ", doy ,"reservoir = ", name.name)
-      print('zone is', zone)   
+      print('for t=', t, 'zone is', zone)   
       
         # Once we know what zone we are in, we can access the array of appropriate constraints for the particular reservoir and zone.       
 
@@ -473,14 +141,14 @@ cp_discharge = cp_discharge_all
                yvalue = lag_outflow 
           else:                                            #Unrecognized xvalue for constraint lookup table
              print ("Unrecognized x value for reservoir constraint lookup label = ", xlabel) 
-          print('The constraint array of i is',constraint_array[i])   
+          print('The constraint array is',constraint_array[i])   
           if constraint_array[i].startswith('Max_'):  #case RCT_MAX  maximum
              if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
                  cols=constraintRules.iloc[0,1::]
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue =float(interp_table(xvalue, yvalue))   
+                 constraintValue =float(interp_table(yvalue, xvalue))   
                  #constraintValue =interp_table(xvalue, yvalue)  
              else:             #//If not, just use xvalue
                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
@@ -494,7 +162,7 @@ cp_discharge = cp_discharge_all
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue =float(interp_table(xvalue, yvalue))                
+                 constraintValue =float(interp_table(yvalue, xvalue))                
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease <= constraintValue:
@@ -509,14 +177,14 @@ cp_discharge = cp_discharge_all
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue =float(interp_table(xvalue, yvalue))
+                 constraintValue =float(interp_table(yvalue, xvalue)) 
                  constraintValue = constraintValue*24   #Covert hourly to daily                  
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                  constraintValue = constraintValue*24   #Covert hourly to daily
              if actualRelease >= lag_outflow  + constraintValue:  #Is planned release more than current release + contstraint? 
                 actualRelease = lag_outflow  + constraintValue
-             print('The constraint value is',constraintValue)   
+                print('The constraint value is',constraintValue)   
 
                 #If so, planned release can be no more than current release + constraint.
                  
@@ -527,14 +195,14 @@ cp_discharge = cp_discharge_all
                  rows=constraintRules.iloc[1::,0]
                  vals=constraintRules.iloc[1::,1::]
                  interp_table = interp2d(cols, rows, vals, kind='linear')
-                 constraintValue =float(interp_table(xvalue, yvalue))
+                 constraintValue =float(interp_table(yvalue, xvalue)) 
                  constraintValue = constraintValue*24   #Covert hourly to daily                  
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                  constraintValue = constraintValue*24   #Covert hourly to daily
              if actualRelease <= lag_outflow  - constraintValue:  #Is planned release less than current release - contstraint? 
                 actualRelease = lag_outflow  - constraintValue  #If so, planned release can be no less than current release - constraint.
-             print('The constraint value is',constraintValue)   
+                print('The constraint value is',constraintValue)   
 
 
           elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point  
@@ -550,7 +218,7 @@ cp_discharge = cp_discharge_all
                               rows=constraintRules.iloc[1::,0]
                               vals=constraintRules.iloc[1::,1::]
                               interp_table = interp2d(cols, rows, vals, kind='linear')
-                              constraintValue =float(interp_table(xvalue, yvalue))
+                              constraintValue =float(interp_table(yvalue, xvalue)) 
                           else:             #//If not, just use xvalue
                               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                               #Compare to current discharge and allocate flow increases or decreases
@@ -604,7 +272,6 @@ cp_discharge = cp_discharge_all
         [powerFlow,RO_flow,spillwayFlow]=AssignReservoirOutletFlows(name,outflow)
     else:
         [powerFlow,RO_flow,spillwayFlow]=[np.nan, np.nan, np.nan]
-    return outflow, powerFlow,RO_flow,spillwayFlow
     #return outflow
 
     

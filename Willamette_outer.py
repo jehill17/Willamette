@@ -460,9 +460,9 @@ for t in range(1,T+2):
     #FOSTER ID=11 count=10
     cp_discharge_all[t,10] = FOS_outflow
     
-    for j in range(0,n_cp):
-        if cp_discharge_all[t,j]<0:
-            print("cp discharge is negative for CP=",CP[j].name," t=", t)
+#    for j in range(0,n_cp):
+#        if cp_discharge_all[t,j]<0:
+#            print("cp discharge is negative for CP=",CP[j].name," t=", t)
             
 #%%    
 #historical validation
