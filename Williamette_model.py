@@ -237,7 +237,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease >= constraintValue:
                 actualRelease = constraintValue;
-             #print('The constraint value is',constraintValue)   
+             
 
           elif constraint_array[i].startswith('Min_'):  # case RCT_MIN:  //minimum
              if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
@@ -294,7 +294,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                   if CP_list[j].COMID in constraint_array[i]:
                       cp_name = CP_list[j]
                       cp_id = CP_list[j].ID        
-                      if name in cp_name.influencedReservoirs:  #Make sure that the reservoir is on the influenced reservoir list
+                      if str(name.ID) in cp_name.influencedReservoirs:  #Make sure that the reservoir is on the influenced reservoir list
                           resallocation=np.nan 
                           if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
                               cols=constraintRules.iloc[0,1::]
@@ -307,12 +307,12 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                               #Compare to current discharge and allocate flow increases or decreases
                               #Currently allocated evenly......need to update based on storage balance curves in ResSIM 
                           if constraint_array[i].startswith('cp_Max'):  #maximum    
-                              if cp_discharge[cp_id] > constraintValue:   #Are we above the maximum flow?   
+                              if cp_discharge[cp_id-1] > constraintValue:   #Are we above the maximum flow?   
                                   resallocation = constraintValue - cp_discharge[cp_id]/len(cp_name.influencedReservoirs) #Allocate decrease in releases (should be negative) over "controlled" reservoirs if maximum, evenly for now
                               else:  
                                   resallocation = 0
                           elif constraint_array[i].startswith('cp_Min'):  #minimum
-                              if cp_discharge[cp_id] < constraintValue:   #Are we below the minimum flow?  
+                              if cp_discharge[cp_id-1] < constraintValue:   #Are we below the minimum flow?  
                                  resallocation = constraintValue - cp_discharge[cp_id]/len(cp_name.influencedReservoirs) 
                               else:  
                                   resallocation = 0

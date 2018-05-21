@@ -123,7 +123,7 @@ CP = [ControlPoint(id) for id in range(1, len(cp_list)+1)]
 for cp in CP:
     id = cp.ID
     cp.name = cp_list[id-1]
-    cp.influencedReservoirs =np.asarray((controlPoints[id-1]["@reservoirs"]).split(','))
+    cp.influencedReservoirs =np.array((str(controlPoints[id-1]["@reservoirs"]).split(',')))
     cp.COMID=str(controlPoints[id-1]["@location"])
 
 
