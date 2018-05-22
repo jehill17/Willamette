@@ -74,6 +74,7 @@ class Reservoir:
         self.minSpillwayFlow=0
         self.Tailwater_elev=[]
         self.Turbine_eff=[]
+        self.R2 = float()
    
 
 #Create ControlPoint class
@@ -474,11 +475,11 @@ Willamette_gen_2005.columns = ['CGR','DET','DEX','FOS','GPR','HCR','LOP','BCL']
 CGR_2005 = Willamette_gen_2005['CGR']
 CGR_2005_daily = np.mean(np.array(CGR_2005).reshape(-1,24),axis=1)
 
-x = (CGR5H[0:365,1].astype('float'))
-y = outflows_all[0:365,7]
+x = (CGR5H[0:364,1].astype('float'))
+y = outflows_all[0:364,7]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+CGR.R2 = r_val**2
+print(CGR.R2)
 
 fig1=plt.figure()
 plt.plot(CGR_2005_daily)
@@ -489,7 +490,7 @@ plt.legend(['CGR historical HP','CGR predicted HP'])
 
 fig2=plt.figure()
 plt.plot(CGR5H[:,1])
-plt.plot(outflows_all[:,7])
+plt.plot(outflows_all[0:364,7])
 fig2.suptitle('Outflows')
 plt.legend(['CGR historical','CGR predicted'])
 ax=fig1.add_subplot(111)
@@ -507,11 +508,11 @@ plt.plot(DET5H[:,1])
 plt.plot(outflows_all[:,11])
 plt.legend(['DET historical outflows','DET predicted'])
 
-x = (DET5H[0:365,1].astype('float'))
-y = outflows_all[0:365,11]
+x = (DET5H[0:364,1].astype('float'))
+y = outflows_all[0:364,11]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+DET.R2 = r_val**2
+print(DET.R2)
 
 DEX_2005 = Willamette_gen_2005['DEX']
 DEX_2005_daily = np.mean(np.array(DEX_2005).reshape(-1,24),axis=1)  
@@ -536,11 +537,11 @@ plt.plot(FOS5H[:,1])
 plt.plot(outflows_all[:,10])
 plt.legend(['FOS historical outflows','FOS predicted'])
 
-x = (FOS5H[0:365,1].astype('float'))
-y = outflows_all[0:365,10]
+x = (FOS5H[0:364,1].astype('float'))
+y = outflows_all[0:364,10]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+FOS.R2 = r_val**2
+print(FOS.R2)
 
 GPR_2005 = Willamette_gen_2005['GPR']
 GPR_2005_daily = np.mean(np.array(GPR_2005).reshape(-1,24),axis=1)  
@@ -553,11 +554,11 @@ plt.plot(GPR5H[:,1])
 plt.plot(outflows_all[:,9])
 plt.legend(['GPR historical outflows','GPR predicted'])
 
-x = (GPR5H[0:365,1].astype('float'))
-y = outflows_all[0:365,9]
+x = (GPR5H[0:364,1].astype('float'))
+y = outflows_all[0:364,9]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+GPR.R2 = r_val**2
+print(GPR.R2)
 
 HCR_2005 = Willamette_gen_2005['HCR']
 HCR_2005_daily = np.mean(np.array(HCR_2005).reshape(-1,24),axis=1)  
@@ -573,8 +574,8 @@ plt.legend(['HCR historical outflows','HCR predicted'])
 x = (HCR5H[0:365,1].astype('float'))
 y = outflows_all[0:365,0]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+HCR.R2 = r_val**2
+print(HCR.R2)
 
 LOP_2005 = Willamette_gen_2005['LOP']
 LOP_2005_daily = np.mean(np.array(LOP_2005).reshape(-1,24),axis=1)  
@@ -587,11 +588,11 @@ plt.plot(LOP5H[:,1])
 plt.plot(outflows_all[:,1])
 plt.legend(['LOP historical outflows','LOP predicted'])
 
-x = (LOP5H[0:365,1].astype('float'))
-y = outflows_all[0:365,1]
+x = (LOP5H[0:364,1].astype('float'))
+y = outflows_all[0:364,1]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+LOP.R2 = r_val**2
+print(LOP.R2)
 
 BCL_2005 = Willamette_gen_2005['BCL']
 BCL_2005_daily = np.mean(np.array(BCL_2005).reshape(-1,24),axis=1)  
@@ -604,11 +605,11 @@ plt.plot(BCL5H[:,1])
 plt.plot(outflows_all[:,12])
 plt.legend(['BCL historical outflows','BCL predicted'])
 
-x = (BCL5H[0:365,1].astype('float'))
-y = outflows_all[0:365,12]
+x = (BCL5H[0:364,1].astype('float'))
+y = outflows_all[0:364,12]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+BCL.R2 = r_val**2
+print(BCL.R2)
 
 
 #nonhydro outflows
@@ -621,8 +622,8 @@ plt.legend(['COT historical outflows','COT predicted'])
 x = (COT5H[0:365,1].astype('float'))
 y = outflows_all[0:365,5]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+COT.R2 = r_val**2
+print(COT.R2)
 
 #DOR
 plt.figure()
@@ -632,8 +633,8 @@ plt.legend(['DOR historical outflows','DOR predicted'])
 x = (DOR5H[0:365,1].astype('float'))
 y = outflows_all[0:365,4]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+DOR.R2 = r_val**2
+print(DOR.R2)
 
 
 #FRN
@@ -642,11 +643,11 @@ plt.plot(FRN5H[:,1])
 plt.plot(outflows_all[:,6])
 plt.legend(['FRN historical outflows','FRN predicted'])
 
-x = (FRN5H[0:365,1].astype('float'))
-y = outflows_all[0:365,6]
+x = (FRN5H[0:364,1].astype('float'))
+y = outflows_all[0:364,6]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+FRN.R2 = r_val**2
+print(FRN.R2)
 
 #FAL
 plt.figure()
@@ -657,8 +658,8 @@ plt.legend(['FAL historical outflows','FAL predicted'])
 x = (FAL5H[0:365,1].astype('float'))
 y = outflows_all[0:365,3]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+FAL.R2 = r_val**2
+print(FAL.R2)
 
 #BLU
 plt.figure()
@@ -666,11 +667,11 @@ plt.plot(BLU5H[:,1])
 plt.plot(outflows_all[:,8])
 plt.legend(['BLU historical outflows','BLU predicted'])
 
-x = (BLU5H[0:365,1].astype('float'))
-y = outflows_all[0:365,8]
+x = (BLU5H[0:364,1].astype('float'))
+y = outflows_all[0:364,8]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-R2 = r_val**2
-print(R2)
+BLU.R2 = r_val**2
+print(BLU.R2)
 
 
 #%%

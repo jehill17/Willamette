@@ -11,18 +11,18 @@
                    1 = build catchments from the aggregate queries defined in the <catchment> 'catch_agg_cols' attribute
                        and populate the catchmentID_col with unique catchment IDs,
                    (optional, default is "1" )
-                   
+
         join_col:  catchment coverage column name containing the join information for connecting catchments and reaches.
                    (required, typically COMID)
         update_display: Update the map with Results from the Hydrology model?  0: no update, 1: update each year, 2: update each flow timestep
                    (optional, default="2"
-       
+
        TO DISABLE SIMPLIFICATION
            1) Set 'catchment_join_col' to COMID
            2) Set 'stream_join_col' to COMID
            3) Set 'catchment_agg_cols' to COMID
            4) remove any 'simplify_xxx' attributes from <flow_model>
-           
+
        TO BUILD A SIMPLIFIED REPRESENTATION
            1) disable simplication as per instructions above
            2) Copy the COMID values to FLOWID for both the IDU and Stream coverage (Note - use Arc, Envision appears buggy for this)
@@ -32,7 +32,7 @@
            6) Set 'catchment_agg_cols' to FLOWID
            7) Add any 'simplify_xxx' attributes to <flow_model>
            8) Launch Envision.  After flow initializes, save the IDU and Stream coverages.  THe FLOWID field will be modified in both coverages.
-           
+
        TO USE THE SIMPLIFIED REPRESENTATION
            1) Set 'catchment_join_col' to FLOWID
            2) Set 'stream_join_col' to FLOWID
@@ -41,8 +41,8 @@
 
 
        To turn off simplification, remove the <streams> 'query' etc attributes.
-            simplify_query="ORDER > 1" 
-            simplify_min_area="1000000000" 
+            simplify_query="ORDER > 1"
+            simplify_min_area="1000000000"
             simplify_max_area="10000000000"
 -->
 
@@ -83,7 +83,7 @@
         veg_layers:  integer identifying number of HRU vegetation layers to use (optional, defaults to 0)
         layer_names: colon-separated list of layer names used to describe HRU layers for plotting purposes.
                     the sum of soil_layers+snow_layers+veg_layers should be equal to the number of names (optional)
-        init_water_content:  initial soil water content (m3/m3) - (optional, defaults to 0.5)        
+        init_water_content:  initial soil water content (m3/m3) - (optional, defaults to 0.5)
   -->
 
     <macros>
@@ -92,7 +92,7 @@
         <scenario name="IntegratedWater" value="LateRefill\" />
       </macro>
     </macros>
-    
+
     <catchments layer="IDU"
               query=""
               area_col="AREA"
@@ -110,10 +110,10 @@
       layer:        Name of the layer used to construct catchments from (in the envx file). (required)
       query:        Subset of the layer used to create reaches.  If empty or not present, the entire layer is used. (optional)
       order_col:    Column name to populate with stream order info.  If the column doesn't exist in the stream coverage, it will
-                    be added. (optional - defaults to nothing, no stream oreder info is generated.)      
+                    be added. (optional - defaults to nothing, no stream oreder info is generated.)
       subnodeLength: max length between subnodes (length units corresponding to the coverage) (optional, defaults to 0, which
                     allocates one subnode per reach.
-      wd_ratio:     default value for width/depth ratio for reach segments. (optional, defaults to 
+      wd_ratio:     default value for width/depth ratio for reach segments. (optional, defaults to
       method:       solution method, euler, rk4, rkf, kinematic, external.  Note external implies fluxes are
                     processed by the plugin, not the framework.  (optional, defaults to 10)
       stepsize:     timestep used to solve the instream routing equations. (optional, defaults to 1 day)
@@ -124,16 +124,16 @@
 
   <!-- <global_methods>
     Attributes include:
-    reach_routing:         reach routing solution method, one of 'euler', 'rk4', 'rkf', 'kinematic', or an 
+    reach_routing:         reach routing solution method, one of 'euler', 'rk4', 'rkf', 'kinematic', or an
                            externally defined method. Externally defined methods should be of the form:
-                           'path:entrypointname'. Note external implies fluxes are processed by the plugin, 
+                           'path:entrypointname'. Note external implies fluxes are processed by the plugin,
                            not the framework. (optional, defaults to "kinematic")
-    horizontal_exchange:   solution method for lateral exchange between reaches and corresponding HRU Layers; internal options 
+    horizontal_exchange:   solution method for lateral exchange between reaches and corresponding HRU Layers; internal options
                            include 'linear_reservoir'.  Externally defined methods should be of the form:
                            'path:entrypointname'. (optional, defaults to "linear_reservoir")
-    hru_vertical_exchange: solution method for vertical movement of water between HRULayers; internal options 
+    hru_vertical_exchange: solution method for vertical movement of water between HRULayers; internal options
                            include 'brooks_corey'.  Externally defined methods should be of the form:
-                           'path:entrypointname'. (optional, defaults to "brooks_corey") 
+                           'path:entrypointname'. (optional, defaults to "brooks_corey")
   -->
   <!--
   <global_methods reach_routing="kinematic" horizontal_exchange="fn=HBV.dll:HBV_HorizontalwSnow" hru_vertical_exchange="none" />
@@ -146,8 +146,8 @@
     <hru_vertical_exchange name="Vertical Exchange" method="none" query="" />
 
     <!-- HBV will be applied everywhere except Metro and Eugene-Springfield -->
-    <external name="HBV"   method="fn=hbv.dll:HBV_IrrigatedSoil" use="1" timing="1+16"/> 
-    
+    <external name="HBV"   method="fn=hbv.dll:HBV_IrrigatedSoil" use="1" timing="1+16"/>
+
     <!-- SWMM and EPANET will be applied to Metro and Eugene-Springfield -->
     <!--
     <external name="SWMM"   method="fn=hbv.dll:SWMM_StormWater" use="1" timing="1+16"/>
@@ -157,11 +157,11 @@
     <external name="EPAnet"   method="fn=swmm.dll:SWMM_PotableWater" use="1" timing="1+16"/>
     <external name="EPAnet"   method="fn=swmm.dll:SWMM_PurpleWater" use="1" timing="1+16"/>
 -->
-     <!--The layers tag will remove water from the layer distribution matching the query first and then remove the unmatched idus 
+     <!--The layers tag will remove water from the layer distribution matching the query first and then remove the unmatched idus
       using the second layer distribution tag in the percentages indicated -->
     <!--The ratio = 1 flag will remove water from the indicated layers in proportion to the amount of water in the layers
      even though the percentages are indicated as 0.  The calculation of the percentages removed are done at run time
-     For example: "(2,1), (4, 0), (5,0)" ratio="1"  will remove water out of all three layers: 2, 4, and 5, in proportion, removing the higher 
+     For example: "(2,1), (4, 0), (5,0)" ratio="1"  will remove water out of all three layers: 2, 4, and 5, in proportion, removing the higher
      percentage out of the layer with the highest percentage of the total amount in all 3 layers-->
 
     <evap_trans name="ForestET" method="PM" use="1"
@@ -280,14 +280,14 @@ dynamic="0"
     value="-814"
     dynamic="0"
        />
-    
+
     <external name="StreamTemperature"  method="fn=hbv.dll:StreamTempReg" use="1" timing="1+32"/>
-    
+
    </global_methods>
 
   <!-- <climate> tag attributes note:
         1) The path should include the base name for the NETCDF files, but FLOW will add
-           "_YEAR.nc" to each.  ELEMENT must be either "prcp" or "temp". Each file must 
+           "_YEAR.nc" to each.  ELEMENT must be either "prcp" or "temp". Each file must
            have a separate band for each day of the year it represents.
            Units:  precipitation in mm/d, temperature degrees C
         2) Paths which begin with a backslash will have the system environment variable CLIMATE_DRIVE prepended.
@@ -345,7 +345,7 @@ dynamic="0"
       <climate type="tavg"     path="\ClimateSvn\trunk\daily\abat_willamette_tavg"   var_name="tavg"    />
     </scenario>
 
-    <!-- actual weather data used for hindcasts 
+    <!-- actual weather data used for hindcasts
       <climate type="precip"   path="\ClimateSvn\trunk\ActualWeather\daily\uofimet_willamette_pr"     var_name="pr"      />
       <climate type="precip"   path="\ClimateSvn\trunk\ActualWeather\testing\infews_pr"     var_name="pr"      />
 -->
@@ -371,7 +371,7 @@ dynamic="0"
 
     <controlPoints>
       <controlPoint id="1"      name="Min flow at Salem"                path="Reservoirs\ControlPoints\{ScenarioName}\"
-        control_point="cp_Min_flow_at_Salem_23791083.csv"               reservoirs="1,2,4,5,6,8,9,10" 
+        control_point="cp_Min_flow_at_Salem_23791083.csv"               reservoirs="11,12"
         location="23791083"/>
 
 <!--      <controlPoint id="2"      name="Max_bankfull_flow_at_Salem"       path="Reservoirs\ControlPoints\{ScenarioName}\"
@@ -379,11 +379,11 @@ dynamic="0"
         location ="23791083" />
 -->
       <controlPoint id="2"      name="Min_Flow_at_Albany"               path="Reservoirs\ControlPoints\{ScenarioName}\"
-        control_point="cp_Min_Flow_at_Albany_23762845.csv"              reservoirs="1,2,4,5,6,8,9"
+        control_point="cp_Min_Flow_at_Albany_23762845.csv"              reservoirs=""
         location ="23762845" />
 
       <controlPoint id="3"      name="Max_Bankfull_Flow_at_Jefferson"   path="Reservoirs\ControlPoints\{ScenarioName}\"
-        control_point="cp_Max_bf_Jefferson_23780423.csv"                reservoirs="10,11,12"
+        control_point="cp_Max_bf_Jefferson_23780423.csv"                reservoirs="11,12"
         location ="23780423" />
 
       <controlPoint id="4"      name="Max_bankfull_flow_at_Mehama"      path="Reservoirs\ControlPoints\{ScenarioName}\"
@@ -391,9 +391,9 @@ dynamic="0"
         location ="23780481" />
 
       <controlPoint id="5"      name="Max_Harrisburg_42500_cfs"         path="Reservoirs\ControlPoints\{ScenarioName}\"
-        control_point="cp_Max_HB_42500_cfs_23763337.csv"                reservoirs="2,4,5,6"
+        control_point="cp_Max_HB_42500_cfs_23763337.csv"                reservoirs="1,2,4,5,6,8,9"
         location ="23763337" />
-<!-- 
+<!--
       <controlPoint id="7"      name="Max_Harrisburg_51000_cfs"         path="Reservoirs\ControlPoints\{ScenarioName}\"
         control_point="cp_Max_HB_51000_cfs_23763337.csv"                reservoirs="2,4,5,6"
         location ="23763337" />
@@ -407,7 +407,7 @@ dynamic="0"
         location ="23772903" />
 
       <controlPoint id="7"     name="Max_Jasper_Bankfull"              path="Reservoirs\ControlPoints\{ScenarioName}\"
-        control_point="cp_Max_Jasper_Bankfull_23751778.csv"             reservoirs="2,4" 
+        control_point="cp_Max_Jasper_Bankfull_23751778.csv"             reservoirs="1,2,4"
         location ="23751778" />
 
       <controlPoint id="8"     name="Max_Bankfull_Flow_at_Goshen"      path="Reservoirs\ControlPoints\{ScenarioName}\"
@@ -415,13 +415,13 @@ dynamic="0"
         location ="23759228" />
 
       <controlPoint id="9"     name="Max_Bankfull_Flow_at_Waterloo"    path="Reservoirs\ControlPoints\{ScenarioName}\"
-        control_point="cp_Max_bf_Waterloo_23785687.csv"                 reservoirs="10,11"
+        control_point="cp_Max_bf_Waterloo_23785687.csv"                 reservoirs="10"
         location ="23785687" />
 
       <controlPoint id="10"     name="Max_Reg_Goal_Long_Tom_Monroe"     path="Reservoirs\ControlPoints\{ScenarioName}\"
         control_point="cp_Max_Reg_Monroe_23763073.csv"                  reservoirs="7"
         location ="23763073" />
-<!-- 
+<!--
       <controlPoint id="14"     name="Min_Flow_at_Monroe"               path="Reservoirs\ControlPoints\{ScenarioName}\"
         control_point="cp_Min_Flow_at_Monroe_23763073.csv"              reservoirs="7"
         location ="23763073" />
@@ -436,7 +436,7 @@ dynamic="0"
 -->
       <controlPoint id="11"     name="Max_10K_into_Foster"              path="Reservoirs\ControlPoints\{ScenarioName}\"
         control_point="cp_Max_10K_into_Foster_23787257.csv"             reservoirs="10"
-        location ="23787257" /> 
+        location ="23787257" />
 <!--
       <controlPoint id="18"     name="Max_12K_into_Foster"              path="Reservoirs\ControlPoints\{ScenarioName}\"
         control_point="cp_Max_12K_into_Foster_23787257.csv"             reservoirs="10"
@@ -493,9 +493,9 @@ dynamic="0"
                composite_rc="FC_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="nan"
                RO_rc="FC_RO_capacity.csv"                         spillway_rc="FC_spillway_capacity.csv"              cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="fall_creek_rule_priorities.csv"   rp_dir="Rules_FC/"                                  td_elev="256.0"
-               tailwater_elev="nan"                               fc1_elev="254.0"                                    fc2_elev="243.0"  
-               fc3_elev="nan"                                     buffer_zone="FC_buffer.csv"                         ressim_output_f="FC_ressim_flow_1935_2008.csv"     
-               ressim_output_r="FC_ressim_rule_1935_2008.csv"      inactive_elev="217.32"                             reservoir_type="Storage_flood" 
+               tailwater_elev="nan"                               fc1_elev="254.0"                                    fc2_elev="243.0"
+               fc3_elev="nan"                                     buffer_zone="FC_buffer.csv"                         ressim_output_f="FC_ressim_flow_1935_2008.csv"
+               ressim_output_r="FC_ressim_rule_1935_2008.csv"      inactive_elev="217.32"                             reservoir_type="Storage_flood"
                turbine_efficiency="nan" />
 
     <reservoir id="5"   name="Dorena Reservoir (USACE)"           path="Reservoirs/"                                  initVolume="8957531.76"
@@ -548,7 +548,7 @@ dynamic="0"
                composite_rc="BR_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="nan"
                RO_rc="BR_RO_capacity.csv"                         spillway_rc="BR_spillway_capacity.csv"              cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="blue_river_rule_priorities.csv"   rp_dir="Rules_BR/"                                  td_elev="415.0"
-               fc1_elev="414.0"                                   fc2_elev="nan"                                      fc3_elev="nan"                                   
+               fc1_elev="414.0"                                   fc2_elev="nan"                                      fc3_elev="nan"
                buffer_zone="BR_buffer.csv"                         ressim_output_f="BR_ressim_flow_1935_2008.csv"
                ressim_output_r="BR_ressim_rule_1935_2008.csv"     inactive_elev="359.66"                              reservoir_type="Storage_flood"
                turbine_efficiency="nan"                           tailwater_elev="nan"  />
@@ -560,7 +560,7 @@ dynamic="0"
                RO_rc="GP_RO_capacity.csv"                         spillway_rc="GP_spillway_capacity.csv"              cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="green_peter_rule_priorities.csv"  rp_dir="Rules_GP/"                                  tailwater_elev="213.36"
                turbine_efficiency="0.9"                           td_elev="311.0"                                     fc1_elev="309.0"
-               fc2_elev="nan"                                     fc3_elev="nan"     
+               fc2_elev="nan"                                     fc3_elev="nan"
                buffer_zone="GP_buffer.csv"                        ressim_output_f="GP_ressim_flow_1935_2008.csv"      ressim_output_r="GP_ressim_rule_1935_2008.csv"
                inactive_elev="281.03"                             reservoir_type="Storage_HP" />
 
@@ -615,8 +615,8 @@ dynamic="0"
       estimateParameters:  This is actually an exposed variable.  To set it to false, change in the Envision-Scenarios dialog
       numberOfRuns:  Flow will run this number of simulations prior to ending
       numberOfYears: The number of years in each model run
-      saveResultsEvery: The model will write results to the disk after this many runs.  
-      
+      saveResultsEvery: The model will write results to the disk after this many runs.
+
       <parameter>
       table:   name for table, this MUST correspond to a field in the IDU coverage
       name:    name of the parameter. This MUST correspond to a parameter name outlined in the referenced table.
@@ -629,7 +629,7 @@ dynamic="0"
 
 
 
-  <!-- 
+  <!--
     name:     name assigned to variable
     query:    query constraining calculations
     value:    expression to be evaulated.  Can be any mathematical expression using IDU field names or
@@ -644,12 +644,12 @@ dynamic="0"
                 "hruCumMaxET"      - HRU Cumulutive Maximum ET
                 "hruCumET"       - HRU Cumulutive ET
                 "hruCumP"        - HRU Cumulutive P
-                
-                "obs"            - 
+
+                "obs"            -
     type:    calculation type, one of "sum", "areaWtMean" or "pctArea".  For pctArea, the "value" expression is ignored.
-    domain:  target of calculation, one of "idu", "hru", "layer", "reach"    
+    domain:  target of calculation, one of "idu", "hru", "layer", "reach"
     -->
-    
+
   <outputs>
 
     <output_group name="FLOW TEMP and PRECIP in HRU vs IDUs" >
@@ -660,14 +660,14 @@ dynamic="0"
       <output in_use="1" name="PRECIP for IDUs in HRU 5086 (mm H2O)" query="HRU_ID=5086" value="PRECIP" type="areaWtMean" domain="idu" />
       <output in_use="1" name="PRECIP for all HRUs  (mm H2O) from domain hru" query="1" value="hruAirTemp" type="areaWtMean" domain="hru" />
     </output_group>
-    
+
     <output_group name="FLOW Chicken Creek area flows with Observations" interval ="monthly" >
       <output in_use="1" name="Q at COMID = 23805228 Chicken Creek At Roy Rogers Rd (cfs)" query="COMID = 23805228" value="reachOutflow*35.3147" type="sum" domain="reach"  />
       <output in_use="1" name="Q at COMID = 23804876 (cfs)" query="COMID = 23804876" value="reachOutflow*35.3147" type="sum" domain="reach" obs="Observations\14206500_2006-2016_TualatinAtFarmington.csv" format="E" />
       <output in_use="1" name="Q at COMID = 23804832 (cfs)" query="COMID = 23804832" value="reachOutflow*35.3147" type="sum" domain="reach" />
       <output in_use="1" name="Q at COMID = 23805270 (cfs)" query="COMID = 23805270" value="reachOutflow*35.3147" type="sum" domain="reach" obs="Observations\14206950_2002-2016_FannoCreekAtDurham.csv" format="E" />
     </output_group>
-<!--    
+<!--
       <output in_use="1" name="Q at COMID = 23804832 (cfs)" query="COMID = 23804832" value="reachOutflow*35.3147" type="sum" domain="reach" obs="Observations\14207500_2006-2016_TualatinAtWestLinn.csv" format="E" />
     <output_group name="FLOW Corvallis area flows with Observations" interval ="monthly" >
       <output in_use="1" name="Q at COMID = 23762877 (cfs)" query="COMID = 23762877" value="reachOutflow*35.3147" type="sum" domain="reach" obs="Observations\14171600_2010-2016_WillametteAtCorvallis.csv" format="E" />
@@ -722,7 +722,7 @@ dynamic="0"
       <output in_use="1" name="23764893 (cfs)" query="COMID = 23764893" value="reachOutflow*35.3147" type="sum" domain="reach" />
       <output in_use="1" name="23764877 Dry Creek (cfs)" query="COMID = 23764877" value="reachOutflow*35.3147" type="sum" domain="reach" />
     </output_group>
-    
+
     <output_group name="FLOW Yearly Flows in Corvallis-Philomath UGA (cfs)" interval="yearly">
       <output in_use="1" name="23762869 Willamette R (cfs)" query="COMID = 23762869" value="reachOutflow*35.3147" type="sum" domain="reach" />
       <output in_use="1" name="23762877 Willamette R (cfs)" query="COMID = 23762877" value="reachOutflow*35.3147" type="sum" domain="reach" />
@@ -815,7 +815,7 @@ dynamic="0"
     <output_group name="FLOW Daily reservoir storage (ac-ft)">
       <output in_use="1" name="Water in reservoirs RESVR_H2O (ac-ft)" query="1" value="RESVR_H2O*0.000810714" type="sum" domain="reach" />
     </output_group>
-    
+
 <!--
     <output_group name="HBV Climate by elev 0-200-1200">
       <output in_use="1" name="Mean AirTemp (C)" query="1" value="hruAirTemp" type="areaWtMean" domain="hru" />
@@ -847,7 +847,7 @@ dynamic="0"
       <output in_use="1" name="res_id 12 Detroit inflow 23780525 (cfs)" query="COMID = 23780525" value="reachOutflow*35.3146667" type="sum" domain="reach" />
       <output in_use="1" name="res_id 12 Detroit outflow 23780523 (cfs)" query="COMID = 23780523" value="reachOutflow*35.3146667" type="sum" domain="reach" />
     </output_group>
-    
+
     <output_group name="HBV Flows (m3/s)">
       <output in_use="1" name="Lookout (m3/s)" query="COMID = 23773411" value="reachOutflow" type="sum" domain="reach" />
       <output in_use="1" name="Mckenzie Clear Lake (m3/s)" query="COMID = 23773373" value="reachOutflow" type="sum" domain="reach" />
@@ -926,14 +926,14 @@ dynamic="0"
       <output in_use="1" name="Mid Elev. ET" query="ELEV_MEAN  >= 200 and ELEV_MEAN &lt;= 1200" value="ET_DAY" type="areaWtMean" domain="idu"  format="Envision" />
       <output in_use="1" name="Mid Elev. Maximum ET" query="ELEV_MEAN  >= 200 and ELEV_MEAN &lt;= 1200" value="MAX_ET_DAY" type="areaWtMean" domain="idu"  format="Envision" />
     </output_group>
-    
+
     <output_group name="HBV ET by LandCover (mm)">
       <output in_use="1" name="Forest ET" query="LULC_A=4 and PVT > 0" value="ET_DAY" type="areaWtMean" domain="idu"  format="Envision" />
       <output in_use="1" name="Forest Maximum ET" query="LULC_A=4 and PVT > 0" value="MAX_ET_DAY" type="areaWtMean" domain="idu"  format="Envision" />
       <output in_use="1" name="Ag ET" query="LULC_A=2" value="ET_DAY" type="areaWtMean" domain="idu"  format="Envision" />
       <output in_use="1" name="Ag Maximum ET" query="LULC_A=2" value="MAX_ET_DAY" type="areaWtMean" domain="idu"  format="Envision" />
     </output_group>
--->    
+-->
     <output_group name="HBV Soil moisture (mm)">
       <output in_use="1" name="HRU Soil Moisture in irrigable IDUs SM_DAY (mm)" query="LULC_A=2 AND (WR_IRRIG_S=1 OR WR_IRRIG_G=1)" value="SM_Day" type="areaWtMean" domain="idu" format="Envision" />
       <output in_use="1" name="HRU Soil Moisture in forest IDUs SM_DAY (mm)" query="LULC_A=4" value="SM_Day" type="areaWtMean" domain="idu" format="Envision" />
@@ -952,7 +952,7 @@ dynamic="0"
       <output in_use="1" name="Forest temperature (deg C)" query="LULC_A=4 and PVT > 0" value="TEMP" type="areaWtMean" domain="idu" format="Envision" />
       <output in_use="1" name="Snowfall correction factor SFCF" query="LULC_A=4 and PVT > 0" value="SFCF" type="areaWtMean" domain="idu" format="Envision" />
     </output_group>
-    
+
     <output_group name="HBV Forest VPD and soil moisture effects on ET (various units)">
       <output in_use="1" name="Forest VPD (kPa)" query="LULC_A=4" value="VPD" type="areaWtMean" domain="idu" format="Envision" />
       <output in_use="1" name="Forest VPD scalar (0-1)" query="LULC_A=4" value="VPD_SCALAR" type="areaWtMean" domain="idu" format="Envision" />
@@ -960,7 +960,7 @@ dynamic="0"
       <output in_use="1" name="Forest Max ET from MAX_ET_DAY (mm H2O)" query="LULC_A=4" value="MAX_ET_DAY" type="areaWtMean" domain="idu" format="Envision" />
       <output in_use="1" name="Forest ET from ET_DAY (mm H2O)" query="LULC_A=4" value="ET_DAY" type="areaWtMean" domain="idu" format="Envision" />
     </output_group>
-    
+
     <output_group name="HBV Forest shortwave radiation (W m-2)">
       <output in_use="1" name="Forest shortwave radiation (W m-2)" query="LULC_A=4 and PVT > 0" value="RAD_SW" type="areaWtMean" domain="idu" format="Envision" />
     </output_group>
@@ -990,7 +990,7 @@ dynamic="0"
     </output_group>
 -->
   </outputs>
-    
+
     <video_capture use='0' frameRate='30'>
       <movie col='TEMP'   file='\envision\studyareas\WW2100\Outputs\AVIs\Temp.avi' />
       <movie col='PRECIP' file='\envision\studyareas\WW2100\Outputs\AVIs\Precip.avi' />
