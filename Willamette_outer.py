@@ -485,14 +485,15 @@ plt.plot(CGR_2005_daily)
 plt.plot(hydropower_all[:,3])
 fig1.suptitle('Hydropower production')
 plt.legend(['CGR historical HP','CGR predicted HP'])
-ax=fig1.add_subplot(111)
-ax.text(1, 30,['R^2=',R2])
+
 
 fig2=plt.figure()
 plt.plot(CGR5H[:,1])
 plt.plot(outflows_all[:,7])
 fig2.suptitle('Outflows')
 plt.legend(['CGR historical','CGR predicted'])
+ax=fig1.add_subplot(111)
+ax.text(1, 30,['R^2=',R2])
 
 
 DET_2005 = Willamette_gen_2005['DET']
