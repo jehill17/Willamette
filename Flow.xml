@@ -371,7 +371,7 @@ dynamic="0"
 
     <controlPoints>
       <controlPoint id="1"      name="Min flow at Salem"                path="Reservoirs\ControlPoints\{ScenarioName}\"
-        control_point="cp_Min_flow_at_Salem_23791083.csv"               reservoirs="11,12"
+        control_point="cp_Min_flow_at_Salem_23791083.csv"               reservoirs="10,12"
         location="23791083"/>
 
 <!--      <controlPoint id="2"      name="Max_bankfull_flow_at_Salem"       path="Reservoirs\ControlPoints\{ScenarioName}\"
@@ -383,7 +383,7 @@ dynamic="0"
         location ="23762845" />
 
       <controlPoint id="3"      name="Max_Bankfull_Flow_at_Jefferson"   path="Reservoirs\ControlPoints\{ScenarioName}\"
-        control_point="cp_Max_bf_Jefferson_23780423.csv"                reservoirs="11,12"
+        control_point="cp_Max_bf_Jefferson_23780423.csv"                reservoirs="10,12"
         location ="23780423" />
 
       <controlPoint id="4"      name="Max_bankfull_flow_at_Mehama"      path="Reservoirs\ControlPoints\{ScenarioName}\"
@@ -553,18 +553,18 @@ dynamic="0"
                ressim_output_r="BR_ressim_rule_1935_2008.csv"     inactive_elev="359.66"                              reservoir_type="Storage_flood"
                turbine_efficiency="nan"                           tailwater_elev="nan"  />
 
-    <reservoir id="10"  name="Green Peter Reservoir (USACE)"      path="Reservoirs/"                               initVolume="199854963.3"
+    <reservoir id="10"  name="Green Peter Reservoir (USACE)"      path="Reservoirs/"                               initVolume="214083369.65"
                area_vol_curve="green_peter_area_capacity.csv"     av_dir="Area_Capacity_Curves/"                      minOutflow="22.6"
                rule_curve="green_peter_rule_curve.csv"            rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="551246341"
                composite_rc="GP_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="125.1"
                RO_rc="GP_RO_capacity.csv"                         spillway_rc="GP_spillway_capacity.csv"              cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="green_peter_rule_priorities.csv"  rp_dir="Rules_GP/"                                  tailwater_elev="213.36"
                turbine_efficiency="0.9"                           td_elev="311.0"                                     fc1_elev="309.0"
-               fc2_elev="nan"                                     fc3_elev="nan"
+               fc2_elev="289.6"                                   fc3_elev="301.8"
                buffer_zone="GP_buffer.csv"                        ressim_output_f="GP_ressim_flow_1935_2008.csv"      ressim_output_r="GP_ressim_rule_1935_2008.csv"
                inactive_elev="281.03"                             reservoir_type="Storage_HP" />
 
-    <reservoir id="11"  name="Foster Reservoir (USACE)"           path="Reservoirs/"                                  initVolume="41534504.55"
+    <reservoir id="11"  name="Foster Reservoir (USACE)"           path="Reservoirs/"                                  initVolume="41786416.09"
                area_vol_curve="foster_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="22.6"
                rule_curve="foster_rule_curve.csv"                 rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="90167522"
                composite_rc="Foster_composite_rc.csv"             re_dir="Rel_Cap/"                                   maxPowerFlow="96.8"
@@ -575,7 +575,7 @@ dynamic="0"
                buffer_zone="Foster_buffer.csv"                    ressim_output_f="Foster_ressim_flow_1935_2008.csv"  ressim_output_r="Foster_ressim_rule_1935_2008.csv"
                inactive_elev="186.84"                             reservoir_type="Storage_HP"/>
 
-    <reservoir id="12"  name="Detroit Reservoir (USACE)"          path="Reservoirs/"                                  initVolume="194690016.2"
+    <reservoir id="12"  name="Detroit Reservoir (USACE)"          path="Reservoirs/"                                  initVolume="196107582.69"
                area_vol_curve="detroit_area_capacity.csv"         av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                rule_curve="detroit_rule_curve.csv"                rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="606873064"
                composite_rc="Detroit_composite_rc.csv"            re_dir="Rel_Cap/"                                   maxPowerFlow="140.4"
@@ -586,7 +586,7 @@ dynamic="0"
                buffer_zone="Detroit_buffer.csv"                   ressim_output_f="DET_ressim_flow_1935_2008.csv"     ressim_output_r="DET_ressim_rule_1935_2008.csv"
                inactive_elev="441.96"                             reservoir_type="Storage_HP" />
 
-    <reservoir id="13"  name="Big Cliff Reservoir (USACE - re-regulating)"  path="Reservoirs/"                       initVolume="6487364.712"
+    <reservoir id="13"  name="Big Cliff Reservoir (USACE - re-regulating)"  path="Reservoirs/"                       initVolume="6551910.80"
                area_vol_curve="Big_Cliff_area_capacity.csv"       av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                composite_rc="BC_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="90.6"
                RO_rc="BC_RO_capacity.csv"                         spillway_rc="BC_spillway_capacity.csv"              tailwater_elev="338.02"

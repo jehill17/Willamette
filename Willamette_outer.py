@@ -133,7 +133,6 @@ for cp in CP:
 #convert data
 cfs_to_cms = 0.0283168
  
-cp_local = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname=[0,1,2,3,4,5,6,7,8,9]) 
 
 #reservoirs:
 #read in historical reservoir inflows -- this will contain the array of 'dates' to use
@@ -173,6 +172,80 @@ FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=27942,skip_footer
 LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=27942,skip_footer =1004)*cfs_to_cms)
 
 outflows_2005_all = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],FRN5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
+outflows_2005_wo_FRN = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
+
+
+#reading in historical volumes
+M3_PER_ACREFT = 1233.4
+
+#HCR
+HCR2005_vol = pd.read_excel('Data/HCRvolume_2005.xlsx')
+HCR2005_vol.columns = ['Date','Time','Storage(AF)']
+HCR2005vol_d = np.array(HCR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+
+#LOP
+LOP2005_vol = pd.read_excel('Data/LOPvolume_2005.xlsx')
+LOP2005_vol.columns = ['Date','Time','Storage(AF)']
+LOP2005vol_d = np.array(LOP2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+
+#FAL
+FAL2005_vol = pd.read_excel('Data/FALvolume_2005.xlsx')
+FAL2005_vol.columns = ['Date','Time','Storage(AF)']
+FAL2005vol_d = np.array(FAL2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+
+#DOR
+DOR2005_vol = pd.read_excel('Data/DORvolume_2005.xlsx')
+DOR2005_vol.columns = ['Date','Time','Storage(AF)']
+DOR2005vol_d = np.array(DOR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+#COT
+COT2005_vol = pd.read_excel('Data/COTvolume_2005.xlsx')
+COT2005_vol.columns = ['Date','Time','Storage(AF)']
+COT2005vol_d = np.array(COT2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+
+#FRN
+FRN2005_vol = pd.read_excel('Data/FRNvolume_2005.xlsx')
+FRN2005_vol.columns = ['Date','Time','Storage(AF)']
+FRN2005vol_d = np.array(FRN2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+#after looking at the query, I have discovered that 2005 was quite an unusual year for FRN. Volume curve does not follow normal pattern.
+
+#CGR
+CGR2005_vol = pd.read_excel('Data/CGRvolume_2005.xlsx')
+CGR2005_vol.columns = ['Date','Time','Storage(AF)']
+CGR2005vol_d = np.array(CGR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+
+#BLU
+BLU2005_vol = pd.read_excel('Data/BLUvolume_2005.xlsx')
+BLU2005_vol.columns = ['Date','Time','Storage(AF)']
+BLU2005vol_d = np.array(BLU2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+
+#DET
+DET2005_vol = pd.read_excel('Data/DETvolume_2005.xlsx')
+DET2005_vol.columns = ['Date','Time','Storage(AF)']
+DET2005vol_d = np.array(DET2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+#BCL
+BCL2005_vol = pd.read_excel('Data/BCLvolume_2005.xlsx') #this should be relatively constant, but need to extract initial values
+BCL2005_vol.columns = ['Date','Time','Storage(AF)']
+BCL2005vol_d = np.array(BCL2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+#FOS
+FOS2005_vol = pd.read_excel('Data/FOSvolume_2005.xlsx')
+FOS2005_vol.columns = ['Date','Time','Storage(AF)']
+FOS2005vol_d = np.array(FOS2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+#GPR
+GPR2005_vol = pd.read_excel('Data/GPRvolume_2005.xlsx')
+GPR2005_vol.columns = ['Date','Time','Storage(AF)']
+GPR2005vol_d = np.array(GPR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
 
 
 #control points
@@ -249,6 +322,12 @@ for  i in range(0,n_res):
     outflows_all[0:3,i] = outflows_2005_all[0:3,i] #remember to stack outflows historical values
     volumes_all[0:3,i] = np.tile(RES[i].InitVol,(3)) #TO BE CHANGED!
     elevations_all[0:3,i]=inner.GetPoolElevationFromVolume(volumes_all[0:3,i],RES[i])
+    
+volumes_all[0:3,9] = GPR2005vol_d[0:3]
+volumes_all[0:3,10] = FOS2005vol_d[0:3]
+volumes_all[0:3,11] = DET2005vol_d[0:3]
+volumes_all[0:3,12] = BCL2005vol_d[0:3]
+
 
 
 for  i in range(0,n_cp):
@@ -418,7 +497,7 @@ for t in range(1,T+2):
     outflows_all[t+2,BCL.ID-1] = BCL_outflow 
     volumes_all[t+2,BCL.ID-1] =  BCL_volume
     elevations_all[t+2,BCL.ID-1]=  BCL_elevation
-    hydropower_all[t+2,7] = BCL_power_output      
+    hydropower_all[t+2,7] = BCL_power_output
 
 
     #UPDATE CONTROL POINTS DISCHARGE
@@ -494,7 +573,7 @@ plt.plot(outflows_all[0:364,7])
 fig2.suptitle('Outflows')
 plt.legend(['CGR historical','CGR predicted'])
 ax=fig1.add_subplot(111)
-ax.text(1, 30,['R^2=',R2])
+ax.text(1, 30,['R^2=',CGR.R2])
 
 
 DET_2005 = Willamette_gen_2005['DET']
@@ -508,8 +587,8 @@ plt.plot(DET5H[:,1])
 plt.plot(outflows_all[:,11])
 plt.legend(['DET historical outflows','DET predicted'])
 
-x = (DET5H[0:364,1].astype('float'))
-y = outflows_all[0:364,11]
+x = (DET5H[0:363,1].astype('float'))
+y = outflows_all[0:363,11]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 DET.R2 = r_val**2
 print(DET.R2)
@@ -533,8 +612,8 @@ plt.plot(FOS_2005_daily)
 plt.plot(hydropower_all[:,5])
 plt.legend(['FOS historical','FOS predicted'])
 plt.figure()
-plt.plot(FOS5H[:,1])
-plt.plot(outflows_all[:,10])
+plt.plot(FOS5H[0:364,1])
+plt.plot(outflows_all[0:364,10])
 plt.legend(['FOS historical outflows','FOS predicted'])
 
 x = (FOS5H[0:364,1].astype('float'))
@@ -550,12 +629,12 @@ plt.plot(GPR_2005_daily)
 plt.plot(hydropower_all[:,4])
 plt.legend(['GPR historical','GPR predicted'])
 plt.figure()
-plt.plot(GPR5H[:,1])
-plt.plot(outflows_all[:,9])
+plt.plot(GPR5H[0:363,1])
+plt.plot(outflows_all[0:363,9])
 plt.legend(['GPR historical outflows','GPR predicted'])
 
-x = (GPR5H[0:364,1].astype('float'))
-y = outflows_all[0:364,9]
+x = (GPR5H[0:363,1].astype('float'))
+y = outflows_all[0:363,9]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 GPR.R2 = r_val**2
 print(GPR.R2)
@@ -605,8 +684,8 @@ plt.plot(BCL5H[:,1])
 plt.plot(outflows_all[:,12])
 plt.legend(['BCL historical outflows','BCL predicted'])
 
-x = (BCL5H[0:364,1].astype('float'))
-y = outflows_all[0:364,12]
+x = (BCL5H[0:363,1].astype('float'))
+y = outflows_all[0:363,12]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 BCL.R2 = r_val**2
 print(BCL.R2)
@@ -677,99 +756,129 @@ print(BLU.R2)
 #%%
 #volume validation
 
-M3_PER_ACREFT = 1233.4
+#M3_PER_ACREFT = 1233.4
+#
+##HCR
+#HCR2005_vol = pd.read_excel('Data/HCRvolume_2005.xlsx')
+#HCR2005_vol.columns = ['Date','Time','Storage(AF)']
+#HCR2005vol_d = np.array(HCR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#plt.figure()
+#plt.plot(volumes_all[0:365,0])
+#plt.plot(HCR2005vol_d)
+#plt.legend(['HCR predicted daily storage (m^3)','HCR historic storage'])
+#
+##LOP
+#LOP2005_vol = pd.read_excel('Data/LOPvolume_2005.xlsx')
+#LOP2005_vol.columns = ['Date','Time','Storage(AF)']
+#LOP2005vol_d = np.array(LOP2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#
+#plt.figure()
+#plt.plot(volumes_all[0:365,1])
+#plt.plot(LOP2005vol_d)
+#plt.legend(['LOP predicted daily storage (m^3)','LOP historic storage'])
+#
+##FAL
+#FAL2005_vol = pd.read_excel('Data/FALvolume_2005.xlsx')
+#FAL2005_vol.columns = ['Date','Time','Storage(AF)']
+#FAL2005vol_d = np.array(FAL2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#
+#plt.figure()
+#plt.plot(volumes_all[0:365,3])
+#plt.plot(FAL2005vol_d)
+#plt.legend(['FAL predicted daily storage (m^3)','FAL historic storage'])
+#
+##DOR
+#DOR2005_vol = pd.read_excel('Data/DORvolume_2005.xlsx')
+#DOR2005_vol.columns = ['Date','Time','Storage(AF)']
+#DOR2005vol_d = np.array(DOR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#
+#plt.figure()
+#plt.plot(volumes_all[0:365,4])
+#plt.plot(DOR2005vol_d)
+#plt.legend(['DOR predicted daily storage (m^3)','DOR historic storage'])
+#
+##COT
+#COT2005_vol = pd.read_excel('Data/COTvolume_2005.xlsx')
+#COT2005_vol.columns = ['Date','Time','Storage(AF)']
+#COT2005vol_d = np.array(COT2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#
+#plt.figure()
+#plt.plot(volumes_all[0:365,5])
+#plt.plot(COT2005vol_d)
+#plt.legend(['COT predicted daily storage (m^3)','COT historic storage'])
+#
+##FRN
+#FRN2005_vol = pd.read_excel('Data/FRNvolume_2005.xlsx')
+#FRN2005_vol.columns = ['Date','Time','Storage(AF)']
+#FRN2005vol_d = np.array(FRN2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#
+#plt.figure()
+#plt.plot(volumes_all[0:365,6])
+#plt.plot(FRN2005vol_d)
+#plt.legend(['FRN predicted daily storage (m^3)','FRN historic storage'])
+#
+##after looking at the query, I have discovered that 2005 was quite an unusual year for FRN. Volume curve does not follow normal pattern.
+#
+##CGR
+#CGR2005_vol = pd.read_excel('Data/CGRvolume_2005.xlsx')
+#CGR2005_vol.columns = ['Date','Time','Storage(AF)']
+#CGR2005vol_d = np.array(CGR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#
+#plt.figure()
+#plt.plot(volumes_all[0:365,7])
+#plt.plot(CGR2005vol_d)
+#plt.legend(['CGR predicted daily storage (m^3)','CGR historic storage'])
+#
+##BLU
+#BLU2005_vol = pd.read_excel('Data/BLUvolume_2005.xlsx')
+#BLU2005_vol.columns = ['Date','Time','Storage(AF)']
+#BLU2005vol_d = np.array(BLU2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#
+#plt.figure()
+#plt.plot(volumes_all[0:365,8])
+#plt.plot(BLU2005vol_d)
+#plt.legend(['BLU predicted daily storage (m^3)','BLU historic storage'])
+#
+##DET
+#DET2005_vol = pd.read_excel('Data/DETvolume_2005.xlsx')
+#DET2005_vol.columns = ['Date','Time','Storage(AF)']
+#DET2005vol_d = np.array(DET2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#
+#plt.figure()
+#plt.plot(volumes_all[0:365,11])
+#plt.plot(DET2005vol_d)
+#plt.legend(['DET predicted daily storage (m^3)','DET historic storage'])
 
-#HCR
-HCR2005_vol = pd.read_excel('Data/HCRvolume_2005.xlsx')
-HCR2005_vol.columns = ['Date','Time','Storage(AF)']
-HCR2005vol_d = np.array(HCR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+
+#%%
+#aggregate outflows and hydropower validation
+#outflows_minus_FRN = np.delete(outflows_all[0:364],6,1)
+outflows_aggr = np.sum(outflows_all[0:364],axis=1)
+
+outflows_aggr_2005 = np.sum(outflows_2005_all[1:365],axis=1).astype(float)
+
 plt.figure()
-plt.plot(volumes_all[0:365,0])
-plt.plot(HCR2005vol_d)
-plt.legend(['HCR predicted daily storage (m^3)','HCR historic storage'])
+plt.plot(outflows_aggr_2005)
+plt.plot(outflows_aggr)
+plt.legend(['Historical aggregate outflows 2005','Simulated aggregate outflows 2005'])
 
-#LOP
-LOP2005_vol = pd.read_excel('Data/LOPvolume_2005.xlsx')
-LOP2005_vol.columns = ['Date','Time','Storage(AF)']
-LOP2005vol_d = np.array(LOP2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+#take FRN out 
 
-plt.figure()
-plt.plot(volumes_all[0:365,1])
-plt.plot(LOP2005vol_d)
-plt.legend(['LOP predicted daily storage (m^3)','LOP historic storage'])
+x = outflows_aggr_2005
+y = outflows_aggr
+slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
+outflows_R2 = r_val**2
+print(outflows_R2)
 
-#FAL
-FAL2005_vol = pd.read_excel('Data/FALvolume_2005.xlsx')
-FAL2005_vol.columns = ['Date','Time','Storage(AF)']
-FAL2005vol_d = np.array(FAL2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+hydro = np.sum(np.array(Willamette_gen_2005),axis=1) #this is hourly
+hydro_aggr_2005 = np.mean(hydro.reshape(-1,24),axis=1) 
+
+hydro_aggr = np.sum(hydropower_all[3:365],axis=1) #this is only 362 days
 
 plt.figure()
-plt.plot(volumes_all[0:365,3])
-plt.plot(FAL2005vol_d)
-plt.legend(['FAL predicted daily storage (m^3)','FAL historic storage'])
-
-#DOR
-DOR2005_vol = pd.read_excel('Data/DORvolume_2005.xlsx')
-DOR2005_vol.columns = ['Date','Time','Storage(AF)']
-DOR2005vol_d = np.array(DOR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-plt.figure()
-plt.plot(volumes_all[0:365,4])
-plt.plot(DOR2005vol_d)
-plt.legend(['DOR predicted daily storage (m^3)','DOR historic storage'])
-
-#COT
-COT2005_vol = pd.read_excel('Data/COTvolume_2005.xlsx')
-COT2005_vol.columns = ['Date','Time','Storage(AF)']
-COT2005vol_d = np.array(COT2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-plt.figure()
-plt.plot(volumes_all[0:365,5])
-plt.plot(COT2005vol_d)
-plt.legend(['COT predicted daily storage (m^3)','COT historic storage'])
-
-#FRN
-FRN2005_vol = pd.read_excel('Data/FRNvolume_2005.xlsx')
-FRN2005_vol.columns = ['Date','Time','Storage(AF)']
-FRN2005vol_d = np.array(FRN2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-plt.figure()
-plt.plot(volumes_all[0:365,6])
-plt.plot(FRN2005vol_d)
-plt.legend(['FRN predicted daily storage (m^3)','FRN historic storage'])
-
-#after looking at the query, I have discovered that 2005 was quite an unusual year for FRN. Volume curve does not follow normal pattern.
-
-#CGR
-CGR2005_vol = pd.read_excel('Data/CGRvolume_2005.xlsx')
-CGR2005_vol.columns = ['Date','Time','Storage(AF)']
-CGR2005vol_d = np.array(CGR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-plt.figure()
-plt.plot(volumes_all[0:365,7])
-plt.plot(CGR2005vol_d)
-plt.legend(['CGR predicted daily storage (m^3)','CGR historic storage'])
-
-#BLU
-BLU2005_vol = pd.read_excel('Data/BLUvolume_2005.xlsx')
-BLU2005_vol.columns = ['Date','Time','Storage(AF)']
-BLU2005vol_d = np.array(BLU2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-plt.figure()
-plt.plot(volumes_all[0:365,8])
-plt.plot(BLU2005vol_d)
-plt.legend(['BLU predicted daily storage (m^3)','BLU historic storage'])
-
-#DET
-DET2005_vol = pd.read_excel('Data/DETvolume_2005.xlsx')
-DET2005_vol.columns = ['Date','Time','Storage(AF)']
-DET2005vol_d = np.array(DET2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-plt.figure()
-plt.plot(volumes_all[0:365,11])
-plt.plot(DET2005vol_d)
-plt.legend(['DET predicted daily storage (m^3)','DET historic storage'])
-
+plt.plot(hydro_aggr_2005)
+plt.plot(hydro_aggr)
+plt.legend(['Historical aggregate hydro 2005','Simulated aggregate hydro 2005'])
 
 #%%
 
