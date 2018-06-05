@@ -137,7 +137,7 @@ def AssignReservoirOutletFlows(name,outflow):
     return(powerFlow,RO_flow,spillwayFlow)
 
 
-def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp_discharge):
+def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp_discharge, lag_zone):
     currentPoolElevation = GetPoolElevationFromVolume(volume,name)    
     if name.Restype!='Storage_flood': #if it produces hydropower
         #reset gate specific flows
@@ -185,11 +185,15 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
             zone = 1
       elif currentPoolElevation <= targetPoolElevation:
          if currentPoolElevation <= bufferZoneElevation:   #in the buffer zone (HERE WE REMOVED THE PART THAT COUNTED THE DAYS IN THE BUFFER ZONE)
-            zone = 3     
+            if lag_zone == 3:
+                zone = 2
+            else:
+                zone = 3     
          else:                                           #in the conservation zone
             zone = 2
       else:
          print ("*** GetResOutflow(): We should never get here. doy = ", doy ,"reservoir = ", name.name)
+      lag_zone=zone
       #print('zone is', zone)   
       
         # Once we know what zone we are in, we can access the array of appropriate constraints for the particular reservoir and zone.       
