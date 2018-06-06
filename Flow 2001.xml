@@ -458,7 +458,7 @@ dynamic="0"
 
 
     <reservoirs col="RES_ID">
-    <reservoir id="1"   name="Hills Creek Reservoir (USACE)"      path="Reservoirs/"                                  initVolume="210826402.8"
+    <reservoir id="1"   name="Hills Creek Reservoir (USACE)"      path="Reservoirs/"                                  initVolume="193150633.2"
                area_vol_curve="hills_creek_area_capacity.csv"     av_dir="Area_Capacity_Curves/"                      minOutflow="11"
                rule_curve="hills_creek_rule_curve.csv"            rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="461075511"
                composite_rc="HC_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="101.8"
@@ -470,7 +470,7 @@ dynamic="0"
                buffer_zone="HC_buffer.csv"                        ressim_output_f="HC_ressim_flow_1935_2008.csv"      ressim_output_r="HC_ressim_rule_1935_2008.csv"
                inactive_elev="441.046"                            reservoir_type="Storage_HP"/>
 
-    <reservoir id="2"   name="Lookout Point Reservoir (USACE)"    path="Reservoirs/"                                  initVolume="154814076"
+    <reservoir id="2"   name="Lookout Point Reservoir (USACE)"    path="Reservoirs/"                                  initVolume="157697334.3"
                area_vol_curve="lookout_point_area_capacity.csv"   av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                rule_curve="lookout_point_rule_curve.csv"          rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="622295321"
                composite_rc="LO_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="222.4"
@@ -481,13 +481,13 @@ dynamic="0"
                ressim_output_f="LO_ressim_flow_1935_2008.csv"     ressim_output_r="LO_ressim_rule_1935_2008.csv"      inactive_elev="251.46"
                reservoir_type="Storage_HP"/>
 
-    <reservoir id="3"  name="Dexter Reservoir (USACE - re-regulating)"      path="Reservoirs/"                        initVolume="31663431.6"
+    <reservoir id="3"  name="Dexter Reservoir (USACE - re-regulating)"      path="Reservoirs/"                        initVolume="25780"
                area_vol_curve="dexter_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                composite_rc="Dexter_composite_rc.csv"             re_dir="Rel_Cap/"                                   maxPowerFlow="118.9"
                RO_rc="Dexter_RO_capacity.csv"                     spillway_rc="Dexter_Spillway_capacity.csv"          tailwater_elev="194.46"
                turbine_efficiency="0.9"                           inactive_elev="194.24"                              reservoir_type= "RunOfRiver" />
 
-    <reservoir id="4"   name="Fall Creek Reservoir (USACE)"       path="Reservoirs/"                                  initVolume="8140968"
+    <reservoir id="4"   name="Fall Creek Reservoir (USACE)"       path="Reservoirs/"                                  initVolume="12312597.36"
                area_vol_curve="fall_creek_area_capacity.csv"      av_dir="Area_Capacity_Curves/"                      minOutflow="1"
                rule_curve="fall_creek_rule_curve.csv"             rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="168741328"
                composite_rc="FC_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="nan"
@@ -498,7 +498,7 @@ dynamic="0"
                ressim_output_r="FC_ressim_rule_1935_2008.csv"      inactive_elev="217.32"                             reservoir_type="Storage_flood"
                turbine_efficiency="nan" />
 
-    <reservoir id="5"   name="Dorena Reservoir (USACE)"           path="Reservoirs/"                                  initVolume="8957531.76"
+    <reservoir id="5"   name="Dorena Reservoir (USACE)"           path="Reservoirs/"                                  initVolume="9574271.76"
                area_vol_curve="dorena_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="2.8"
                rule_curve="dorena_rule_curve.csv"                 rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="178855940"
                composite_rc="Dorena_composite_rc.csv"             re_dir="Rel_Cap/"                                   maxPowerFlow="nan"
@@ -509,7 +509,7 @@ dynamic="0"
                reservoir_type="Storage_flood"                           fc3_elev="nan"                                      turbine_efficiency="nan"
                tailwater_elev="nan"  />
 
-    <reservoir id="6"   name="Cottage Grove Reservoir (USACE)"    path="Reservoirs/"                                  initVolume="2782730.88"
+    <reservoir id="6"   name="Cottage Grove Reservoir (USACE)"    path="Reservoirs/"                                  initVolume="4235770.32"
                area_vol_curve="cottage_grove_area_capacity.csv"   av_dir="Area_Capacity_Curves/"                      minOutflow="1.4"
                rule_curve="cottage_grove_rule_curve.csv"          rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="68014597"
                composite_rc="CG_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="nan"
@@ -520,7 +520,7 @@ dynamic="0"
                reservoir_type="Storage_flood"                           fc3_elev="nan"                                      turbine_efficiency="nan"
                tailwater_elev="nan" />
 
-    <reservoir id="7"   name="Fern Ridge Reservoir (USACE)"       path="Reservoirs/"                                 initVolume="9453390.72"
+    <reservoir id="7"   name="Fern Ridge Reservoir (USACE)"       path="Reservoirs/"                                 initVolume="4792336.232"
                area_vol_curve="fern_ridge_area_capacity.csv"      av_dir="Area_Capacity_Curves/"                      minOutflow="1"
                rule_curve="fern_ridge_rule_curve.csv"             rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="211850506"
                composite_rc="FR_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="nan"
@@ -531,7 +531,7 @@ dynamic="0"
                ressim_output_r="FR_ressim_rule_1935_2008.csv"     inactive_elev="107.60"                              reservoir_type="Storage_flood"
                turbine_efficiency="nan"                          tailwater_elev="nan" />
 
-    <reservoir id="8"   name="Cougar Reservoir (USACE)"           path="Reservoirs/"                                initVolume="27782931.89"
+    <reservoir id="8"   name="Cougar Reservoir (USACE)"           path="Reservoirs/"                                initVolume="80065186.8"
                area_vol_curve="cougar_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="11"
                rule_curve="cougar_rule_curve.csv"                 rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="246696368"
                composite_rc="Cougar_composite_rc.csv"             re_dir="Rel_Cap/"                                   maxPowerFlow="36.5"
@@ -542,7 +542,7 @@ dynamic="0"
                buffer_zone="Cougar_buffer.csv"                    ressim_output_f="Cougar_ressim_flow_1935_2008.csv"  ressim_output_r="Cougar_ressim_rule_1935_2008.csv"
                inactive_elev="466.65"                             reservoir_type="Storage_HP"/>
 
-    <reservoir id="9"   name="Blue River Reservoir (USACE)"       path="Reservoirs/"                                 initVolume="5031364.92"
+    <reservoir id="9"   name="Blue River Reservoir (USACE)"       path="Reservoirs/"                                 initVolume="5653038.84"
                area_vol_curve="blue_river_area_capacity.csv"      av_dir="Area_Capacity_Curves/"                      minOutflow="1.417"
                rule_curve="blue_river_rule_curve.csv"             rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="168123574"
                composite_rc="BR_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="nan"
@@ -553,7 +553,7 @@ dynamic="0"
                ressim_output_r="BR_ressim_rule_1935_2008.csv"     inactive_elev="359.66"                              reservoir_type="Storage_flood"
                turbine_efficiency="nan"                           tailwater_elev="nan"  />
 
-    <reservoir id="10"  name="Green Peter Reservoir (USACE)"      path="Reservoirs/"                               initVolume="214083369.65"
+    <reservoir id="10"  name="Green Peter Reservoir (USACE)"      path="Reservoirs/"                               initVolume="222322435.2"
                area_vol_curve="green_peter_area_capacity.csv"     av_dir="Area_Capacity_Curves/"                      minOutflow="22.6"
                rule_curve="green_peter_rule_curve.csv"            rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="551246341"
                composite_rc="GP_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="125.1"
@@ -564,7 +564,7 @@ dynamic="0"
                buffer_zone="GP_buffer.csv"                        ressim_output_f="GP_ressim_flow_1935_2008.csv"      ressim_output_r="GP_ressim_rule_1935_2008.csv"
                inactive_elev="281.03"                             reservoir_type="Storage_HP" />
 
-    <reservoir id="11"  name="Foster Reservoir (USACE)"           path="Reservoirs/"                                  initVolume="41786416.09"
+    <reservoir id="11"  name="Foster Reservoir (USACE)"           path="Reservoirs/"                                  initVolume="39647037.16"
                area_vol_curve="foster_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="22.6"
                rule_curve="foster_rule_curve.csv"                 rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="90167522"
                composite_rc="Foster_composite_rc.csv"             re_dir="Rel_Cap/"                                   maxPowerFlow="96.8"
@@ -575,7 +575,7 @@ dynamic="0"
                buffer_zone="Foster_buffer.csv"                    ressim_output_f="Foster_ressim_flow_1935_2008.csv"  ressim_output_r="Foster_ressim_rule_1935_2008.csv"
                inactive_elev="186.84"                             reservoir_type="Storage_HP"/>
 
-    <reservoir id="12"  name="Detroit Reservoir (USACE)"          path="Reservoirs/"                                  initVolume="196107582.69"
+    <reservoir id="12"  name="Detroit Reservoir (USACE)"          path="Reservoirs/"                                  initVolume="198417592.8"
                area_vol_curve="detroit_area_capacity.csv"         av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                rule_curve="detroit_rule_curve.csv"                rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="606873064"
                composite_rc="Detroit_composite_rc.csv"            re_dir="Rel_Cap/"                                   maxPowerFlow="140.4"
@@ -586,7 +586,7 @@ dynamic="0"
                buffer_zone="Detroit_buffer.csv"                   ressim_output_f="DET_ressim_flow_1935_2008.csv"     ressim_output_r="DET_ressim_rule_1935_2008.csv"
                inactive_elev="441.96"                             reservoir_type="Storage_HP" />
 
-    <reservoir id="13"  name="Big Cliff Reservoir (USACE - re-regulating)"  path="Reservoirs/"                       initVolume="6551910.80"
+    <reservoir id="13"  name="Big Cliff Reservoir (USACE - re-regulating)"  path="Reservoirs/"                       initVolume="6487364.712"
                area_vol_curve="Big_Cliff_area_capacity.csv"       av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                composite_rc="BC_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="90.6"
                RO_rc="BC_RO_capacity.csv"                         spillway_rc="BC_spillway_capacity.csv"              tailwater_elev="338.02"

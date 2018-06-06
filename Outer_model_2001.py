@@ -43,7 +43,7 @@ import Williamette_model as inner #reading in the inner function
 import os
 
 #%%  load reservoirs and control point infos
-with open('Flow.xml') as fd:
+with open('Flow 2001.xml') as fd:
     flow = xmld.parse(fd.read())
 
 flow_model = flow["flow_model"]
@@ -164,7 +164,7 @@ LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=26481,skip_f
 
 
 #historical outflows 
-BLU5H = np.array(pd.read_excel('Data/BLU5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms) #only using data from 2001: change these index values!!
+BLU5H = np.array(pd.read_excel('Data/BLU5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms) #only using data from 2001
 BCL5H = np.array(pd.read_excel('Data/BCL5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms) 
 CGR5H = np.array(pd.read_excel('Data/CGR5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
 DET5H = np.array(pd.read_excel('Data/DET5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
@@ -180,8 +180,8 @@ COT5H = np.array(pd.read_excel('Data/COT5H_daily.xls',skiprows=26481,skip_footer
 FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
 LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
 
-outflows_2005_all = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],FRN5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
-outflows_2005_wo_FRN = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
+outflows_2001_all = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],FRN5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
+#outflows_2001_wo_FRN = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
 
 
 #reading in historical volumes
@@ -191,72 +191,72 @@ M3_PER_ACREFT = 1233.4
 ########DOWNLOAD 2001 VOLUME DATA AND UPLOAD HERE####################
 
 #HCR
-HCR2005_vol = pd.read_excel('Data/HCRvolume_2005.xlsx')
-HCR2005_vol.columns = ['Date','Time','Storage(AF)']
-HCR2005vol_d = np.array(HCR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+HCR2001_vol = pd.read_excel('Data/HCRvolume_2001.xlsx')
+HCR2001_vol.columns = ['Date','Time','Storage(AF)']
+HCR2001vol_d = np.array(HCR2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 
 #LOP
-LOP2005_vol = pd.read_excel('Data/LOPvolume_2005.xlsx')
-LOP2005_vol.columns = ['Date','Time','Storage(AF)']
-LOP2005vol_d = np.array(LOP2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+LOP2001_vol = pd.read_excel('Data/LOPvolume_2001.xlsx')
+LOP2001_vol.columns = ['Date','Time','Storage(AF)']
+LOP2001vol_d = np.array(LOP2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 
 #FAL
-FAL2005_vol = pd.read_excel('Data/FALvolume_2005.xlsx')
-FAL2005_vol.columns = ['Date','Time','Storage(AF)']
-FAL2005vol_d = np.array(FAL2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+FAL2001_vol = pd.read_excel('Data/FALvolume_2001.xlsx')
+FAL2001_vol.columns = ['Date','Time','Storage(AF)']
+FAL2001vol_d = np.array(FAL2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 
 #DOR
-DOR2005_vol = pd.read_excel('Data/DORvolume_2005.xlsx')
-DOR2005_vol.columns = ['Date','Time','Storage(AF)']
-DOR2005vol_d = np.array(DOR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+DOR2001_vol = pd.read_excel('Data/DORvolume_2001.xlsx')
+DOR2001_vol.columns = ['Date','Time','Storage(AF)']
+DOR2001vol_d = np.array(DOR2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 #COT
-COT2005_vol = pd.read_excel('Data/COTvolume_2005.xlsx')
-COT2005_vol.columns = ['Date','Time','Storage(AF)']
-COT2005vol_d = np.array(COT2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+COT2001_vol = pd.read_excel('Data/COTvolume_2001.xlsx')
+COT2001_vol.columns = ['Date','Time','Storage(AF)']
+COT2001vol_d = np.array(COT2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 
 #FRN
-FRN2005_vol = pd.read_excel('Data/FRNvolume_2005.xlsx')
-FRN2005_vol.columns = ['Date','Time','Storage(AF)']
-FRN2005vol_d = np.array(FRN2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+FRN2001_vol = pd.read_excel('Data/FRNvolume_2001.xlsx')
+FRN2001_vol.columns = ['Date','Time','Storage(AF)']
+FRN2001vol_d = np.array(FRN2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
-#after looking at the query, I have discovered that 2005 was quite an unusual year for FRN. Volume curve does not follow normal pattern.
+#after looking at the query, I have discovered that 2001 was quite an unusual year for FRN. Volume curve does not follow normal pattern.
 
 #CGR
-CGR2005_vol = pd.read_excel('Data/CGRvolume_2005.xlsx')
-CGR2005_vol.columns = ['Date','Time','Storage(AF)']
-CGR2005vol_d = np.array(CGR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+CGR2001_vol = pd.read_excel('Data/CGRvolume_2001.xlsx')
+CGR2001_vol.columns = ['Date','Time','Storage(AF)']
+CGR2001vol_d = np.array(CGR2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 
 #BLU
-BLU2005_vol = pd.read_excel('Data/BLUvolume_2005.xlsx')
-BLU2005_vol.columns = ['Date','Time','Storage(AF)']
-BLU2005vol_d = np.array(BLU2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+BLU2001_vol = pd.read_excel('Data/BLUvolume_2001.xlsx')
+BLU2001_vol.columns = ['Date','Time','Storage(AF)']
+BLU2001vol_d = np.array(BLU2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 
 #DET
-DET2005_vol = pd.read_excel('Data/DETvolume_2005.xlsx')
-DET2005_vol.columns = ['Date','Time','Storage(AF)']
-DET2005vol_d = np.array(DET2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+DET2001_vol = pd.read_excel('Data/DETvolume_2001.xlsx')
+DET2001_vol.columns = ['Date','Time','Storage(AF)']
+DET2001vol_d = np.array(DET2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
-#BCL
-BCL2005_vol = pd.read_excel('Data/BCLvolume_2005.xlsx') #this should be relatively constant, but need to extract initial values
-BCL2005_vol.columns = ['Date','Time','Storage(AF)']
-BCL2005vol_d = np.array(BCL2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+##BCL
+BCL2001_vol = pd.read_excel('Data/BCLvolume_2005.xlsx') #this should be relatively constant, but need to extract initial values
+BCL2001_vol.columns = ['Date','Time','Storage(AF)']
+BCL2001vol_d = np.array(BCL2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 #FOS
-FOS2005_vol = pd.read_excel('Data/FOSvolume_2005.xlsx')
-FOS2005_vol.columns = ['Date','Time','Storage(AF)']
-FOS2005vol_d = np.array(FOS2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+FOS2001_vol = pd.read_excel('Data/FOSvolume_2001.xlsx')
+FOS2001_vol.columns = ['Date','Time','Storage(AF)']
+FOS2001vol_d = np.array(FOS2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 #GPR
-GPR2005_vol = pd.read_excel('Data/GPRvolume_2005.xlsx')
-GPR2005_vol.columns = ['Date','Time','Storage(AF)']
-GPR2005vol_d = np.array(GPR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+GPR2001_vol = pd.read_excel('Data/GPRvolume_2001.xlsx')
+GPR2001_vol.columns = ['Date','Time','Storage(AF)']
+GPR2001vol_d = np.array(GPR2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 
 
@@ -264,28 +264,28 @@ GPR2005vol_d = np.array(GPR2005_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER
 #cp_hist discharge: start this at 12/31/2001 ##############EXTRACT 2001 DATA FROM CP HISTORICAL EXCEL SHEET###############
 filename='Data/Control point historical discharge 2001.xlsx'
 SAL_2001 = pd.read_excel(filename,sheetname='Salem')
-SAL_2001_dis = np.array(SAL_2005['Discharge'])*cfs_to_cms
+SAL_2001_dis = np.array(SAL_2001['Discharge'])*cfs_to_cms
 ALB_2001 = pd.read_excel(filename,sheetname='Albany')
-ALB_2001_dis = np.array(ALB_2005['Discharge'])*cfs_to_cms
-JEF_2005 = pd.read_excel(filename,sheetname='Jefferson')
-JEF_2005_dis = np.array(JEF_2005['Discharge'])*cfs_to_cms
-MEH_2005 = pd.read_excel(filename,sheetname='Mehama')
-MEH_2005_dis = np.array(MEH_2005['Discharge'])*cfs_to_cms
-HAR_2005 = pd.read_excel(filename,sheetname='Harrisburg')
-HAR_2005_dis = np.array(HAR_2005['Discharge'])*cfs_to_cms
-VID_2005 = pd.read_excel(filename,sheetname='Vida')
-VID_2005_dis = np.array(VID_2005['Discharge'])*cfs_to_cms
-JAS_2005 = pd.read_excel(filename,sheetname='Jasper')
-JAS_2005_dis = np.array(JAS_2005['Discharge'])*cfs_to_cms
-GOS_2005 = pd.read_excel(filename,sheetname='Goshen')
-GOS_2005_dis = np.array(GOS_2005['Discharge'])*cfs_to_cms
-WAT_2005 = pd.read_excel(filename,sheetname='Waterloo')
-WAT_2005_dis = np.array(WAT_2005['Discharge'])*cfs_to_cms
-MON_2005 = pd.read_excel(filename,sheetname='Monroe')
-MON_2005_dis = np.array(MON_2005['Discharge'])*cfs_to_cms
-FOS_2005 = pd.read_excel(filename,sheetname='Foster')
-FOS_2005_dis = np.array(FOS_2005['Discharge'])*cfs_to_cms
-cp_discharge_2005_all = np.stack((SAL_2005_dis,ALB_2005_dis,JEF_2005_dis,MEH_2005_dis,HAR_2005_dis,VID_2005_dis,JAS_2005_dis,GOS_2005_dis,WAT_2005_dis,MON_2005_dis,FOS_2005_dis),axis=1)    
+ALB_2001_dis = np.array(ALB_2001['Discharge'])*cfs_to_cms
+JEF_2001 = pd.read_excel(filename,sheetname='Jefferson')
+JEF_2001_dis = np.array(JEF_2001['Discharge'])*cfs_to_cms
+MEH_2001 = pd.read_excel(filename,sheetname='Mehama')
+MEH_2001_dis = np.array(MEH_2001['Discharge'])*cfs_to_cms
+HAR_2001 = pd.read_excel(filename,sheetname='Harrisburg')
+HAR_2001_dis = np.array(HAR_2001['Discharge'])*cfs_to_cms
+VID_2001 = pd.read_excel(filename,sheetname='Vida')
+VID_2001_dis = np.array(VID_2001['Discharge'])*cfs_to_cms
+JAS_2001 = pd.read_excel(filename,sheetname='Jasper')
+JAS_2001_dis = np.array(JAS_2001['Discharge'])*cfs_to_cms
+GOS_2001 = pd.read_excel(filename,sheetname='Goshen')
+GOS_2001_dis = np.array(GOS_2001['Discharge'])*cfs_to_cms
+WAT_2001 = pd.read_excel(filename,sheetname='Waterloo')
+WAT_2001_dis = np.array(WAT_2001['Discharge'])*cfs_to_cms
+MON_2001 = pd.read_excel(filename,sheetname='Monroe')
+MON_2001_dis = np.array(MON_2001['Discharge'])*cfs_to_cms
+FOS_2001 = pd.read_excel(filename,sheetname='Foster')
+FOS_2001_dis = np.array(FOS_2001['Discharge'])*cfs_to_cms
+cp_discharge_2001_all = np.stack((SAL_2001_dis,ALB_2001_dis,JEF_2001_dis,MEH_2001_dis,HAR_2001_dis,VID_2001_dis,JAS_2001_dis,GOS_2001_dis,WAT_2001_dis,MON_2001_dis,FOS_2001_dis),axis=1)    
 
 
 
@@ -331,24 +331,25 @@ cp_discharge_all = np.full((T+2,(n_cp)),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
-    outflows_all[0:3,i] = outflows_2005_all[0:3,i] #remember to stack outflows historical values #CHANGE THIS TO 2001####
+    outflows_all[0:3,i] = outflows_2001_all[0:3,i] #remember to stack outflows historical values #CHANGE THIS TO 2001####
     volumes_all[0:3,i] = np.tile(RES[i].InitVol,(3)) #TO BE CHANGED!
     elevations_all[0:3,i]=inner.GetPoolElevationFromVolume(volumes_all[0:3,i],RES[i])
     
-volumes_all[0:3,9] = GPR2005vol_d[0:3]  #CHANGE THIS TO 2001
-volumes_all[0:3,10] = FOS2005vol_d[0:3]
-volumes_all[0:3,11] = DET2005vol_d[0:3]
-volumes_all[0:3,12] = BCL2005vol_d[0:3]
+volumes_all[0:3,9] = GPR2001vol_d[0:3]  
+volumes_all[0:3,10] = FOS2001vol_d[0:3]
+volumes_all[0:3,11] = DET2001vol_d[0:3]
+volumes_all[0:3,12] = BCL2001vol_d[0:3]
 
 
 
 for  i in range(0,n_cp):
-     cp_discharge_all[0,i] = cp_discharge_2005_all[0,i]
+     cp_discharge_all[0,i] = cp_discharge_2001_all[0,i]
 
 #define an outer fnt here that takes date, name, vol as inputs?
 
 InitwaterYear = 1.2
 waterYear = InitwaterYear
+lag_zone = 1
 
 #%% Daily loop
 for t in range(1,T+2):    
@@ -360,7 +361,7 @@ for t in range(1,T+2):
     #COTTAGE GROVE ID=6 count=5 NO HYDROPOWER
     COT = RES[5]
     COT_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,COT.ID-1],COT)
-    [COT_outflow, _,_,_] = inner.GetResOutflow(COT,volumes_all[t-1,COT.ID-1],COT5A.iloc[t,1],outflows_all[t-1,COT.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [COT_outflow, _,_,_,_] = inner.GetResOutflow(COT,volumes_all[t-1,COT.ID-1],COT5A.iloc[t,1],outflows_all[t-1,COT.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:],lag_zone)
     [COT_volume,COT_elevation] = inner.UpdateVolume_elev (COT, COT5A.iloc[t,1], COT_outflow, volumes_all[t-1,COT.ID-1])
     
     outflows_all[t,COT.ID-1] = COT_outflow 
@@ -371,7 +372,7 @@ for t in range(1,T+2):
     #DORENA ID=5 count=4 NO HYDROPOWER
     DOR = RES[4]
     DOR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,DOR.ID-1],DOR)
-    [DOR_outflow, _,_,_] = inner.GetResOutflow(DOR,volumes_all[t-1,DOR.ID-1],DOR5A.iloc[t,1],outflows_all[t-1,DOR.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [DOR_outflow, _,_,_,_] = inner.GetResOutflow(DOR,volumes_all[t-1,DOR.ID-1],DOR5A.iloc[t,1],outflows_all[t-1,DOR.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:],lag_zone)
     [DOR_volume,DOR_elevation] = inner.UpdateVolume_elev (DOR, DOR5A.iloc[t,1], DOR_outflow,volumes_all[t-1,DOR.ID-1])
     
     outflows_all[t,DOR.ID-1] = DOR_outflow 
@@ -381,7 +382,7 @@ for t in range(1,T+2):
     #FERN RIDGE ID=7 count=6 NO HYDROPOWER
     FRN = RES[6]
     FRN_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,FRN.ID-1],FRN)
-    [FRN_outflow,_,_,_] = inner.GetResOutflow(FRN,volumes_all[t-1,FRN.ID-1],FRN5M.iloc[t,1],outflows_all[t-1,FRN.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [FRN_outflow,_,_,_,_] = inner.GetResOutflow(FRN,volumes_all[t-1,FRN.ID-1],FRN5M.iloc[t,1],outflows_all[t-1,FRN.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:],lag_zone)
     [FRN_volume,FRN_elevation] = inner.UpdateVolume_elev (FRN, FRN5M.iloc[t,1], FRN_outflow,volumes_all[t-1,FRN.ID-1])
     
     outflows_all[t,FRN.ID-1] = FRN_outflow 
@@ -391,7 +392,7 @@ for t in range(1,T+2):
     #HILLS CREEK ID=1 count =0
     HCR = RES[0]
     HCR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,HCR.ID-1],HCR)
-    [HCR_outflow,powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(HCR,volumes_all[t-1,HCR.ID-1],HCR5A.iloc[t,1],outflows_all[t-1,HCR.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [HCR_outflow,powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(HCR,volumes_all[t-1,HCR.ID-1],HCR5A.iloc[t,1],outflows_all[t-1,HCR.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:],lag_zone)
     HCR_power_output = inner.CalculateHydropowerOutput(HCR,HCR_poolElevation,powerFlow)
     [HCR_volume,HCR_elevation] = inner.UpdateVolume_elev (HCR, HCR5A.iloc[t,1], HCR_outflow,volumes_all[t-1,HCR.ID-1])
     
@@ -404,7 +405,7 @@ for t in range(1,T+2):
     LOP = RES[1]
     LOP_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,LOP.ID-1],LOP)
     LOP_inflow =  HCR_outflow + LOP_loc.iloc[t,1] + LOP5E.iloc[t,1] #balance equation
-    [LOP_outflow,powerFlow,RO_flow,spillwayFlow]  = inner.GetResOutflow(LOP,volumes_all[t-1,LOP.ID-1],LOP_inflow,outflows_all[t-1,LOP.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [LOP_outflow,powerFlow,RO_flow,spillwayFlow]  = inner.GetResOutflow(LOP,volumes_all[t-1,LOP.ID-1],LOP_inflow,outflows_all[t-1,LOP.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:],lag_zone)
     LOP_power_output = inner.CalculateHydropowerOutput(LOP,LOP_poolElevation,powerFlow)
     [LOP_volume,LOP_elevation] = inner.UpdateVolume_elev (LOP, LOP5A.iloc[t,1], LOP_outflow,volumes_all[t-1,LOP.ID-1])
     
@@ -416,7 +417,7 @@ for t in range(1,T+2):
     #DEXTER ID=3 count=2
     DEX = RES[2]
     DEX_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,DEX.ID-1],DEX)
-    [DEX_outflow,powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(DEX,volumes_all[t-1,DEX.ID-1],LOP_outflow,outflows_all[t-1,DEX.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [DEX_outflow,powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(DEX,volumes_all[t-1,DEX.ID-1],LOP_outflow,outflows_all[t-1,DEX.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:],lag_zone)
     DEX_power_output = inner.CalculateHydropowerOutput(DEX,DEX_poolElevation,powerFlow)
     [DEX_volume,DEX_elevation] = inner.UpdateVolume_elev (DEX, LOP_outflow, DEX_outflow,volumes_all[t-1,DEX.ID-1])
     
@@ -428,7 +429,7 @@ for t in range(1,T+2):
     #FALL CREEK ID=4 count=3 NO HYDROPOWER
     FAL = RES[3]
     FAL_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,FAL.ID-1],FAL)
-    [FAL_outflow, _,_,_] = inner.GetResOutflow(FAL,volumes_all[t-1,FAL.ID-1],FAL5A.iloc[t,1],outflows_all[t-1,FAL.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [FAL_outflow, _,_,_,_] = inner.GetResOutflow(FAL,volumes_all[t-1,FAL.ID-1],FAL5A.iloc[t,1],outflows_all[t-1,FAL.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:],lag_zone)
     [FAL_volume,FAL_elevation] = inner.UpdateVolume_elev (FAL, FAL5A.iloc[t,1], FAL_outflow,volumes_all[t-1,FAL.ID-1])
     
     outflows_all[t,FAL.ID-1] = FAL_outflow 
@@ -438,7 +439,7 @@ for t in range(1,T+2):
     #COUGAR ID=8 count=7
     CGR = RES[7]
     CGR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,CGR.ID-1],CGR)
-    [CGR_outflow,powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(CGR,volumes_all[t-1,CGR.ID-1],CGR5A.iloc[t,1],outflows_all[t-1,CGR.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [CGR_outflow,powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(CGR,volumes_all[t-1,CGR.ID-1],CGR5A.iloc[t,1],outflows_all[t-1,CGR.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:],lag_zone)
     CGR_power_output = inner.CalculateHydropowerOutput(CGR,CGR_poolElevation,powerFlow)
     [CGR_volume,CGR_elevation] = inner.UpdateVolume_elev (CGR, CGR5A.iloc[t,1], CGR_outflow,volumes_all[t-1,CGR.ID-1])
     
@@ -451,7 +452,7 @@ for t in range(1,T+2):
     #BLUE RIVER ID=9 count= 8 NO HYDROPOWER
     BLU = RES[8]
     BLU_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t-1,BLU.ID-1],BLU)
-    [BLU_outflow,_,_,_]  = inner.GetResOutflow(BLU,volumes_all[t-1,BLU.ID-1],BLU5A.iloc[t,1],outflows_all[t-1,BLU.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:])
+    [BLU_outflow,_,_,_,_]  = inner.GetResOutflow(BLU,volumes_all[t-1,BLU.ID-1],BLU5A.iloc[t,1],outflows_all[t-1,BLU.ID-1],doy,waterYear,CP,cp_discharge_all[t-1,:],lag_zone)
     [BLU_volume,BLU_elevation] = inner.UpdateVolume_elev (BLU, BLU5A.iloc[t,1], BLU_outflow,volumes_all[t-1,BLU.ID-1])
     
     outflows_all[t,BLU.ID-1] = BLU_outflow 
@@ -463,7 +464,7 @@ for t in range(1,T+2):
     #GREEN PETER ID=10 count=9
     GPR = RES[9]
     GPR_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+1,GPR.ID-1],GPR)
-    [GPR_outflow, powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(GPR,volumes_all[t+1,GPR.ID-1],GPR5A.iloc[t+2,1],outflows_all[t+1,GPR.ID-1],doy,waterYear,CP,cp_discharge_all[t+1,:])
+    [GPR_outflow, powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(GPR,volumes_all[t+1,GPR.ID-1],GPR5A.iloc[t+2,1],outflows_all[t+1,GPR.ID-1],doy,waterYear,CP,cp_discharge_all[t+1,:],lag_zone)
     GPR_power_output = inner.CalculateHydropowerOutput(GPR,GPR_poolElevation,powerFlow)
     [GPR_volume,GPR_elevation] = inner.UpdateVolume_elev (GPR, GPR5A.iloc[t+2,1], GPR_outflow,volumes_all[t+1,GPR.ID-1])
     
@@ -477,7 +478,7 @@ for t in range(1,T+2):
     FOS = RES[10]
     FOS_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+1,FOS.ID-1],FOS)
     FOS_inflow =GPR_outflow + FOS_loc.iloc[t+2,1] #balance equation
-    [FOS_outflow, powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(FOS,volumes_all[t+1,FOS.ID-1],FOS_inflow,outflows_all[t+1,FOS.ID-1],doy,waterYear,CP,cp_discharge_all[t+1,:])
+    [FOS_outflow, powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(FOS,volumes_all[t+1,FOS.ID-1],FOS_inflow,outflows_all[t+1,FOS.ID-1],doy,waterYear,CP,cp_discharge_all[t+1,:],lag_zone)
     FOS_power_output = inner.CalculateHydropowerOutput(FOS,FOS_poolElevation,powerFlow)
     [FOS_volume,FOS_elevation] = inner.UpdateVolume_elev (FOS, FOS5A.iloc[t+2,1], FOS_outflow,volumes_all[t+1,FOS.ID-1])
     
@@ -490,7 +491,7 @@ for t in range(1,T+2):
     #DETROIT ID=12 count=11
     DET = RES[11]
     DET_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+1,DET.ID-1],DET)
-    [DET_outflow, powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(DET,volumes_all[t+1,DET.ID-1],DET5A.iloc[t+2,1],outflows_all[t+1,DET.ID-1],doy,waterYear,CP,cp_discharge_all[t+1,:])
+    [DET_outflow, powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(DET,volumes_all[t+1,DET.ID-1],DET5A.iloc[t+2,1],outflows_all[t+1,DET.ID-1],doy,waterYear,CP,cp_discharge_all[t+1,:],lag_zone)
     DET_power_output = inner.CalculateHydropowerOutput(DET,DET_poolElevation,powerFlow)
     [DET_volume,DET_elevation] = inner.UpdateVolume_elev (DET, DET5A.iloc[t+2,1], DET_outflow,volumes_all[t+1,DET.ID-1])
     
@@ -502,7 +503,7 @@ for t in range(1,T+2):
     #BIG CLIFF ID=13 count=12
     BCL = RES[12]
     BCL_poolElevation = inner.GetPoolElevationFromVolume(volumes_all[t+1,BCL.ID-1],BCL)
-    [BCL_outflow, powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(BCL,volumes_all[t+1,BCL.ID-1],DET_outflow,outflows_all[t+1,BCL.ID-1],doy,waterYear,CP,cp_discharge_all[t+1,:])
+    [BCL_outflow, powerFlow,RO_flow,spillwayFlow] = inner.GetResOutflow(BCL,volumes_all[t+1,BCL.ID-1],DET_outflow,outflows_all[t+1,BCL.ID-1],doy,waterYear,CP,cp_discharge_all[t+1,:],lag_zone)
     BCL_power_output = inner.CalculateHydropowerOutput(BCL,BCL_poolElevation,powerFlow)
     [BCL_volume,BCL_elevation] = inner.UpdateVolume_elev (BCL, DET_outflow, BCL_outflow,volumes_all[t+1,BCL.ID-1])
     
@@ -565,10 +566,10 @@ Willamette_gen_2001.columns = ['CGR','DET','DEX','FOS','GPR','HCR','LOP','BCL']
 
 
 #CGR hydro
-CGR_2005 = Willamette_gen_2001['CGR']
-CGR_2005_daily = np.mean(np.array(CGR_2005).reshape(-1,24),axis=1)
+CGR_2001 = Willamette_gen_2001['CGR']
+CGR_2001_daily = np.mean(np.array(CGR_2001).reshape(-1,24),axis=1)
 
-x = (CGR_2005_daily[1:365].astype('float'))
+x = (CGR_2001_daily[1:365].astype('float'))
 y = hydropower_all[1:365,3]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 CGR.hydro_R2 = r_val**2
@@ -602,10 +603,10 @@ plt.text(120,40,'$R^2$={}'.format(round(CGR.R2,4)),fontsize=15)
 
 
 #DET hydro
-DET_2005 = Willamette_gen_2001['DET']
-DET_2005_daily = np.mean(np.array(DET_2005).reshape(-1,24),axis=1)
+DET_2001 = Willamette_gen_2001['DET']
+DET_2001_daily = np.mean(np.array(DET_2001).reshape(-1,24),axis=1)
 
-x = (DET_2005_daily[3:365].astype('float'))
+x = (DET_2001_daily[3:365].astype('float'))
 y = hydropower_all[3:365,6]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 DET.hydro_R2 = r_val**2
@@ -640,17 +641,17 @@ plt.text(200,150,'$R^2$={}'.format(round(DET.R2,4)),fontsize=15)
 
 
 #DEX hydro
-DEX_2005 = Willamette_gen_2001['DEX']
-DEX_2005_daily = np.mean(np.array(DEX_2005).reshape(-1,24),axis=1)  
+DEX_2001 = Willamette_gen_2001['DEX']
+DEX_2001_daily = np.mean(np.array(DEX_2001).reshape(-1,24),axis=1)  
 
-x = (DEX_2005_daily[1:365].astype('float'))
+x = (DEX_2001_daily[1:365].astype('float'))
 y = hydropower_all[1:365,2]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 DEX.hydro_R2 = r_val**2
 print(DEX.hydro_R2)
 
 plt.figure()
-plt.plot(DEX_2005_daily[1:365])
+plt.plot(DEX_2001_daily[1:365])
 plt.plot(hydropower_all[1:365,2])
 plt.title('Dexter Hydropower Generation',fontsize=20)
 plt.legend(['historical generation','simulated generation'],fontsize=12)
@@ -660,8 +661,8 @@ plt.text(150,15,'$R^2$={}'.format(round(DEX.hydro_R2,4)),fontsize=12)
 
 
 
-FOS_2005 = Willamette_gen_2001['FOS']
-FOS_2005_daily = np.mean(np.array(FOS_2005).reshape(-1,24),axis=1)  
+FOS_2001 = Willamette_gen_2001['FOS']
+FOS_2001_daily = np.mean(np.array(FOS_2001).reshape(-1,24),axis=1)  
 
 x = (FOS5H[0:364,1].astype('float'))
 y = outflows_all[0:364,10]
@@ -679,14 +680,14 @@ plt.ylabel('Outflows (cubic meters/second)')
 plt.text(175,150,'$R^2$={}'.format(round(FOS.R2,4)),fontsize=15)
 
 #FOS hydropower
-x = (FOS_2005_daily[3:365].astype('float'))
+x = (FOS_2001_daily[3:365].astype('float'))
 y = hydropower_all[3:365,5]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 FOS.hydro_R2 = r_val**2
 print(FOS.hydro_R2)
 
 plt.figure()
-plt.plot(FOS_2005_daily[3:365])
+plt.plot(FOS_2001_daily[3:365])
 plt.plot(hydropower_all[3:365,5])
 plt.title('Foster Hydropower Generation',fontsize=20)
 plt.legend(['historical generation','simulated generation'],fontsize=12)
@@ -698,10 +699,10 @@ plt.text(200,25,'$R^2$={}'.format(round(FOS.hydro_R2,4)),fontsize=12)
 
 
 
-GPR_2005 = Willamette_gen_2001['GPR']
-GPR_2005_daily = np.mean(np.array(GPR_2005).reshape(-1,24),axis=1)  
+GPR_2001 = Willamette_gen_2001['GPR']
+GPR_2001_daily = np.mean(np.array(GPR_2001).reshape(-1,24),axis=1)  
 
-x = (GPR_2005_daily[3:365].astype('float'))
+x = (GPR_2001_daily[3:365].astype('float'))
 y = hydropower_all[3:365,4]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 GPR.hydro_R2 = r_val**2
@@ -735,16 +736,16 @@ plt.text(150,150,'$R^2$={}'.format(round(GPR.R2,4)),fontsize=15)
 
 
 #HCR
-HCR_2005 = Willamette_gen_2001['HCR']
-HCR_2005_daily = np.mean(np.array(HCR_2005).reshape(-1,24),axis=1)  
-x = (HCR_2005_daily[1:365].astype('float'))
+HCR_2001 = Willamette_gen_2001['HCR']
+HCR_2001_daily = np.mean(np.array(HCR_2001).reshape(-1,24),axis=1)  
+x = (HCR_2001_daily[1:365].astype('float'))
 y = hydropower_all[1:365,0]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 HCR.hydro_R2 = r_val**2
 print(HCR.hydro_R2)
 
 plt.figure()
-plt.plot(HCR_2005_daily[1:365])
+plt.plot(HCR_2001_daily[1:365])
 plt.plot(hydropower_all[1:365,0])
 plt.title('Hills Creek Hydropower Generation',fontsize=20)
 plt.legend(['historical generation','simulated generation'],fontsize=12)
@@ -770,16 +771,16 @@ plt.text(150,60,'$R^2$={}'.format(round(HCR.R2,4)),fontsize=15)
 
 
 #LOP hydro validation
-LOP_2005 = Willamette_gen_2001['LOP']
-LOP_2005_daily = np.mean(np.array(LOP_2005).reshape(-1,24),axis=1)
-x = (LOP_2005_daily[1:365].astype('float'))
+LOP_2001 = Willamette_gen_2001['LOP']
+LOP_2001_daily = np.mean(np.array(LOP_2001).reshape(-1,24),axis=1)
+x = (LOP_2001_daily[1:365].astype('float'))
 y = hydropower_all[1:365,1]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 LOP.hydro_R2 = r_val**2
 print(LOP.hydro_R2)
 
 plt.figure()
-plt.plot(LOP_2005_daily[1:365])
+plt.plot(LOP_2001_daily[1:365])
 plt.plot(hydropower_all[1:365,1])
 plt.title('Lookout Point Hydropower Generation',fontsize=20)
 plt.legend(['historical generation','simulated generation'],fontsize=12)
@@ -806,10 +807,10 @@ plt.text(150,150,'$R^2$={}'.format(round(LOP.R2,4)),fontsize=15)
 
 
 #BCL hydro valid
-BCL_2005 = Willamette_gen_2001['BCL']
-BCL_2005_daily = np.mean(np.array(BCL_2005).reshape(-1,24),axis=1)  
+BCL_2001 = Willamette_gen_2001['BCL']
+BCL_2001_daily = np.mean(np.array(BCL_2001).reshape(-1,24),axis=1)  
 
-x = (BCL_2005_daily[3:365].astype('float'))
+x = (BCL_2001_daily[3:365].astype('float'))
 y = hydropower_all[3:365,7]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 BCL.hydro_R2 = r_val**2
