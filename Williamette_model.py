@@ -186,7 +186,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
       elif currentPoolElevation <= targetPoolElevation:
          if currentPoolElevation <= bufferZoneElevation:   #in the buffer zone (HERE WE REMOVED THE PART THAT COUNTED THE DAYS IN THE BUFFER ZONE)
             if lag_zone == 3:
-                print("buffer rule activated")
+                #print("buffer rule activated")
                 zone = 2
             else:
                 zone = 3  
