@@ -155,7 +155,7 @@ for t in range (0, 364):
                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease >= constraintValue:
                 actualRelease = constraintValue;
-                print('The constraint value is',constraintValue)   
+                print('The constraint is',constraint_array[i], 'value is',constraintValue)   
 
           elif constraint_array[i].startswith('Min_'):  # case RCT_MIN:  //minimum
              if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
@@ -168,7 +168,7 @@ for t in range (0, 364):
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease <= constraintValue:
                 actualRelease = constraintValue;
-                print('The constraint value is',constraintValue)   
+                print('The constraint is',constraint_array[i], 'value is',constraintValue)   
 
 
 
@@ -185,7 +185,7 @@ for t in range (0, 364):
                  constraintValue = constraintValue*24   #Covert hourly to daily
              if actualRelease >= lag_outflow  + constraintValue:  #Is planned release more than current release + contstraint? 
                 actualRelease = lag_outflow  + constraintValue
-                print('The constraint value is',constraintValue)   
+                print('The constraint is',constraint_array[i], 'value is',constraintValue) 
 
                 #If so, planned release can be no more than current release + constraint.
                  
@@ -203,7 +203,7 @@ for t in range (0, 364):
                  constraintValue = constraintValue*24   #Covert hourly to daily
              if actualRelease <= lag_outflow  - constraintValue:  #Is planned release less than current release - contstraint? 
                 actualRelease = lag_outflow  - constraintValue  #If so, planned release can be no less than current release - constraint.
-                print('The constraint value is',constraintValue)   
+                print('The constraint is',constraint_array[i], 'value is',constraintValue)  
 
 
           elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point  
@@ -235,7 +235,7 @@ for t in range (0, 364):
                               else:  
                                   resallocation = 0
                           actualRelease += resallocation #add/subract cp allocation
-                          print('The resallocation is',resallocation)               
+                          print('The constraint is',constraint_array[i], 'resallocation is',resallocation)               
           #GATE SPECIFIC RULES:   
           elif constraint_array[i].startswith('Pow_Max'): # case RCT_POWERPLANT:  //maximum Power plant rule  Assign m_maxPowerFlow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
@@ -243,7 +243,8 @@ for t in range (0, 364):
           elif constraint_array[i].startswith('Pow_Min'): # case RCT_POWERPLANT:  //minimum Power plant rule  Assign m_minPowerFlow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                name.minPowerFlow = constraintValue 
-           
+               print('The constraint is',constraint_array[i], 'value is',constraintValue)  
+
             
           elif constraint_array[i].startswith('RO_Max'): #case RCT_REGULATINGOUTLET:  Max Regulating outlet rule, Assign m_maxRO_Flow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
@@ -251,6 +252,7 @@ for t in range (0, 364):
           elif constraint_array[i].startswith('RO_Min'): #Min Regulating outlet rule, Assign m_maxRO_Flow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                name.minRO_Flow  = constraintValue 
+               print('The constraint is',constraint_array[i], 'value is',constraintValue)  
 
 
           elif constraint_array[i].startswith('Spill_Max'): #  case RCT_SPILLWAY:   //Max Spillway rule
@@ -259,6 +261,7 @@ for t in range (0, 364):
           elif constraint_array[i].startswith('Spill_Min'): #Min Spillway rule
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                name.minSpillwayFlow  = constraintValue 
+               print('The constraint is',constraint_array[i], 'value is',constraintValue)  
                 
                
           if actualRelease < 0:
