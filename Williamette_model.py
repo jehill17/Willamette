@@ -131,7 +131,7 @@ def AssignReservoirOutletFlows(name,outflow):
             
     massbalancecheck = outflow - (powerFlow + RO_flow + spillwayFlow)
     #does this equal 0?
-    if massbalancecheck != 0:
+    if abs(massbalancecheck - 0) > 1e-5:
         print ("Mass balance didn't close for ", name.name," massbalancecheck = ", massbalancecheck, "Pow, Spill and RO =", powerFlow, spillwayFlow, RO_flow )
 
     return(powerFlow,RO_flow,spillwayFlow)
