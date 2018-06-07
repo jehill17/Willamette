@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri May 25 14:13:08 2018
+Created on Wed Jun 06 13:51:13 2018
 
 @author: Joy Hill
 """
 
-# -*- coding: utf-8 -*-
-"""
-Created on Tue May  8 09:09:37 2018
 
-@authors: Joy Hill, Simona Denaro
-"""
 
 #this file will be the outer shell of the Willamette code
 
@@ -20,7 +15,7 @@ Created on Tue May  8 09:09:37 2018
 #initialize reservoirs
 #running the inner function for each reservoir along with the timing of the routing
 
-#####################THIS IS FOR RUNNING 2001##################################
+#####################THIS IS FOR RUNNING 1989-2007#################################
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -43,7 +38,7 @@ import Williamette_model as inner #reading in the inner function
 import os
 
 #%%  load reservoirs and control point infos
-with open('Flow 2001.xml') as fd:
+with open('Flow 1989.xml') as fd:
     flow = xmld.parse(fd.read())
 
 flow_model = flow["flow_model"]
@@ -109,7 +104,7 @@ for res in RES:
     res.Composite=pd.read_csv(os.path.join('Rel_Cap/', str(reservoirs[id-1]['@composite_rc'])))
     res.RO=pd.read_csv(os.path.join('Rel_Cap/', str(reservoirs[id-1]['@RO_rc'])))
     res.Spillway=pd.read_csv(os.path.join('Rel_Cap/', str(reservoirs[id-1]['@spillway_rc'])))
-    res.InitVol=float(reservoirs[id-1]["@initVolume"]) ###########change these in XML file to 2001 values########
+    res.InitVol=float(reservoirs[id-1]["@initVolume"]) ###########change these in XML file to 1989 values########
     #res.InitVol=float(reservoirs[id-1]["@initOutflow"]) TO BE ADDED in the xml file
     res.minOutflow=float(reservoirs[id-1]["@minOutflow"])
     res.inactive_elev=float(reservoirs[id-1]["@inactive_elev"])
@@ -138,6 +133,8 @@ for cp in CP:
     cp.COMID=str(controlPoints[id-1]["@location"])
 
 
+
+#%%DATA IMPORT
 #import control point historical data-- shifted one day before
 
 #convert data
@@ -146,42 +143,42 @@ cfs_to_cms = 0.0283168
 
 #reservoirs:
 #read in historical reservoir inflows -- this will contain the array of 'dates' to use
-BLU5Ad = pd.read_excel('Data/BLU5A_daily.xls',skiprows=26481,skip_footer =2465) #only using data from 2001 --- change these index values!!!!!
+BLU5Ad = pd.read_excel('Data/BLU5A_daily.xls',skiprows=22098,skip_footer =274) #USING 1989-2007 DATA - CHANGE INDEX VALUES
 BLU5Ad.columns = ['Date','Inflow']
-BLU5A = pd.read_excel('Data/BLU5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-CGR5A = pd.read_excel('Data/CGR5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-DET5A = pd.read_excel('Data/DET5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-DOR5A = pd.read_excel('Data/DOR5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-FAL5A = pd.read_excel('Data/FAL5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-FOS5A = pd.read_excel('Data/FOS5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-FRN5M = pd.read_excel('Data/FRN5M_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-GPR5A = pd.read_excel('Data/GPR5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-HCR5A = pd.read_excel('Data/HCR5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-LOP5A = pd.read_excel('Data/LOP5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-LOP5E = pd.read_excel('Data/LOP5E_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-COT5A = pd.read_excel('Data/COT5A_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms
-FOS_loc = pd.read_excel('Data/FOS_loc.xls',usecols = [0,3],skiprows=26481,skip_footer =2465)*cfs_to_cms
-LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=26481,skip_footer =2465)*cfs_to_cms
+BLU5A = pd.read_excel('Data/BLU5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+CGR5A = pd.read_excel('Data/CGR5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+DET5A = pd.read_excel('Data/DET5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+DOR5A = pd.read_excel('Data/DOR5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+FAL5A = pd.read_excel('Data/FAL5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+FOS5A = pd.read_excel('Data/FOS5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+FRN5M = pd.read_excel('Data/FRN5M_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+GPR5A = pd.read_excel('Data/GPR5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+HCR5A = pd.read_excel('Data/HCR5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+LOP5A = pd.read_excel('Data/LOP5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+LOP5E = pd.read_excel('Data/LOP5E_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+COT5A = pd.read_excel('Data/COT5A_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms
+FOS_loc = pd.read_excel('Data/FOS_loc.xls',usecols = [0,3],skiprows=22098,skip_footer =274)*cfs_to_cms
+LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=22098,skip_footer =274)*cfs_to_cms
 
 
 #historical outflows 
-BLU5H = np.array(pd.read_excel('Data/BLU5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms) #only using data from 2001
-BCL5H = np.array(pd.read_excel('Data/BCL5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms) 
-CGR5H = np.array(pd.read_excel('Data/CGR5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-DET5H = np.array(pd.read_excel('Data/DET5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-DEX5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-DOR5H = np.array(pd.read_excel('Data/DOR5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-FAL5H = np.array(pd.read_excel('Data/FAL5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-FRN5H = np.array(pd.read_excel('Data/FRN5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-GPR5H = np.array(pd.read_excel('Data/GPR5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-HCR5H = np.array(pd.read_excel('Data/HCR5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-COT5H = np.array(pd.read_excel('Data/COT5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
-LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=26481,skip_footer =2465)*cfs_to_cms)
+BLU5H = np.array(pd.read_excel('Data/BLU5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms) #1989-2007 CHANGE INDEX VALS
+BCL5H = np.array(pd.read_excel('Data/BCL5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms) 
+CGR5H = np.array(pd.read_excel('Data/CGR5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+DET5H = np.array(pd.read_excel('Data/DET5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+DEX5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+DOR5H = np.array(pd.read_excel('Data/DOR5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+FAL5H = np.array(pd.read_excel('Data/FAL5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+FRN5H = np.array(pd.read_excel('Data/FRN5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+GPR5H = np.array(pd.read_excel('Data/GPR5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+HCR5H = np.array(pd.read_excel('Data/HCR5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+COT5H = np.array(pd.read_excel('Data/COT5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
+LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=22098,skip_footer =274)*cfs_to_cms)
 
-outflows_2001_all = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],FRN5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
+outflows_1989_all = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],FRN5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
 #outflows_2001_wo_FRN = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
 
 
@@ -189,133 +186,86 @@ outflows_2001_all = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[
 M3_PER_ACREFT = 1233.4
 
 
-########DOWNLOAD 2001 VOLUME DATA AND UPLOAD HERE####################
 
-#HCR
-HCR2001_vol = pd.read_excel('Data/HCRvolume_2001.xlsx')
-HCR2001_vol.columns = ['Date','Time','Storage(AF)']
-HCR2001vol_d = np.array(HCR2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-
-#LOP
-LOP2001_vol = pd.read_excel('Data/LOPvolume_2001.xlsx')
-LOP2001_vol.columns = ['Date','Time','Storage(AF)']
-LOP2001vol_d = np.array(LOP2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-
-#FAL
-FAL2001_vol = pd.read_excel('Data/FALvolume_2001.xlsx')
-FAL2001_vol.columns = ['Date','Time','Storage(AF)']
-FAL2001vol_d = np.array(FAL2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-
-#DOR
-DOR2001_vol = pd.read_excel('Data/DORvolume_2001.xlsx')
-DOR2001_vol.columns = ['Date','Time','Storage(AF)']
-DOR2001vol_d = np.array(DOR2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-#COT
-COT2001_vol = pd.read_excel('Data/COTvolume_2001.xlsx')
-COT2001_vol.columns = ['Date','Time','Storage(AF)']
-COT2001vol_d = np.array(COT2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-
-#FRN
-FRN2001_vol = pd.read_excel('Data/FRNvolume_2001.xlsx')
-FRN2001_vol.columns = ['Date','Time','Storage(AF)']
-FRN2001vol_d = np.array(FRN2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-#after looking at the query, I have discovered that 2001 was quite an unusual year for FRN. Volume curve does not follow normal pattern.
-
-#CGR
-CGR2001_vol = pd.read_excel('Data/CGRvolume_2001.xlsx')
-CGR2001_vol.columns = ['Date','Time','Storage(AF)']
-CGR2001vol_d = np.array(CGR2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-
-#BLU
-BLU2001_vol = pd.read_excel('Data/BLUvolume_2001.xlsx')
-BLU2001_vol.columns = ['Date','Time','Storage(AF)']
-BLU2001vol_d = np.array(BLU2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 
 #DET
-DET2001_vol = pd.read_excel('Data/DETvolume_2001.xlsx')
-DET2001_vol.columns = ['Date','Time','Storage(AF)']
-DET2001vol_d = np.array(DET2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+DET1989_vol = pd.read_excel('Data/DETvolume_1989.xlsx')
+DET1989_vol.columns = ['Date','Time','Storage(AF)']
+DET1989vol_d = np.array(DET1989_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 ##BCL
-BCL2001_vol = pd.read_excel('Data/BCLvolume_2005.xlsx') #this should be relatively constant, but need to extract initial values
-BCL2001_vol.columns = ['Date','Time','Storage(AF)']
-BCL2001vol_d = np.array(BCL2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+BCL1989_vol = pd.read_excel('Data/BCLvolume_2004.xlsx')##USING 2004 VALS, DON'T HAVE EARLIER##
+BCL1989_vol.columns = ['Date','Time','Storage(AF)']
+BCL1989vol_d = np.array(BCL1989_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 #FOS
-FOS2001_vol = pd.read_excel('Data/FOSvolume_2001.xlsx')
-FOS2001_vol.columns = ['Date','Time','Storage(AF)']
-FOS2001vol_d = np.array(FOS2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+FOS1989_vol = pd.read_excel('Data/FOSvolume_1989.xlsx')
+FOS1989_vol.columns = ['Date','Time','Storage(AF)']
+FOS1989vol_d = np.array(FOS1989_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 #GPR
-GPR2001_vol = pd.read_excel('Data/GPRvolume_2001.xlsx')
-GPR2001_vol.columns = ['Date','Time','Storage(AF)']
-GPR2001vol_d = np.array(GPR2001_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
+GPR1989_vol = pd.read_excel('Data/GPRvolume_1990.xlsx') #1988 and 1989 are missing from data set
+GPR1989_vol.columns = ['Date','Time','Storage(AF)']
+GPR1989vol_d = np.array(GPR1989_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
 
 
 
 #control points
-#cp_hist discharge: start this at 12/31/2001 ##############EXTRACT 2001 DATA FROM CP HISTORICAL EXCEL SHEET###############
-filename='Data/Control point historical discharge 2001.xlsx'
-SAL_2001 = pd.read_excel(filename,sheetname='Salem')
-SAL_2001_dis = np.array(SAL_2001['Discharge'])*cfs_to_cms
-ALB_2001 = pd.read_excel(filename,sheetname='Albany')
-ALB_2001_dis = np.array(ALB_2001['Discharge'])*cfs_to_cms
-JEF_2001 = pd.read_excel(filename,sheetname='Jefferson')
-JEF_2001_dis = np.array(JEF_2001['Discharge'])*cfs_to_cms
-MEH_2001 = pd.read_excel(filename,sheetname='Mehama')
-MEH_2001_dis = np.array(MEH_2001['Discharge'])*cfs_to_cms
-HAR_2001 = pd.read_excel(filename,sheetname='Harrisburg')
-HAR_2001_dis = np.array(HAR_2001['Discharge'])*cfs_to_cms
-VID_2001 = pd.read_excel(filename,sheetname='Vida')
-VID_2001_dis = np.array(VID_2001['Discharge'])*cfs_to_cms
-JAS_2001 = pd.read_excel(filename,sheetname='Jasper')
-JAS_2001_dis = np.array(JAS_2001['Discharge'])*cfs_to_cms
-GOS_2001 = pd.read_excel(filename,sheetname='Goshen')
-GOS_2001_dis = np.array(GOS_2001['Discharge'])*cfs_to_cms
-WAT_2001 = pd.read_excel(filename,sheetname='Waterloo')
-WAT_2001_dis = np.array(WAT_2001['Discharge'])*cfs_to_cms
-MON_2001 = pd.read_excel(filename,sheetname='Monroe')
-MON_2001_dis = np.array(MON_2001['Discharge'])*cfs_to_cms
-FOS_2001 = pd.read_excel(filename,sheetname='Foster')
-FOS_2001_dis = np.array(FOS_2001['Discharge'])*cfs_to_cms
-cp_discharge_2001_all = np.stack((SAL_2001_dis,ALB_2001_dis,JEF_2001_dis,MEH_2001_dis,HAR_2001_dis,VID_2001_dis,JAS_2001_dis,GOS_2001_dis,WAT_2001_dis,MON_2001_dis,FOS_2001_dis),axis=1)    
+#cp_hist discharge: start this at 12/31/1988::to:::12/31/2007##########
+filename='Data/Control point historical discharge 1989_2007.xlsx'
+SAL_1989 = pd.read_excel(filename,sheetname='Salem')
+SAL_1989_dis = np.array(SAL_1989['Discharge'])*cfs_to_cms
+ALB_1989 = pd.read_excel(filename,sheetname='Albany')
+ALB_1989_dis = np.array(ALB_1989['Discharge'])*cfs_to_cms
+JEF_1989 = pd.read_excel(filename,sheetname='Jefferson')
+JEF_1989_dis = np.array(JEF_1989['Discharge'])*cfs_to_cms
+MEH_1989 = pd.read_excel(filename,sheetname='Mehama')
+MEH_1989_dis = np.array(MEH_1989['Discharge'])*cfs_to_cms
+HAR_1989 = pd.read_excel(filename,sheetname='Harrisburg')
+HAR_1989_dis = np.array(HAR_1989['Discharge'])*cfs_to_cms
+VID_1989 = pd.read_excel(filename,sheetname='Vida')
+VID_1989_dis = np.array(VID_1989['Discharge'])*cfs_to_cms
+JAS_1989 = pd.read_excel(filename,sheetname='Jasper')
+JAS_1989_dis = np.array(JAS_1989['Discharge'])*cfs_to_cms
+GOS_1989 = pd.read_excel(filename,sheetname='Goshen')
+GOS_1989_dis = np.array(GOS_1989['Discharge'])*cfs_to_cms
+WAT_1989 = pd.read_excel(filename,sheetname='Waterloo')
+WAT_1989_dis = np.array(WAT_1989['Discharge'])*cfs_to_cms
+MON_1989 = pd.read_excel(filename,sheetname='Monroe')
+MON_1989_dis = np.array(MON_1989['Discharge'])*cfs_to_cms
+FOS_1989 = pd.read_excel(filename,sheetname='Foster')
+FOS_1989_dis = np.array(FOS_1989['Discharge'])*cfs_to_cms
+cp_discharge_1989_all = np.stack((SAL_1989_dis,ALB_1989_dis,JEF_1989_dis,MEH_1989_dis,HAR_1989_dis,VID_1989_dis,JAS_1989_dis,GOS_1989_dis,WAT_1989_dis,MON_1989_dis,FOS_1989_dis),axis=1)    
 
 
 
-#cp local flows, starts at 1/1/2001  ########CHANGE INDEX VALUES TO MATCH 2001#####
-ALB_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Albany',skiprows=4383,skip_footer=2191)
+#cp local flows, starts at 1/1/1989  ########USING ALL VALUES####
+ALB_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Albany')
 ALB_loc.columns = ['Date','Local Flow']
-SAL_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Salem',skiprows=4383,skip_footer=2191)
+SAL_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Salem')
 SAL_loc.columns = ['Date','Local Flow']
-JEF_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Jefferson',skiprows=4383,skip_footer=2191)
+JEF_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Jefferson')
 JEF_loc.columns = ['Date','Local Flow']
-MEH_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Mehama',skiprows=4383,skip_footer=2191)
+MEH_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Mehama')
 MEH_loc.columns = ['Date','Local Flow']
-HAR_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Harrisburg',skiprows=4383,skip_footer=2191)
+HAR_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Harrisburg')
 HAR_loc.columns = ['Date','Local Flow']
-VID_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Vida',skiprows=4383,skip_footer=2191)
+VID_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Vida')
 VID_loc.columns = ['Date','Local Flow']
-JAS_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Jasper',skiprows=4383,skip_footer=2191)
+JAS_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Jasper')
 JAS_loc.columns = ['Date','Local Flow']
-GOS_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Goshen',skiprows=4383,skip_footer=2191)
+GOS_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Goshen')
 GOS_loc.columns = ['Date','Local Flow']
-WAT_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Waterloo',skiprows=4383,skip_footer=2191)
+WAT_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Waterloo')
 WAT_loc.columns = ['Date','Local Flow']
-MON_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Monroe',skiprows=4383,skip_footer=2191)
+MON_loc = pd.read_excel('Data/Controlpoints_local_flows.xls',sheetname='Monroe')
 MON_loc.columns = ['Date','Local Flow']
 
 dates = np.array(BLU5Ad['Date'])
 
 #%% Allocate and initialize
-T = 365 # Set the simulation horizon
+T = 6940 # Set the simulation horizon
 
 n_res=13
 n_HPres=8
@@ -332,19 +282,19 @@ cp_discharge_all = np.full((T+2,(n_cp)),np.nan)
 
 #initialize values
 for  i in range(0,n_res):
-    outflows_all[0:3,i] = outflows_2001_all[0:3,i] #remember to stack outflows historical values #CHANGE THIS TO 2001####
+    outflows_all[0:3,i] = outflows_1989_all[0:3,i] #remember to stack outflows historical values #CHANGE THIS TO 2001####
     volumes_all[0:3,i] = np.tile(RES[i].InitVol,(3)) #TO BE CHANGED!
     elevations_all[0:3,i]=inner.GetPoolElevationFromVolume(volumes_all[0:3,i],RES[i])
     
-volumes_all[0:3,9] = GPR2001vol_d[0:3]  
-volumes_all[0:3,10] = FOS2001vol_d[0:3]
-volumes_all[0:3,11] = DET2001vol_d[0:3]
-volumes_all[0:3,12] = BCL2001vol_d[0:3]
+volumes_all[0:3,9] = GPR1989vol_d[0:3]  
+volumes_all[0:3,10] = FOS1989vol_d[0:3]
+volumes_all[0:3,11] = DET1989vol_d[0:3]
+volumes_all[0:3,12] = BCL1989vol_d[0:3]
 
 
 
 for  i in range(0,n_cp):
-     cp_discharge_all[0,i] = cp_discharge_2001_all[0,i]
+     cp_discharge_all[0,i] = cp_discharge_1989_all[0,i]
 
 #define an outer fnt here that takes date, name, vol as inputs?
 
@@ -561,43 +511,19 @@ for t in range(1,T+2):
 #            print("cp discharge is negative for CP=",CP[j].name," t=", t)
             
 #%%    
-#historical validation -- HYDRO AND OUTFLOWS
-Willamette_gen_2001 = pd.read_excel('Data/Williamette_historical_hydropower_gen.xlsx',sheetname='2001',skiprows=4) #this is hourly
-Willamette_gen_2001.columns = ['CGR','DET','DEX','FOS','GPR','HCR','LOP','BCL']
-
-
-
-
-#CGR hydro
-CGR_2001 = Willamette_gen_2001['CGR']
-CGR_2001_daily = np.mean(np.array(CGR_2001).reshape(-1,24),axis=1)
-
-x = (CGR_2001_daily[1:365].astype('float'))
-y = hydropower_all[1:365,3]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-CGR.hydro_R2 = r_val**2
-print(CGR.hydro_R2)
-
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Cougar Hydropower Generation',fontsize=20)
-plt.legend(['historical generation','simulated generation'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Generation (MWh)')
-plt.text(100,30,'$R^2$={}'.format(round(CGR.hydro_R2,4)),fontsize=12)
+#OUTFLOW VALIDATION
 
 
 #CGR outflows
-x = (CGR5H[0:364,1].astype('float'))
-y = outflows_all[0:364,7]
+x = (CGR5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,7]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 CGR.R2 = r_val**2
 print(CGR.R2)
 
 plt.figure()
-plt.plot(CGR5H[:,1])
-plt.plot(outflows_all[0:364,7])
+plt.plot(x)
+plt.plot(y)
 plt.title('Cougar Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -605,37 +531,19 @@ plt.ylabel('Outflows (cubic meters/second)')
 plt.text(120,40,'$R^2$={}'.format(round(CGR.R2,4)),fontsize=15)
 
 
-#DET hydro
-DET_2001 = Willamette_gen_2001['DET']
-DET_2001_daily = np.mean(np.array(DET_2001).reshape(-1,24),axis=1)
-
-x = (DET_2001_daily[3:365].astype('float'))
-y = hydropower_all[3:365,6]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-DET.hydro_R2 = r_val**2
-print(DET.hydro_R2)
-
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Detroit Hydropower Generation',fontsize=20)
-plt.legend(['historical generation','simulated generation'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Generation (MWh)')
-plt.text(200,70,'$R^2$={}'.format(round(DET.hydro_R2,4)),fontsize=12)
 
 
   
 #DET outflows
-x = (DET5H[0:363,1].astype('float'))
-y = outflows_all[0:363,11]
+x = (DET5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,11]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 DET.R2 = r_val**2
 print(DET.R2)
 
 plt.figure()
-plt.plot(DET5H[:,1])
-plt.plot(outflows_all[0:364,11])
+plt.plot(x)
+plt.plot(y)
 plt.title('Detroit Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -643,93 +551,45 @@ plt.ylabel('Outflows (cubic meters/second)')
 plt.text(200,150,'$R^2$={}'.format(round(DET.R2,4)),fontsize=15)
 
 
-#DEX hydro
-DEX_2001 = Willamette_gen_2001['DEX']
-DEX_2001_daily = np.mean(np.array(DEX_2001).reshape(-1,24),axis=1)  
-
-x = (DEX_2001_daily[1:365].astype('float'))
-y = hydropower_all[1:365,2]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-DEX.hydro_R2 = r_val**2
-print(DEX.hydro_R2)
-
-plt.figure()
-plt.plot(DEX_2001_daily[1:365])
-plt.plot(hydropower_all[1:365,2])
-plt.title('Dexter Hydropower Generation',fontsize=20)
-plt.legend(['historical generation','simulated generation'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Generation (MWh)')
-plt.text(150,15,'$R^2$={}'.format(round(DEX.hydro_R2,4)),fontsize=12)
 
 
-
-FOS_2001 = Willamette_gen_2001['FOS']
-FOS_2001_daily = np.mean(np.array(FOS_2001).reshape(-1,24),axis=1)  
-
-x = (FOS5H[0:364,1].astype('float'))
-y = outflows_all[0:364,10]
+  
+#FOS outflows
+x = (FOS5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,10]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 FOS.R2 = r_val**2
-#print(FOS.R2)
-#FOS outflows
+print(FOS.R2)
+
 plt.figure()
-plt.plot(FOS5H[0:364,1])
-plt.plot(outflows_all[0:364,10])
+plt.plot(x)
+plt.plot(y)
 plt.title('Foster Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
 plt.ylabel('Outflows (cubic meters/second)')
 plt.text(175,150,'$R^2$={}'.format(round(FOS.R2,4)),fontsize=15)
 
-#FOS hydropower
-x = (FOS_2001_daily[3:365].astype('float'))
-y = hydropower_all[3:365,5]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-FOS.hydro_R2 = r_val**2
-print(FOS.hydro_R2)
-
-plt.figure()
-plt.plot(FOS_2001_daily[3:365])
-plt.plot(hydropower_all[3:365,5])
-plt.title('Foster Hydropower Generation',fontsize=20)
-plt.legend(['historical generation','simulated generation'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Generation (MWh)')
-plt.text(200,25,'$R^2$={}'.format(round(FOS.hydro_R2,4)),fontsize=12)
 
 
 
 
 
-GPR_2001 = Willamette_gen_2001['GPR']
-GPR_2001_daily = np.mean(np.array(GPR_2001).reshape(-1,24),axis=1)  
 
-x = (GPR_2001_daily[3:365].astype('float'))
-y = hydropower_all[3:365,4]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-GPR.hydro_R2 = r_val**2
-print(GPR.hydro_R2)
 
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Green Peter Hydropower Generation',fontsize=20)
-plt.legend(['historical generation','simulated generation'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Generation (MWh)')
-plt.text(200,50,'$R^2$={}'.format(round(GPR.hydro_R2,4)),fontsize=12)
 
-x = (GPR5H[0:363,1].astype('float'))
-y = outflows_all[0:363,9]
+
+#GPR outflows
+x = (GPR5H[0:6938,1].astype('float'))
+y = outflows_all[0:6938,9]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 GPR.R2 = r_val**2
 print(GPR.R2)
 
-#GPR outflows
+
 plt.figure()
-plt.plot(GPR5H[0:363,1])
-plt.plot(outflows_all[0:363,9])
+plt.plot(x)
+plt.plot(y)
 plt.title('Green Peter Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -738,34 +598,17 @@ plt.text(150,150,'$R^2$={}'.format(round(GPR.R2,4)),fontsize=15)
 
 
 
-#HCR
-HCR_2001 = Willamette_gen_2001['HCR']
-HCR_2001_daily = np.mean(np.array(HCR_2001).reshape(-1,24),axis=1)  
-x = (HCR_2001_daily[1:365].astype('float'))
-y = hydropower_all[1:365,0]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-HCR.hydro_R2 = r_val**2
-print(HCR.hydro_R2)
-
-plt.figure()
-plt.plot(HCR_2001_daily[1:365])
-plt.plot(hydropower_all[1:365,0])
-plt.title('Hills Creek Hydropower Generation',fontsize=20)
-plt.legend(['historical generation','simulated generation'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Generation (MWh)')
-plt.text(150,40,'$R^2$={}'.format(round(HCR.hydro_R2,4)),fontsize=12)
 
 #HCR OUTFLOWS
-x = (HCR5H[0:365,1].astype('float'))
-y = outflows_all[0:365,0]
+x = (HCR5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,0]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 HCR.R2 = r_val**2
 print(HCR.R2)
 
 plt.figure()
-plt.plot(HCR5H[:,1])
-plt.plot(outflows_all[0:364,0])
+plt.plot(x)
+plt.plot(y)
 plt.title('Hills Creek Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -773,34 +616,18 @@ plt.ylabel('Outflows (cubic meters/second)')
 plt.text(150,60,'$R^2$={}'.format(round(HCR.R2,4)),fontsize=15)
 
 
-#LOP hydro validation
-LOP_2001 = Willamette_gen_2001['LOP']
-LOP_2001_daily = np.mean(np.array(LOP_2001).reshape(-1,24),axis=1)
-x = (LOP_2001_daily[1:365].astype('float'))
-y = hydropower_all[1:365,1]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-LOP.hydro_R2 = r_val**2
-print(LOP.hydro_R2)
 
-plt.figure()
-plt.plot(LOP_2001_daily[1:365])
-plt.plot(hydropower_all[1:365,1])
-plt.title('Lookout Point Hydropower Generation',fontsize=20)
-plt.legend(['historical generation','simulated generation'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Generation (MWh)')
-plt.text(150,65,'$R^2$={}'.format(round(LOP.hydro_R2,4)),fontsize=12)  
 
 
 #LOP outflows validation
-x = (LOP5H[0:364,1].astype('float'))
-y = outflows_all[0:364,1]
+x = (LOP5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,1]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 LOP.R2 = r_val**2
 print(LOP.R2)
 plt.figure()
-plt.plot(LOP5H[:,1])
-plt.plot(outflows_all[0:364,1])
+plt.plot(x)
+plt.plot(y)
 plt.title('Lookout Point Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -809,35 +636,16 @@ plt.text(150,150,'$R^2$={}'.format(round(LOP.R2,4)),fontsize=15)
 
 
 
-#BCL hydro valid
-BCL_2001 = Willamette_gen_2001['BCL']
-BCL_2001_daily = np.mean(np.array(BCL_2001).reshape(-1,24),axis=1)  
-
-x = (BCL_2001_daily[3:365].astype('float'))
-y = hydropower_all[3:365,7]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-BCL.hydro_R2 = r_val**2
-print(BCL.hydro_R2)
-
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Big Cliff Generation',fontsize=20)
-plt.legend(['historical generation','simulated generation'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Generation (MWh)')
-plt.text(200,17,'$R^2$={}'.format(round(BCL.hydro_R2,4)),fontsize=12)
-
 #BCL outflows valid
-x = (BCL5H[0:363,1].astype('float'))
-y = outflows_all[0:363,12]
+x = (BCL5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,12]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 BCL.R2 = r_val**2
 print(BCL.R2)
 
 plt.figure()
-plt.plot(BCL5H[0:363,1])
-plt.plot(outflows_all[0:363,12])
+plt.plot(x)
+plt.plot(y)
 plt.title('Big Cliff Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -848,15 +656,15 @@ plt.text(150,150,'$R^2$={}'.format(round(BCL.R2,4)),fontsize=15)
 #nonhydro outflows
 
 #COT
-x = (COT5H[0:365,1].astype('float'))
-y = outflows_all[0:365,5]
+x = (COT5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,5]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 COT.R2 = r_val**2
 print(COT.R2)
 
 plt.figure()
-plt.plot(COT5H[0:365,1])
-plt.plot(outflows_all[0:365,5])
+plt.plot(x)
+plt.plot(y)
 plt.title('Cottage Grove Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -865,14 +673,14 @@ plt.text(200,30,'$R^2$={}'.format(round(COT.R2,4)),fontsize=15)
 
 
 #DOR
-x = (DOR5H[0:365,1].astype('float'))
-y = outflows_all[0:365,4]
+x = (DOR5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,4]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 DOR.R2 = r_val**2
 print(DOR.R2)
 plt.figure()
-plt.plot(DOR5H[0:365,1])
-plt.plot(outflows_all[0:365,4])
+plt.plot(x)
+plt.plot(y)
 plt.title('Dorena Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -882,15 +690,15 @@ plt.text(200,80,'$R^2$={}'.format(round(DOR.R2,4)),fontsize=15)
 
 
 #FRN
-x = (FRN5H[0:364,1].astype('float'))
-y = outflows_all[0:364,6]
+x = (FRN5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,6]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 FRN.R2 = r_val**2
 print(FRN.R2)
 
 plt.figure()
-plt.plot(FRN5H[0:364,1])
-plt.plot(outflows_all[0:364,6])
+plt.plot(x)
+plt.plot(y)
 plt.title('Fern Ridge Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -898,15 +706,15 @@ plt.ylabel('Outflows (cubic meters/second)')
 
 
 #FAL
-x = (FAL5H[0:365,1].astype('float'))
-y = outflows_all[0:365,3]
+x = (FAL5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,3]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 FAL.R2 = r_val**2
 print(FAL.R2)
 
 plt.figure()
-plt.plot(FAL5H[0:365,1])
-plt.plot(outflows_all[0:365,3])
+plt.plot(x)
+plt.plot(y)
 plt.title('Fall Creek Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
@@ -914,216 +722,32 @@ plt.ylabel('Outflows (cubic meters/second)')
 plt.text(160,40,'$R^2$={}'.format(round(FAL.R2,4)),fontsize=15)
 
 #BLU
-x = (BLU5H[0:364,1].astype('float'))
-y = outflows_all[0:364,8]
+x = (BLU5H[0:6939,1].astype('float'))
+y = outflows_all[0:6939,8]
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 BLU.R2 = r_val**2
 print(BLU.R2)
 
 plt.figure()
-plt.plot(BLU5H[0:364,1])
-plt.plot(outflows_all[0:364,8])
+plt.plot(x)
+plt.plot(y)
 plt.title('Blue River Reservoir Outflows',fontsize=20)
 plt.legend(['historical outflows','simulated outflows'],fontsize=12)
 plt.xlabel('doy')
 plt.ylabel('Outflows (cubic meters/second)')
 plt.text(160,60,'$R^2$={}'.format(round(BLU.R2,4)),fontsize=15)
 
-#%%
-#volume validation
 
-#HCR
-x = HCR2005vol_d
-y = volumes_all[0:365,0]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-HCR.vol_R2 = r_val**2
-print(HCR.vol_R2)
-
-plt.figure()
-plt.plot(HCR2005vol_d)
-plt.plot(volumes_all[0:365,0])
-plt.title('Hills Creek Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(20,3.8e8,'$R^2$={}'.format(round(HCR.vol_R2,4)),fontsize=12)
-
-
-
-
-#LOP
-x = LOP2005vol_d
-y = volumes_all[0:365,1]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-LOP.vol_R2 = r_val**2
-print(LOP.vol_R2)
-
-plt.figure()
-plt.plot(LOP2005vol_d)
-plt.plot(volumes_all[0:365,1])
-plt.title('Lookout Point Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(20,4.5e8,'$R^2$={}'.format(round(LOP.vol_R2,4)),fontsize=12)
-
-#FAL
-x = FAL2005vol_d
-y = volumes_all[0:365,3]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-FAL.vol_R2 = r_val**2
-print(FAL.vol_R2)
-
-plt.figure()
-plt.plot(FAL2005vol_d)
-plt.plot(volumes_all[0:365,3])
-plt.title('Fall Creek Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(25,1.4e8,'$R^2$={}'.format(round(FAL.vol_R2,4)),fontsize=12)
-
-
-#DOR
-x = DOR2005vol_d
-y = volumes_all[0:365,4]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-DOR.vol_R2 = r_val**2
-print(DOR.vol_R2)
-
-plt.figure()
-plt.plot(DOR2005vol_d)
-plt.plot(volumes_all[0:365,4])
-plt.title('Dorena Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(25,0.8e8,'$R^2$={}'.format(round(DOR.vol_R2,4)),fontsize=12)
-
-#COT
-x = COT2005vol_d
-y = volumes_all[0:365,5]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-COT.vol_R2 = r_val**2
-print(COT.vol_R2)
-
-plt.figure()
-plt.plot(COT2005vol_d)
-plt.plot(volumes_all[0:365,5])
-plt.title('Cottage Grove Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(25,3.5e7,'$R^2$={}'.format(round(COT.vol_R2,4)),fontsize=12)
-
-#FRN
-x = FRN2005vol_d
-y = volumes_all[0:365,6]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-FRN.vol_R2 = r_val**2
-print(FRN.vol_R2)
-
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Fern Ridge Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(25,1.0e8,'$R^2$={}'.format(round(FRN.vol_R2,4)),fontsize=12)
-
-#after looking at the query, I have discovered that 2005 was quite an unusual year for FRN. Volume curve does not follow normal pattern.
-
-#CGR
-x = CGR2005vol_d
-y = volumes_all[0:365,7]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-CGR.vol_R2 = r_val**2
-print(CGR.vol_R2)
-
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Cougar Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(25,2.0e8,'$R^2$={}'.format(round(CGR.vol_R2,4)),fontsize=12)
-
-#BLU
-x = BLU2005vol_d
-y = volumes_all[0:365,8]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-BLU.vol_R2 = r_val**2
-print(BLU.vol_R2)
-
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Blue River Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(25,0.9e8,'$R^2$={}'.format(round(BLU.vol_R2,4)),fontsize=12)
-
-#GPR
-x = GPR2005vol_d[0:365]
-y = volumes_all[0:365,9]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-GPR.vol_R2 = r_val**2
-print(GPR.vol_R2)
-
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Green Peter Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(25,4.5e8,'$R^2$={}'.format(round(GPR.vol_R2,4)),fontsize=12)
-
-
-#FOS
-x = FOS2005vol_d[0:365]
-y = volumes_all[0:365,10]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-FOS.vol_R2 = r_val**2
-print(FOS.vol_R2)
-
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Foster Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(25,0.7e8,'$R^2$={}'.format(round(FOS.vol_R2,4)),fontsize=12)
-
-#DET
-x = DET2005vol_d[0:365]
-y = volumes_all[0:365,11]
-slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
-DET.vol_R2 = r_val**2
-print(DET.vol_R2)
-
-plt.figure()
-plt.plot(x)
-plt.plot(y)
-plt.title('Detroit Reservoir Storage',fontsize=20)
-plt.legend(['historical storage levels','simulated storage levels'],fontsize=12)
-plt.xlabel('doy')
-plt.ylabel('Storage ($m^3$)')
-plt.text(25,5.0e8,'$R^2$={}'.format(round(DET.vol_R2,4)),fontsize=12)
 
 
 #%%
 #aggregate outflows and hydropower validation
 #outflows_minus_FRN = np.delete(outflows_all[0:364],6,1)
-outflows_aggr = np.sum(outflows_all[0:364],axis=1)
+outflows_aggr = np.sum(outflows_all[0:6939],axis=1)
 
-outflows_aggr_2001 = np.sum(outflows_2001_all[1:365],axis=1).astype(float)
+outflows_aggr_1989 = np.sum(outflows_1989_all[1:6940],axis=1).astype(float)
 
-x = outflows_aggr_2001
+x = outflows_aggr_1989
 y = outflows_aggr
 slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
 outflows_R2 = r_val**2
@@ -1132,22 +756,12 @@ print(outflows_R2)
 plt.figure()
 plt.plot(x)
 plt.plot(y)
-plt.title('Aggregate Outflows 2001')
+plt.title('Aggregate Outflows 89-07')
 plt.legend(['Historical aggregate outflows','Simulated aggregate outflows'])
 plt.xlabel('doy')
 plt.ylabel('Outflows ($m^3$/s)')
 plt.text(150,1200,'$R^2$={}'.format(round(outflows_R2,4)),fontsize=12)
 
-
-hydro = np.sum(np.array(Willamette_gen_2001),axis=1) #this is hourly
-hydro_aggr_2005 = np.mean(hydro.reshape(-1,24),axis=1) 
-
-hydro_aggr = np.sum(hydropower_all[3:365],axis=1) #this is only 362 days
-
-plt.figure()
-plt.plot(hydro_aggr_2005)
-plt.plot(hydro_aggr)
-plt.legend(['Historical aggregate hydro 2005','Simulated aggregate hydro 2005'])
 
 #%%
 
