@@ -254,7 +254,7 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
              else:             #//If not, just use xvalue
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease <= constraintValue:
-                actualRelease = constraintValue;
+                actualRelease = constraintValue
              #print('The constraint value is',constraintValue)   
 
 
@@ -292,7 +292,10 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                 actualRelease = lag_outflow  - constraintValue  #If so, planned release can be no less than current release - constraint.
              #print('The constraint value is',constraintValue)   
 
-
+          elif constraint_array[i].startswith('IRRM_'): #special case interim risk reduction measures for GPR
+               constraintValue = xvalue
+               actualRelease = constraintValue
+               
           elif constraint_array[i].startswith('cp_'):  #case RCT_CONTROLPOINT:  #Downstream control point  
               #Determine which control point this is.....use COMID to identify
               for j in range(len(CP_list)):

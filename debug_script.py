@@ -41,20 +41,21 @@ runfile('C:/Users/sdenaro/OneDrive - University of North Carolina at Chapel Hill
 
 InitwaterYear = 1.2
 waterYear = InitwaterYear
-CGR = RES[7]
-name = CGR
-t=265
-doy = DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
-
-volume = volumes_all[t,7]
-inflow = CGR5A.iloc[t,1]
-lag_outflow = outflows_all[t-1,7]
+GPR = RES[9]
+name = GPR
 
 CP_list = CP
 cp_discharge = cp_discharge_all
 #%%
  #GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp_discharge):
-for t in range (265, 290):
+for t in range (0, 364):
+    doy = DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
+
+    volume = volumes_all[t,9]
+    inflow = GPR5A.iloc[t,1]
+    lag_outflow = outflows_all[t-1,9]
+    
+    
     currentPoolElevation = GetPoolElevationFromVolume(volume,name)    
     if name.Restype!='Storage_flood': #if it produces hydropower
         #reset gate specific flows
@@ -77,7 +78,7 @@ for t in range (265, 290):
          currentPoolElevation = GetPoolElevationFromVolume(currentVolume, name);  #Adjust pool elevation
          print ("Reservoir volume at ", name.name , " on day of year ", doy, " exceeds maximum. Volume set to maxVolume. Mass Balance not closed.")
         
-
+      #print('for t=', t, 'target elev is', targetPoolElevation,'and current elev is',currentPoolElevation)
       desiredRelease = (currentVolume - targetPoolVolume)/86400     #This would bring pool elevation back to the rule curve in one timestep.  Converted from m3/day to m3/s  (cms).
                                                                           #This would be ideal if possible within the given constraints.
       if currentVolume < targetPoolVolume: #if we want to fill the reservoir
@@ -141,7 +142,7 @@ for t in range (265, 290):
                yvalue = lag_outflow 
           else:                                            #Unrecognized xvalue for constraint lookup table
              print ("Unrecognized x value for reservoir constraint lookup label = ", xlabel) 
-          print('The constraint array is',constraint_array[i])   
+          #print('The constraint array is',constraint_array[i])   
           if constraint_array[i].startswith('Max_'):  #case RCT_MAX  maximum
              if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
                  cols=constraintRules.iloc[0,1::]
@@ -154,7 +155,7 @@ for t in range (265, 290):
                 constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease >= constraintValue:
                 actualRelease = constraintValue;
-             print('The constraint value is',constraintValue)   
+                print('The constraint value is',constraintValue)   
 
           elif constraint_array[i].startswith('Min_'):  # case RCT_MIN:  //minimum
              if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
@@ -167,7 +168,7 @@ for t in range (265, 290):
                  constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
              if actualRelease <= constraintValue:
                 actualRelease = constraintValue;
-             print('The constraint value is',constraintValue)   
+                print('The constraint value is',constraintValue)   
 
 
 
@@ -272,6 +273,8 @@ for t in range (265, 290):
         [powerFlow,RO_flow,spillwayFlow]=AssignReservoirOutletFlows(name,outflow)
     else:
         [powerFlow,RO_flow,spillwayFlow]=[np.nan, np.nan, np.nan]
+    #print('for t=', t, 'release is', outflow)
+
     #return outflow
 
     

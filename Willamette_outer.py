@@ -34,7 +34,7 @@ import Williamette_model as inner #reading in the inner function
 import os
 
 #%%  load reservoirs and control point infos
-with open('Flow.xml') as fd:
+with open('Flow_2005.xml') as fd:
     flow = xmld.parse(fd.read())
 
 flow_model = flow["flow_model"]

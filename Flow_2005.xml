@@ -558,9 +558,9 @@ dynamic="0"
                rule_curve="green_peter_rule_curve.csv"            rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="551246341"
                composite_rc="GP_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="125.1"
                RO_rc="GP_RO_capacity.csv"                         spillway_rc="GP_spillway_capacity.csv"              cp_dir="ControlPoints{ScenarioName}"
-               rule_priorities="green_peter_rule_priorities.csv"  rp_dir="Rules_GP/"                                  tailwater_elev="213.36"
+               rule_priorities="green_peter_rule_priorities_NEW.csv"  rp_dir="Rules_GP/"                                  tailwater_elev="213.36"
                turbine_efficiency="0.9"                           td_elev="311.0"                                     fc1_elev="309.0"
-               fc2_elev="289.6"                                   fc3_elev="301.8"
+               fc2_elev="289.56"                                   fc3_elev="301.75"
                buffer_zone="GP_buffer.csv"                        ressim_output_f="GP_ressim_flow_1935_2008.csv"      ressim_output_r="GP_ressim_rule_1935_2008.csv"
                inactive_elev="281.03"                             reservoir_type="Storage_HP" />
 
