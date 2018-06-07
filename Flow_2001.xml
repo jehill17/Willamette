@@ -369,6 +369,17 @@ dynamic="0"
 -->
   </scenarios>
 
+  <simulation_horizon>
+    <res_data
+    skiprows_number= "26481"
+    skip_footer_number= "2465"/>
+
+    <cp_data
+    skiprows_number= "4383"
+    skip_footer_number= "2191"
+    filename= "Data/Control point historical discharge 2001.xlsx"/>
+  </simulation_horizon>
+
     <controlPoints>
       <controlPoint id="1"      name="Min flow at Salem"                path="Reservoirs\ControlPoints\{ScenarioName}\"
         control_point="cp_Min_flow_at_Salem_23791083.csv"               reservoirs="10,12"
@@ -558,7 +569,7 @@ dynamic="0"
                rule_curve="green_peter_rule_curve.csv"            rc_dir="Rule_Curves{ScenarioName}"                 maxVolume="551246341"
                composite_rc="GP_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="125.1"
                RO_rc="GP_RO_capacity.csv"                         spillway_rc="GP_spillway_capacity.csv"              cp_dir="ControlPoints{ScenarioName}"
-               rule_priorities="green_peter_rule_priorities.csv"  rp_dir="Rules_GP/"                                  tailwater_elev="213.36"
+               rule_priorities="green_peter_rule_priorities_NEW.csv"  rp_dir="Rules_GP/"                                  tailwater_elev="213.36"
                turbine_efficiency="0.9"                           td_elev="311.0"                                     fc1_elev="309.0"
                fc2_elev="289.6"                                   fc3_elev="301.8"
                buffer_zone="GP_buffer.csv"                        ressim_output_f="GP_ressim_flow_1935_2008.csv"      ressim_output_r="GP_ressim_rule_1935_2008.csv"
@@ -592,6 +603,25 @@ dynamic="0"
                RO_rc="BC_RO_capacity.csv"                         spillway_rc="BC_spillway_capacity.csv"              tailwater_elev="338.02"
                turbine_efficiency="0.9"                           inactive_elev="353.99"                              reservoir_type="RunOfRiver"/>
   </reservoirs>
+
+  <historical_volumes
+    HCR_vol = 'Data/HCRvolume_2001.xlsx'
+    LOP_vol = 'Data/LOPvolume_2001.xlsx'
+    DEX_vol = 'Data/DEXvolume_2001.xlsx'
+    FAL_vol = 'Data/FALvolume_2001.xlsx'
+    DOR_vol = 'Data/DORvolume_2001.xlsx'
+    COT_vol = 'Data/COTvolume_2001.xlsx'
+    FRN_vol = 'Data/FRNvolume_2001.xlsx'
+    CGR_vol = 'Data/CGRvolume_2001.xlsx'
+    BLU_vol = 'Data/BLUvolume_2001.xlsx'
+    DET_vol = 'Data/DETvolume_2001.xlsx'
+    BCL_vol = 'Data/BCLvolume_2005.xlsx'
+    FOS_vol = 'Data/FOSvolume_2001.xlsx'
+    GPR_vol = 'Data/GPRvolume_2001.xlsx'/>
+    <!--
+      NO BCL VOL records for 2001, used 2005 values instead to initializes
+          -->
+
 
   <fluxes>
 

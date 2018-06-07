@@ -137,7 +137,7 @@ def AssignReservoirOutletFlows(name,outflow):
     return(powerFlow,RO_flow,spillwayFlow)
 
 
-def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp_discharge, lag_zone):
+def GetResOutflow(name, volume, inflow, lag_inflow , lag_outflow, doy, waterYear, CP_list, cp_discharge, lag_zone):
     currentPoolElevation = GetPoolElevationFromVolume(volume,name)    
     if name.Restype!='Storage_flood': #if it produces hydropower
         #reset gate specific flows
@@ -218,6 +218,8 @@ def GetResOutflow(name, volume, inflow, lag_outflow, doy, waterYear, CP_list, cp
                xvalue = inflow            
           elif xlabel=="Outflow_lagged_24h":            #24h lagged outflow based rule?   xvalue = outflow from reservoir at last timestep
                xvalue = lag_outflow               #placeholder (assumes that timestep=24 hours)
+          elif xlabel=="Inflow_lagged_24h":            #24h lagged outflow based rule?   xvalue = outflow from reservoir at last timestep
+               xvalue = lag_inflow               #placeholder (assumes that timestep=24 hours)
           elif xlabel=="Date_pool_elev_m":             # Lookup based on two values...date and pool elevation.  x value is date.  y value is pool elevation
                xvalue = doy
                yvalue = currentPoolElevation

@@ -369,6 +369,18 @@ dynamic="0"
 -->
   </scenarios>
 
+    <simulation_horizon>
+      <res_data
+      skiprows_number= "27942"
+      skip_footer_number= "1004"/>
+
+      <cp_data
+      skiprows_number= "5844"
+      skip_footer_number= "730"
+      filename= "Data/Control point historical discharge 2005.xlsx"/>
+    </simulation_horizon>
+
+
     <controlPoints>
       <controlPoint id="1"      name="Min flow at Salem"                path="Reservoirs\ControlPoints\{ScenarioName}\"
         control_point="cp_Min_flow_at_Salem_23791083.csv"               reservoirs="10,12"
@@ -593,6 +605,23 @@ dynamic="0"
                turbine_efficiency="0.9"                           inactive_elev="353.99"                              reservoir_type="RunOfRiver"/>
   </reservoirs>
 
+  <historical_volumes
+    HCR_vol = 'Data/HCRvolume_2005.xlsx'
+    LOP_vol = 'Data/LOPvolume_2005.xlsx'
+    DEX_vol = 'Data/DEXvolume_2001.xlsx'
+    FAL_vol = 'Data/FALvolume_2005.xlsx'
+    DOR_vol = 'Data/DORvolume_2005.xlsx'
+    COT_vol = 'Data/COTvolume_2005.xlsx'
+    FRN_vol = 'Data/FRNvolume_2005.xlsx'
+    CGR_vol = 'Data/CGRvolume_2005.xlsx'
+    BLU_vol = 'Data/BLUvolume_2005.xlsx'
+    DET_vol = 'Data/DETvolume_2005.xlsx'
+    BCL_vol = 'Data/BCLvolume_2005.xlsx'
+    FOS_vol = 'Data/FOSvolume_2005.xlsx'
+    GPR_vol = 'Data/GPRvolume_2005.xlsx'/>
+    <!--
+      NO DEXTER VOL records for 2005, used 2001 values instead to initializes
+          -->
   <fluxes>
 
 
