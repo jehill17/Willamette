@@ -370,6 +370,8 @@ dynamic="0"
   </scenarios>
 
     <simulation_horizon>
+      <length
+        T="365"/>          
       <res_data
       skiprows_number= "27942"
       skip_footer_number= "1004"/>
@@ -620,7 +622,7 @@ dynamic="0"
     FOS_vol = 'Data/FOSvolume_2005.xlsx'
     GPR_vol = 'Data/GPRvolume_2005.xlsx'/>
     <!--
-      NO DEXTER VOL records for 2005, used 2001 values instead to initializes
+      NO DEXTER VOL records for 2005, used 2001 values instead to initialize
           -->
   <fluxes>
 

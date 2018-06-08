@@ -370,6 +370,8 @@ dynamic="0"
   </scenarios>
 
   <simulation_horizon>
+    <length
+      T="365"/>    
     <res_data
     skiprows_number= "26481"
     skip_footer_number= "2465"/>
@@ -619,7 +621,7 @@ dynamic="0"
     FOS_vol = 'Data/FOSvolume_2001.xlsx'
     GPR_vol = 'Data/GPRvolume_2001.xlsx'/>
     <!--
-      NO BCL VOL records for 2001, used 2005 values instead to initializes
+      NO BCL VOL records for 2001, used 2005 values instead to initialize
           -->
 
 

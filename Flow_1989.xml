@@ -369,6 +369,22 @@ dynamic="0"
 -->
   </scenarios>
 
+  <simulation_horizon>
+    <length
+      T="6940"/>
+    <res_data
+    skiprows_number= "22098"
+    skip_footer_number= "274"/>
+
+    <cp_data
+    skiprows_number= "0"
+    skip_footer_number= "0"
+    filename= "Data/Control point historical discharge 1989_2007.xlsx"/>
+  </simulation_horizon>
+
+
+
+
     <controlPoints>
       <controlPoint id="1"      name="Min flow at Salem"                path="Reservoirs\ControlPoints\{ScenarioName}\"
         control_point="cp_Min_flow_at_Salem_23791083.csv"               reservoirs="10,12"
@@ -592,6 +608,24 @@ dynamic="0"
                RO_rc="BC_RO_capacity.csv"                         spillway_rc="BC_spillway_capacity.csv"              tailwater_elev="338.02"
                turbine_efficiency="0.9"                           inactive_elev="353.99"                              reservoir_type="RunOfRiver"/>
   </reservoirs>
+
+  <historical_volumes
+    HCR_vol = 'Data/HCRvolume_1989.xlsx'
+    LOP_vol = 'Data/LOPvolume_1989.xlsx'
+    DEX_vol = 'Data/DEXvolume_1989.xlsx'
+    FAL_vol = 'Data/FALvolume_1989.xlsx'
+    DOR_vol = 'Data/DORvolume_1989.xlsx'
+    COT_vol = 'Data/COTvolume_1989.xlsx'
+    FRN_vol = 'Data/FRNvolume_1990.xlsx'
+    CGR_vol = 'Data/CGRvolume_1989.xlsx'
+    BLU_vol = 'Data/BLUvolume_1989.xlsx'
+    DET_vol = 'Data/DETvolume_1989.xlsx'
+    BCL_vol = 'Data/BCLvolume_2004.xlsx'
+    FOS_vol = 'Data/FOSvolume_1989.xlsx'
+    GPR_vol = 'Data/GPRvolume_1990.xlsx'/>
+    <!--
+      NO BCL, GPR, FRN VOL records for 1989, used 1990 and 2005 values instead to initialize
+          -->
 
   <fluxes>
 
