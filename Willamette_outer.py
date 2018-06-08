@@ -301,7 +301,7 @@ MON_loc.columns = ['Date','Local Flow']
 dates = np.array(BLU5Ad['Date'])
 
 #%% Allocate and initialize
-T =horizon["length"]["@T"] #Set the simulation horizon
+T =int(horizon["length"]["@T"]) #Set the simulation horizon
 
 n_res=13
 n_HPres=8
