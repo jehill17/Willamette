@@ -72,6 +72,7 @@ class Reservoir:
         self.Fc2_elev=[]
         self.Fc3_elev=[]
         self.GateMaxPowerFlow=[]
+        self.maxHydro=[]
         self.maxPowerFlow=[]
         self.maxRO_Flow =[]
         self.maxSpillwayFlow=[]
@@ -113,6 +114,7 @@ for res in RES:
     res.GateMaxPowerFlow=float(reservoirs[id-1]["@maxPowerFlow"])
     res.Tailwater_elev=float(reservoirs[id-1]["@tailwater_elev"])
     res.Turbine_eff=float(reservoirs[id-1]["@turbine_efficiency"])
+    res.maxHydro = float(reservoirs[id-1]["@max_hydro_production"])
     if res.Restype != "RunOfRiver":
         res.ruleDir=str(reservoirs[id-1]["@rp_dir"])
         res.cpDir=str(reservoirs[id-1]["@cp_dir"])
