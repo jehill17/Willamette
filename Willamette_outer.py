@@ -30,7 +30,7 @@ import xmltodict as xmld
 #from collections import OrderedDict
 #import dict_digger as dd
 import datetime as dt
-import Williamette_model as inner #reading in the inner function
+import Willamette_model as inner #reading in the inner function
 import os
 import sys
 
