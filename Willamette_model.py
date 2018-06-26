@@ -374,6 +374,9 @@ def GetResOutflow(name, volume, inflow, lag_inflow , lag_outflow, doy, waterYear
 def CalculateHydropowerOutput(name,elevation,powerFlow):
     head = elevation - name.Tailwater_elev 
     powerOut = (1000*powerFlow*9.81*head*0.9)/1000000  #assume a 0.9 turbine efficiency
+    
+    if powerOut > name.maxHydro:
+        powerOut = name.maxHydro
 
     return powerOut
 
