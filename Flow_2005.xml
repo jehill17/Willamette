@@ -371,7 +371,7 @@ dynamic="0"
 
     <simulation_horizon>
       <length
-        T="365"/>          
+        T="365"/>
       <res_data
       skiprows_number= "27942"
       skip_footer_number= "1004"/>
@@ -480,7 +480,7 @@ dynamic="0"
                rule_priorities="hills_creek_rule_priorities.csv"  rp_dir="Rules_HC/"                                  tailwater_elev="374.0"
                turbine_efficiency="0.9"                           td_elev="472.0"                                     fc1_elev="470.0"
                fc2_elev="nan"
-               fc3_elev="nan"
+               fc3_elev="nan"                                     max_hydro_production = "30"
                buffer_zone="HC_buffer.csv"                        ressim_output_f="HC_ressim_flow_1935_2008.csv"      ressim_output_r="HC_ressim_rule_1935_2008.csv"
                inactive_elev="441.046"                            reservoir_type="Storage_HP"/>
 
@@ -492,6 +492,7 @@ dynamic="0"
                rule_priorities="lookout_rule_priorities.csv"      rp_dir="Rules_Lookout/"                             tailwater_elev="210.31"
                turbine_efficiency="0.9"                           td_elev="287.0"                                     fc1_elev="285.0"
                fc3_elev="283.0"                                   fc2_elev="261.0"                                    buffer_zone="LO_buffer.csv"
+               max_hydro_production = "120"
                ressim_output_f="LO_ressim_flow_1935_2008.csv"     ressim_output_r="LO_ressim_rule_1935_2008.csv"      inactive_elev="251.46"
                reservoir_type="Storage_HP"/>
 
@@ -499,6 +500,7 @@ dynamic="0"
                area_vol_curve="dexter_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                composite_rc="Dexter_composite_rc.csv"             re_dir="Rel_Cap/"                                   maxPowerFlow="118.9"
                RO_rc="Dexter_RO_capacity.csv"                     spillway_rc="Dexter_Spillway_capacity.csv"          tailwater_elev="194.46"
+               max_hydro_production = "15"
                turbine_efficiency="0.9"                           inactive_elev="194.24"                              reservoir_type= "RunOfRiver" />
 
     <reservoir id="4"   name="Fall Creek Reservoir (USACE)"       path="Reservoirs/"                                  initVolume="8140968"
@@ -509,6 +511,7 @@ dynamic="0"
                rule_priorities="fall_creek_rule_priorities.csv"   rp_dir="Rules_FC/"                                  td_elev="256.0"
                tailwater_elev="nan"                               fc1_elev="254.0"                                    fc2_elev="243.0"
                fc3_elev="nan"                                     buffer_zone="FC_buffer.csv"                         ressim_output_f="FC_ressim_flow_1935_2008.csv"
+               max_hydro_production = "nan"
                ressim_output_r="FC_ressim_rule_1935_2008.csv"      inactive_elev="217.32"                             reservoir_type="Storage_flood"
                turbine_efficiency="nan" />
 
@@ -519,6 +522,7 @@ dynamic="0"
                RO_rc="Dorena_RO_capacity.csv"                     spillway_rc="Dorena_spillway_capacity.csv"          cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="dorena_rule_priorities.csv"       rp_dir="Rules_Dorena/"                              td_elev="264.0"
                fc1_elev="255.0"                                   fc2_elev="247.0"                                    buffer_zone="Dorena_buffer.csv"
+               max_hydro_production = "nan"
                ressim_output_f="Dorena_ressim_flow_1935_2008.csv" ressim_output_r="Dorena_ressim_rule_1935_2008.csv"  inactive_elev="235.0"
                reservoir_type="Storage_flood"                           fc3_elev="nan"                                      turbine_efficiency="nan"
                tailwater_elev="nan"  />
@@ -531,6 +535,7 @@ dynamic="0"
                rule_priorities="cottage_grove_rule_priorities.csv" rp_dir="Rules_CG/"                                 td_elev="246.0"
                fc1_elev="241.0"                                   fc2_elev="237.0"                                    buffer_zone="CG_buffer.csv"
                ressim_output_f="CG_ressim_flow_1935_2008.csv"     ressim_output_r="CG_ressim_rule_1935_2008.csv"      inactive_elev="228.6"
+               max_hydro_production = "nan"
                reservoir_type="Storage_flood"                           fc3_elev="nan"                                      turbine_efficiency="nan"
                tailwater_elev="nan" />
 
@@ -540,7 +545,7 @@ dynamic="0"
                composite_rc="FR_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="nan"
                RO_rc="FR_RO_capacity.csv"                         spillway_rc="FR_spillway_capacity.csv"              cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="fern_ridge_rule_priorities.csv"   rp_dir="Rules_FR/"                                  td_elev="116.0"
-               fc1_elev="114.0"                  fc2_elev="nan"
+               fc1_elev="114.0"                                   fc2_elev="nan"                                      max_hydro_production = "nan"
                fc3_elev="nan"                                buffer_zone="FR_buffer.csv"                         ressim_output_f="FR_ressim_flow_1935_2008.csv"
                ressim_output_r="FR_ressim_rule_1935_2008.csv"     inactive_elev="107.60"                              reservoir_type="Storage_flood"
                turbine_efficiency="nan"                          tailwater_elev="nan" />
@@ -552,7 +557,7 @@ dynamic="0"
                RO_rc="Cougar_RO_capacity.csv"                     spillway_rc="Cougar_spillway_capacity.csv"          cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="cougar_rule_priorities.csv"       rp_dir="Rules_Cougar/"                              tailwater_elev="382.10"
                turbine_efficiency="0.9"                           td_elev="520.0"                                     fc1_elev="518.0"
-               fc2_elev="nan"                                     fc3_elev="nan"
+               fc2_elev="nan"                                     fc3_elev="nan"                                       max_hydro_production = "25"
                buffer_zone="Cougar_buffer.csv"                    ressim_output_f="Cougar_ressim_flow_1935_2008.csv"  ressim_output_r="Cougar_ressim_rule_1935_2008.csv"
                inactive_elev="466.65"                             reservoir_type="Storage_HP"/>
 
@@ -563,7 +568,7 @@ dynamic="0"
                RO_rc="BR_RO_capacity.csv"                         spillway_rc="BR_spillway_capacity.csv"              cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="blue_river_rule_priorities.csv"   rp_dir="Rules_BR/"                                  td_elev="415.0"
                fc1_elev="414.0"                                   fc2_elev="nan"                                      fc3_elev="nan"
-               buffer_zone="BR_buffer.csv"                         ressim_output_f="BR_ressim_flow_1935_2008.csv"
+               buffer_zone="BR_buffer.csv"                         ressim_output_f="BR_ressim_flow_1935_2008.csv"     max_hydro_production = "nan"
                ressim_output_r="BR_ressim_rule_1935_2008.csv"     inactive_elev="359.66"                              reservoir_type="Storage_flood"
                turbine_efficiency="nan"                           tailwater_elev="nan"  />
 
@@ -574,7 +579,7 @@ dynamic="0"
                RO_rc="GP_RO_capacity.csv"                         spillway_rc="GP_spillway_capacity.csv"              cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="green_peter_rule_priorities_NEW.csv"  rp_dir="Rules_GP/"                                  tailwater_elev="213.36"
                turbine_efficiency="0.9"                           td_elev="311.0"                                     fc1_elev="309.0"
-               fc2_elev="289.56"                                   fc3_elev="301.75"
+               fc2_elev="289.56"                                   fc3_elev="301.75"                                  max_hydro_production = "80"
                buffer_zone="GP_buffer.csv"                        ressim_output_f="GP_ressim_flow_1935_2008.csv"      ressim_output_r="GP_ressim_rule_1935_2008.csv"
                inactive_elev="281.03"                             reservoir_type="Storage_HP" />
 
@@ -585,7 +590,7 @@ dynamic="0"
                RO_rc="Foster_RO_capacity.csv"                     spillway_rc="Foster_spillway_capacity.csv"          cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="foster_rule_priorities.csv"       rp_dir="Rules_Foster/"                              tailwater_elev="159.87"
                turbine_efficiency="0.9"                           td_elev="197.0"                                     fc1_elev="195.0"
-               fc2_elev="nan"                                     fc3_elev="nan"
+               fc2_elev="nan"                                     fc3_elev="nan"                                      max_hydro_production = "20"
                buffer_zone="Foster_buffer.csv"                    ressim_output_f="Foster_ressim_flow_1935_2008.csv"  ressim_output_r="Foster_ressim_rule_1935_2008.csv"
                inactive_elev="186.84"                             reservoir_type="Storage_HP"/>
 
@@ -596,7 +601,7 @@ dynamic="0"
                RO_rc="Detroit_RO_capacity.csv"                    spillway_rc="Detroit_Spillway_capacity.csv"         cp_dir="ControlPoints{ScenarioName}"
                rule_priorities="detroit_rule_priorities.csv"      rp_dir="Rules_Detroit/"                             tailwater_elev="365.15"
                turbine_efficiency="0.9"                           td_elev="481.0"                                     fc1_elev="480.0"
-               fc2_elev="nan"                                     fc3_elev="nan"
+               fc2_elev="nan"                                     fc3_elev="nan"                                      max_hydro_production = "100"
                buffer_zone="Detroit_buffer.csv"                   ressim_output_f="DET_ressim_flow_1935_2008.csv"     ressim_output_r="DET_ressim_rule_1935_2008.csv"
                inactive_elev="441.96"                             reservoir_type="Storage_HP" />
 
@@ -604,6 +609,7 @@ dynamic="0"
                area_vol_curve="Big_Cliff_area_capacity.csv"       av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                composite_rc="BC_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="90.6"
                RO_rc="BC_RO_capacity.csv"                         spillway_rc="BC_spillway_capacity.csv"              tailwater_elev="338.02"
+               max_hydro_production = "18"
                turbine_efficiency="0.9"                           inactive_elev="353.99"                              reservoir_type="RunOfRiver"/>
   </reservoirs>
 
