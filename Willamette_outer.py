@@ -151,140 +151,18 @@ GOS=CP[7]; WAT=CP[8]; MON=CP[9]; FOS_cp=CP[10];
 #%% LOAD DATA 
 
 #converters
+cfs_to_cms = 0.0283168  
+M3_PER_ACREFT = 1233.4  
 
-#reservoirs:
-#read in historical reservoir inflows -- this will contain the array of 'dates' to use
+#load reservoirs inflow and volume data:   
 top=int(horizon["res_data"]["@skiprows_number"])
 bottom=int(horizon["res_data"]["@skip_footer_number"])
 
-BLU5Ad = pd.read_excel('Data/BLU5A_daily.xls',skiprows=top, skip_footer=bottom) #only using data from 2005
-BLU5Ad.columns = ['Date','Inflow']
-BLU5A = pd.read_excel('Data/BLU5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-CGR5A = pd.read_excel('Data/CGR5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-DET5A = pd.read_excel('Data/DET5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-DOR5A = pd.read_excel('Data/DOR5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-FAL5A = pd.read_excel('Data/FAL5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-FOS5A = pd.read_excel('Data/FOS5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-FRN5M = pd.read_excel('Data/FRN5M_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-GPR5A = pd.read_excel('Data/GPR5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-HCR5A = pd.read_excel('Data/HCR5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-LOP5A = pd.read_excel('Data/LOP5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-LOP5E = pd.read_excel('Data/LOP5E_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-COT5A = pd.read_excel('Data/COT5A_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms
-FOS_loc = pd.read_excel('Data/FOS_loc.xls',usecols = [0,3],skiprows=top, skip_footer=bottom)*cfs_to_cms
-LOP_loc = pd.read_excel('Data/LOP_loc.xls',usecols = [0,3],skiprows=top, skip_footer=bottom)*cfs_to_cms
-
-
-#historical outflows 
-BLU5H = np.array(pd.read_excel('Data/BLU5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms) #only using data from 2005
-BCL5H = np.array(pd.read_excel('Data/BCL5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms) #only using data from 2005
-CGR5H = np.array(pd.read_excel('Data/CGR5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-DET5H = np.array(pd.read_excel('Data/DET5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-DEX5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-DOR5H = np.array(pd.read_excel('Data/DOR5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-FAL5H = np.array(pd.read_excel('Data/FAL5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-FRN5H = np.array(pd.read_excel('Data/FRN5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-GPR5H = np.array(pd.read_excel('Data/GPR5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-HCR5H = np.array(pd.read_excel('Data/HCR5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-COT5H = np.array(pd.read_excel('Data/COT5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-FOS5H = np.array(pd.read_excel('Data/FOS5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-LOP5H = np.array(pd.read_excel('Data/LOP5H_daily.xls',skiprows=top, skip_footer=bottom)*cfs_to_cms)
-
-outflows_all_hist = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],FRN5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
-outflows_wo_FRN_hist = np.stack((HCR5H[:,1],LOP5H[:,1],DEX5H[:,1],FAL5H[:,1],DOR5H[:,1],COT5H[:,1],CGR5H[:,1],BLU5H[:,1],GPR5H[:,1],FOS5H[:,1],DET5H[:,1],BCL5H[:,1]),axis=1)
-
-
-#reading in historical volumes
-M3_PER_ACREFT = 1233.4
-
-#HCR
-HCR_vol = pd.read_excel(str(volumes['@HCR_vol']))
-HCR_vol.columns = ['Date','Time','Storage(AF)']
-RES[0].histVol = np.array(HCR_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#LOP
-LOP_vol = pd.read_excel(str(volumes['@LOP_vol']))
-LOP_vol.columns = ['Date','Time','Storage(AF)']
-RES[1].histVol = np.array(LOP_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#DEX
-DEX_vol = pd.read_excel(str(volumes['@DEX_vol']))
-DEX_vol.columns = ['Date','Time','Storage(AF)']
-RES[2].histVol = np.array(LOP_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#FAL
-FAL_vol = pd.read_excel(str(volumes['@FAL_vol']))
-FAL_vol.columns = ['Date','Time','Storage(AF)']
-RES[3].histVol = np.array(FAL_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#DOR
-DOR_vol = pd.read_excel(str(volumes['@DOR_vol']))
-DOR_vol.columns = ['Date','Time','Storage(AF)']
-RES[4].histVol = np.array(DOR_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#COT
-COT_vol = pd.read_excel(str(volumes['@COT_vol']))
-COT_vol.columns = ['Date','Time','Storage(AF)']
-RES[5].histVol = np.array(COT_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#FRN
-FRN_vol = pd.read_excel(str(volumes['@FRN_vol']))
-FRN_vol.columns = ['Date','Time','Storage(AF)']
-RES[6].histVol = np.array(FRN_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#CGR
-CGR_vol = pd.read_excel(str(volumes['@CGR_vol']))
-CGR_vol.columns = ['Date','Time','Storage(AF)']
-RES[7].histVol = np.array(CGR_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#BLU
-BLU_vol = pd.read_excel(str(volumes['@BLU_vol']))
-BLU_vol.columns = ['Date','Time','Storage(AF)']
-RES[8].histVol = np.array(BLU_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#GPR
-GPR_vol = pd.read_excel(str(volumes['@GPR_vol']))
-GPR_vol.columns = ['Date','Time','Storage(AF)']
-RES[9].histVol = np.array(GPR_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#FOS
-FOS_vol = pd.read_excel(str(volumes['@FOS_vol']))
-FOS_vol.columns = ['Date','Time','Storage(AF)']
-RES[10].histVol = np.array(FOS_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#DET
-DET_vol = pd.read_excel(str(volumes['@DET_vol']))
-DET_vol.columns = ['Date','Time','Storage(AF)']
-RES[11].histVol = np.array(DET_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-#BCL
-BCL_vol = pd.read_excel(str(volumes['@BCL_vol']))
-BCL_vol.columns = ['Date','Time','Storage(AF)']
-RES[12].histVol = np.array(BCL_vol.groupby('Date')['Storage(AF)'].mean()*M3_PER_ACREFT)
-
-
-
-
-#control points
-#cp_hist discharge: start this at 12/31/2004
-filename=str(horizon["cp_data"]["@filename"])
-
-SAL = pd.read_excel(filename,sheetname='Salem')
-SAL_dis = np.array(SAL['Discharge'])*cfs_to_cms
-ALB = pd.read_excel(filename,sheetname='Albany')
-ALB_dis = np.array(ALB['Discharge'])*cfs_to_cms
-JEF = pd.read_excel(filename,sheetname='Jefferson')
-JEF_dis = np.array(JEF['Discharge'])*cfs_to_cms
-MEH = pd.read_excel(filename,sheetname='Mehama')
-MEH_dis = np.array(MEH['Discharge'])*cfs_to_cms
-HAR = pd.read_excel(filename,sheetname='Harrisburg')
-HAR_dis = np.array(HAR['Discharge'])*cfs_to_cms
-VID = pd.read_excel(filename,sheetname='Vida')
-VID_dis = np.array(VID['Discharge'])*cfs_to_cms
-JAS = pd.read_excel(filename,sheetname='Jasper')
-JAS_dis = np.array(JAS['Discharge'])*cfs_to_cms
-GOS = pd.read_excel(filename,sheetname='Goshen')
-GOS_dis = np.array(GOS['Discharge'])*cfs_to_cms
-WAT = pd.read_excel(filename,sheetname='Waterloo')
-WAT_dis = np.array(WAT['Discharge'])*cfs_to_cms
-MON = pd.read_excel(filename,sheetname='Monroe')
-MON_dis = np.array(MON['Discharge'])*cfs_to_cms
-FOS = pd.read_excel(filename,sheetname='Foster')
-FOS_dis = np.array(FOS['Discharge'])*cfs_to_cms
-cp_discharge_all_hist = np.stack((SAL_dis,ALB_dis,JEF_dis,MEH_dis,HAR_dis,VID_dis,JAS_dis,GOS_dis,WAT_dis,MON_dis,FOS_dis),axis=1)    
-
-
-#cp local flows, starts at 1/1
+for res in RES:
+    if res.Restype!="RunOfRiver":
+        res.dataIN = pd.read_excel(res.filename_dataIN, skiprows=top, skip_footer=bottom)*cfs_to_cms
+    if res.name=="LOP":
+        res.dataEV = pd.read_excel(res.filename_dataEV, skiprows=top, skip_footer=bottom)*cfs_to_cms
     res.dataOUT = np.array(pd.read_excel(res.filename_dataOUT, skiprows=top, skip_footer=bottom)*cfs_to_cms)
     temp=pd.read_excel(res.initVol_filename)
     temp.columns = ['Date','Time','Storage(AF)']
