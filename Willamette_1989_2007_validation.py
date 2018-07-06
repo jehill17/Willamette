@@ -26,7 +26,7 @@ import xmltodict as xmld
 import datetime as dt
 import Willamette_model as inner #reading in the inner function
 import os
-import sys
+import pylab as py
 
 #%%
 
@@ -37,8 +37,8 @@ runfile("Willamette_outer.py", "Flow_1989.xml")
 
 #PLOT
 for i in range (0, len(res_list)):
-    x = (RES[i].dataOUT[0:6939,1].astype('float'))
-    y = outflows_all[0:6939,i]
+    x = (RES[i].dataOUT[0:T-1,1].astype('float'))
+    y = outflows_all[0:T-1,i]
     slope,intercept,r_val,p_val,std_err = stats.linregress(x,y)
     RES[i].R2 = r_val**2
     print(RES[i].R2)
@@ -50,18 +50,19 @@ for i in range (0, len(res_list)):
     plt.xlabel('doy')
     plt.ylabel('Outflows 1989-2007 (cubic meters/second)')
     plt.text(150,max(outflows_all[:,i])-60,'$R^2$={}'.format(round(RES[i].R2,4)),fontsize=15)
-    
+    #figure_name=os.path.join('Figures/',(RES[i].name + '.png'))
+    #py.savefig(figure_name, bbox_inches='tight')
 
 #%%
 #aggregate outflows and hydropower validation
 #outflows_minus_FRN = np.delete(outflows_all[0:364],6,1)
-outflows_aggr = np.sum(outflows_all[0:6939],axis=1)
+outflows_aggr = np.sum(outflows_all[0:T-1],axis=1)
 
 outflows_all_hist=np.zeros((6940,n_res))
 for i in range(0,n_res):
     outflows_all_hist[:,i] = RES[i].dataOUT[:,1]
     
-outflows_aggr_1989=np.sum(outflows_all_hist[1:6940],axis=1).astype(float)
+outflows_aggr_1989=np.sum(outflows_all_hist[1:T],axis=1).astype(float)
 
 
 x = outflows_aggr_1989
@@ -77,7 +78,8 @@ plt.title('Aggregate Outflows 89-07')
 plt.legend(['Historical aggregate outflows','Simulated aggregate outflows'])
 plt.xlabel('doy')
 plt.ylabel('Outflows ($m^3$/s)')
-plt.text(150,1200,'$R^2$={}'.format(round(outflows_R2,4)),fontsize=12)
+plt.text(150,3000,'$R^2$={}'.format(round(outflows_R2,4)),fontsize=12)
+py.savefig('Figures/aggregated_89_07.png', bbox_inches='tight')
 
 
 #%%

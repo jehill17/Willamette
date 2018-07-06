@@ -12,7 +12,7 @@
       <cp_data
       skiprows_number= "5844"
       skip_footer_number= "730"
-      hist_dis_filename= "Data/Control point historical discharge 2005.xlsx"
+      hist_dis_filename= "Data/Control point historical discharge 1989_2007.xlsx"
       locflow_filename= "Data/Controlpoints_local_flows.xls"/>
     </simulation_horizon>
 
@@ -47,8 +47,11 @@
         <controlPoint id="10"     name="Monroe"   reservoirs="7"
           location ="23763073" />
 
-        <controlPoint id="11"     name="Foster"   reservoirs="10"
-          location ="23787257" />
+        <controlPoint id="11"     name="Foster_out"   reservoirs="10"
+          location ="23785773" />
+
+        <controlPoint id="12"     name="Foster_in"   reservoirs="10"
+          location ="23787257"/>
 
       </controlPoints>
 
@@ -81,7 +84,7 @@
                  area_vol_curve="dexter_area_capacity.csv"          av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                  composite_rc="Dexter_composite_rc.csv"             re_dir="Rel_Cap/"                                   maxPowerFlow="118.9"
                  RO_rc="Dexter_RO_capacity.csv"                     spillway_rc="Dexter_Spillway_capacity.csv"          tailwater_elev="194.46"
-                 max_hydro_production = "15"                        filename_dataIN=""                                  filename_dataOUT='Data/LOP5H_daily.xls'
+                 max_hydro_production = "15"                        filename_dataIN='Data/DEX_loc.xls'                                   filename_dataOUT='Data/LOP5H_daily.xls'
                  turbine_efficiency="0.9"                           inactive_elev="194.24"                              reservoir_type= "RunOfRiver"
                  filename_dataEV=""/>
 
@@ -197,7 +200,7 @@
                  area_vol_curve="Big_Cliff_area_capacity.csv"       av_dir="Area_Capacity_Curves/"                      minOutflow="34"
                  composite_rc="BC_composite_rc.csv"                 re_dir="Rel_Cap/"                                   maxPowerFlow="90.6"
                  RO_rc="BC_RO_capacity.csv"                         spillway_rc="BC_spillway_capacity.csv"              tailwater_elev="338.02"
-                 max_hydro_production = "18"                        filename_dataEV=""                                  filename_dataIN=""
+                 max_hydro_production = "18"                        filename_dataEV=""                                  filename_dataIN="Data/BCL_loc.xls"
                  filename_dataOUT="Data/BCL5H_daily.xls"            turbine_efficiency="0.9"                           inactive_elev="353.99"
                  reservoir_type="RunOfRiver"/>
     </reservoirs>

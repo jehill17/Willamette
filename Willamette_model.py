@@ -127,7 +127,7 @@ def AssignReservoirOutletFlows(name,outflow):
                 spillwayFlow = name.minSpillwayFlow
                 RO_flow =- name.minSpillwayFlow - excessFlow
             if spillwayFlow > name.maxSpillwayFlow:
-                print('Maximum spillway volume exceed')
+                print('Maximum spillway volume exceed reservoir', name.name)
 
             
     massbalancecheck = outflow - (powerFlow + RO_flow + spillwayFlow)

@@ -4,7 +4,7 @@
 
   <simulation_horizon>
     <length
-      T="2920"/>
+      T="2919"/>
     <res_data
     skiprows_number= "0"
     skip_footer_number= "0"/>
@@ -48,8 +48,11 @@
           <controlPoint id="10"     name="Monroe"   reservoirs="7"
             location ="23763073" />
 
-          <controlPoint id="11"     name="Foster"   reservoirs="10"
-            location ="23787257" />
+          <controlPoint id="11"     name="Foster_out"   reservoirs="10"
+            location ="23785773" />
+
+          <controlPoint id="12"     name="Foster_in"   reservoirs="10"
+            location ="23787257"/>
 
         </controlPoints>
 

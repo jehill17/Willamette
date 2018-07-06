@@ -34,8 +34,8 @@ import os
 
 ####################
 
-runfile('C:/Users/sdenaro/OneDrive - University of North Carolina at Chapel Hill/UNC_2017/PNW/INFEWSgroup_Willamette/Willamette_model/Williamette/Williamette_model.py', wdir='C:/Users/sdenaro/OneDrive - University of North Carolina at Chapel Hill/UNC_2017/PNW/INFEWSgroup_Willamette/Willamette_model/Williamette')
-runfile('C:/Users/sdenaro/OneDrive - University of North Carolina at Chapel Hill/UNC_2017/PNW/INFEWSgroup_Willamette/Willamette_model/Williamette/Williamette_outer.py', wdir='C:/Users/sdenaro/OneDrive - University of North Carolina at Chapel Hill/UNC_2017/PNW/INFEWSgroup_Willamette/Willamette_model/Williamette')
+runfile('Willamette_model.py')
+runfile("Willamette_outer.py", "Flow_2001.xml")
 
 #%% Allocate and initialize
 
@@ -52,7 +52,7 @@ for t in range (0, 364):
     doy = DatetoDayOfYear(str(dates[t])[:10],'%Y-%m-%d')
 
     volume = volumes_all[t,9]
-    inflow = GPR5A.iloc[t,1]
+    inflow = GPR.dataIN.iloc[t,1]
     lag_outflow = outflows_all[t-1,9]
     
     
@@ -212,7 +212,7 @@ for t in range (0, 364):
                   if CP_list[j].COMID in constraint_array[i]:
                       cp_name = CP_list[j]
                       cp_id = CP_list[j].ID        
-                      if name in cp_name.influencedReservoirs:  #Make sure that the reservoir is on the influenced reservoir list
+                      if str(name.ID) in cp_name.influencedReservoirs:  #Make sure that the reservoir is on the influenced reservoir list
                           resallocation=np.nan 
                           if yvalue != [] :    # Does the constraint depend on two values?  If so, use both xvalue and yvalue
                               cols=constraintRules.iloc[0,1::]
@@ -224,19 +224,31 @@ for t in range (0, 364):
                               constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                               #Compare to current discharge and allocate flow increases or decreases
                               #Currently allocated evenly......need to update based on storage balance curves in ResSIM 
-                          if constraint_array[i].startswith('cp_Max'):  #maximum    
-                              if cp_discharge[t-1,cp_id-1] > constraintValue:   #Are we above the maximum flow?   
-                                  resallocation = constraintValue - cp_discharge[cp_id]/len(cp_name.influencedReservoirs) #Allocate decrease in releases (should be negative) over "controlled" reservoirs if maximum, evenly for now
-                              else:  
-                                  resallocation = 0
-                          elif constraint_array[i].startswith('cp_Min'):  #minimum
-                              if cp_discharge[t-1,cp_id-1] < constraintValue:   #Are we below the minimum flow?  
-                                 resallocation = constraintValue - cp_discharge[cp_id]/len(cp_name.influencedReservoirs) 
-                              else:  
-                                  resallocation = 0
-                          actualRelease += resallocation #add/subract cp allocation
-                          print('The constraint is',constraint_array[i], 'resallocation is',resallocation)               
-          #GATE SPECIFIC RULES:   
+                          if CP_list[j].COMID =='23787257': #if FOSTER
+                              print('Foster type constraint')
+                              if constraint_array[i].startswith('cp_Max'): 
+                                  if actualRelease >= constraintValue:
+                                     actualRelease = constraintValue
+                                     print('The constraint is',constraint_array[i], 'value is',constraintValue)
+                              elif constraint_array[i].startswith('cp_Min'):  #minimum
+                                  if actualRelease <= constraintValue:
+                                     actualRelease = constraintValue
+                                     print('The constraint is',constraint_array[i], 'value is',constraintValue)
+                          else:
+                              if constraint_array[i].startswith('cp_Max'):  #maximum    
+                                  if cp_discharge[cp_id-1] > constraintValue:   #Are we above the maximum flow?   
+                                      resallocation = (constraintValue - cp_discharge[cp_id-1])/len(cp_name.influencedReservoirs) #Allocate decrease in releases (should be negative) over "controlled" reservoirs if maximum, evenly for now
+                                  else:  
+                                      resallocation = 0
+                              elif constraint_array[i].startswith('cp_Min'):  #minimum
+                                  if cp_discharge[cp_id-1] < constraintValue:   #Are we below the minimum flow?  
+                                     resallocation = (constraintValue - cp_discharge[cp_id-1])/len(cp_name.influencedReservoirs) 
+                                  else:  
+                                      resallocation = 0
+                              actualRelease += resallocation #add/subract cp allocation
+                              print('The constraint is',constraint_array[i], 'resallocation is',resallocation)               
+
+                   #GATE SPECIFIC RULES:   
           elif constraint_array[i].startswith('Pow_Max'): # case RCT_POWERPLANT:  //maximum Power plant rule  Assign m_maxPowerFlow attribute.
                constraintValue = np.interp(xvalue,constraintRules.iloc[:,0],constraintRules.iloc[:,1])
                name.maxPowerFlow = constraintValue  #Just for this timestep.  name.MaxPowerFlow is the physical limitation for the reservoir.
